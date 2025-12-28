@@ -1,0 +1,101 @@
+🏆 Babua Premier League – Product Design Challenge
+
+🎯 Core Objective
+Design a Babua-styled Learning Management System (LMS) that delivers high-quality tech education for free, while also creating sustainable, student-friendly revenue streams without selling courses.
+
+📚 Learning Scope (Free for All Users)
+The platform should reflect the Babua mindset — practical, no-nonsense, community-driven, and focused on real engineering growth, not certificate selling.
+
+💡 Revenue Innovation Challenge
+Build a free-to-learn, Babua-branded LMS that offers structured, pattern-based content across core computer science and engineering topics, while innovating on ethical, low-cost monetization models that students genuinely feel happy to pay for.
+
+🧠 What We Are Evaluating
+Teams are encouraged to think beyond conventional LMS monetization.
+
+🚫 What NOT to Build
+❌ A traditional LMS that sells courses
+❌ High-priced subscriptions
+❌ Locked content behind paywalls
+❌ Certificate-only value systems
+
+📘 Supported Learning Domains (All Free)
+
+DSA (Pattern-based, interview-focused)
+
+System Design (Beginner → Advanced)
+
+Low Level Design (LLD)
+
+Operating Systems
+
+Computer Networks
+
+DBMS
+
+AI / ML fundamentals (practical, applied focus)
+
+⚠️ Important Constraint
+👉 All core learning content must remain free.
+No paywalls for videos, notes, or problem access.
+
+💰 Monetization Rules
+
+Since selling courses is not allowed, proposed revenue streams must be:
+
+Optional, not mandatory
+
+Low-cost and accessible
+
+Provide real value (no artificial scarcity)
+
+Make students feel happy, not forced, to pay
+
+Example direction (not a limitation):
+
+Mentor connect / office hours
+
+🧪 Judging Criteria
+
+1️⃣ Product Thinking
+
+How “Babua-first” is the experience?
+
+Is the LMS practical, real, and learner-centric?
+
+2️⃣ System & Feature Design
+
+Course structure & learning flow
+
+Progress tracking & revision systems
+
+Community and accountability features
+
+3️⃣ Business Model Creativity
+
+Sustainability without course sales
+
+Value vs price fairness
+
+Scalability of the revenue idea
+
+4️⃣ Execution & Clarity
+
+Clear user journeys
+
+Feature prioritization
+
+Thoughtful trade-offs
+
+🧩 Expected Deliverables
+
+Product overview & target users
+
+Core LMS features & architecture
+
+Learning experience design
+
+Revenue model(s) with reasoning
+
+Why students would want to pay
+
+How the business sustains long-term

@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DSA Problem Tracker
+
+A comprehensive dashboard to track your Data Structures and Algorithms (DSA) problem-solving journey. Built with **Next.js 15**, **MongoDB**, and **Tailwind CSS**.
+
+## Features
+
+- **📊 Interactive Dashboard**: Get a high-level view of your progress across various topics.
+- **📝 Problem Management**: Track problem status (Pending, In Progress, Completed), difficulty, and star your favorites.
+- **📈 Analytics**: Visualize your solving activity, streaks, and progress over time.
+- **⏱️ Focus Timer**: Built-in timer to manage your practice sessions effectively.
+- **🏷️ Smart Tagging**: Organize problems with custom tags and filter them easily.
+- **💾 Hybrid Sync**: Fetches problem sets from MongoDB while persisting your personal notes, solutions, and time spent in Local Storage.
+- **🌑 Dark Mode**: Polished UI with full dark mode support using `next-themes`.
+
+## Tech Stack
+
+- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) & [Shadcn UI](https://ui.shadcn.com/)
+- **Database**: [MongoDB](https://www.mongodb.com/)
+- **State Management**: React Hooks & Local Storage
+- **Charts**: Recharts
+- **Icons**: Lucide React
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Node.js (v18+ recommended)
+- A MongoDB database (local or Atlas)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Clone the repository**:
+   ```bash
+   git clone <repository-url>
+   cd <project-directory>
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. **Install dependencies**:
+   ```bash
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   ```
 
-## Learn More
+3. **Environment Setup**:
+   Create a `.env` file in the root directory and add your MongoDB connection URI:
+   ```env
+   MONGODB_URI=your_mongodb_connection_string
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+4. **Run Development Server**:
+   ```bash
+   npm run dev
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5. **Open the App**:
+   Visit [http://localhost:3000](http://localhost:3000) in your browser. The app will redirect you to the dashboard.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+- **`app/`**: Next.js App Router pages (Dashboard, API routes).
+- **`components/`**: UI components including:
+  - `topic-detail.tsx`: Main view for a specific topic's problems.
+  - `analytics-dashboard.tsx`: Visual analytics and charts.
+  - `problem-notes.tsx`: Rich text notes for problems.
+  - `ui/`: Reusable primitive components (buttons, dialogs, etc.).
+- **`lib/`**: Utilities and configurations:
+  - `mongodb.ts`: Database connection helper.
+  - `local-storage.ts`: Helpers for syncing user state.
+  - `types.ts`: TypeScript interfaces for Problems and Topics.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Contributing
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Contributions are welcome! Please feel free to submit a Pull Request.
