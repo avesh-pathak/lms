@@ -12,7 +12,7 @@
 
 # testing
 /coverage
-
+/q.txt/
 # next.js
 /.next/
 /out/

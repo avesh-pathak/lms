@@ -38,7 +38,7 @@ export function HackathonCard({
 
     return (
         <Card className={cn(
-            "group relative overflow-hidden border bg-card/50 backdrop-blur-sm transition-all hover:shadow-2xl hover:shadow-[#FB923C]/10 hover:-translate-y-1",
+            "group relative overflow-hidden border bg-card/50 backdrop-blur-sm transition-all hover:shadow-2xl hover:shadow-[#FB923C]/10 hover:-translate-y-1 font-sans",
             isLive ? "border-[#FB923C]/50" : "border-border/50"
         )}>
             {/* Background Glow */}
@@ -117,7 +117,7 @@ export function HackathonCard({
             <CardFooter className="p-6 pt-0">
                 <Button
                     className={cn(
-                        "w-full h-12 rounded-2xl font-black uppercase tracking-tight group/btn transition-all shadow-xl",
+                        "w-full h-11 rounded-xl font-black uppercase tracking-tight group/btn transition-all shadow-xl",
                         isLive ? "bg-[#FB923C] text-white hover:bg-[#FB923C]/90 shadow-[#FB923C]/20" : "bg-muted text-muted-foreground"
                     )}
                 >

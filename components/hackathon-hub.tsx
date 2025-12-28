@@ -64,19 +64,19 @@ export function HackathonHub() {
     return (
         <div className="space-y-12 pb-20">
             {/* Hero Header */}
-            <div className="relative overflow-hidden rounded-[40px] bg-[#FB923C] p-12 text-white">
-                <div className="absolute top-0 right-0 p-12 opacity-10 blur-sm">
-                    <Trophy className="h-64 w-64" />
+            <div className="relative overflow-hidden rounded-[32px] bg-[#FB923C] p-10 md:p-12 text-white">
+                <div className="absolute top-0 right-0 p-8 opacity-10 blur-sm">
+                    <Trophy className="h-48 w-48" />
                 </div>
-                <div className="relative z-10 max-w-2xl space-y-6">
+                <div className="relative z-10 max-w-xl space-y-4">
                     <Badge className="bg-white/20 hover:bg-white/30 text-white border-0 font-black uppercase tracking-widest py-1 px-4 rounded-full">
                         Babua Arena
                     </Badge>
-                    <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase leading-none italic">
+                    <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-none italic">
                         BUILD FAST. <br />
                         WIN <span className="underline decoration-4 underline-offset-8">REAL</span> REWARDS.
                     </h1>
-                    <p className="text-lg font-bold opacity-90 leading-relaxed">
+                    <p className="text-lg font-bold opacity-90 leading-relaxed font-sans">
                         Transform your learning into production-grade projects. Compete with top engineers, build your proof-of-work, and win exclusive mentorship and prizes.
                     </p>
                     <div className="flex gap-4 pt-4">
@@ -118,6 +118,28 @@ export function HackathonHub() {
                 {hackathons.map((hackathon) => (
                     <HackathonCard key={hackathon.id} {...hackathon} />
                 ))}
+            </div>
+
+            {/* How to Compete Section */}
+            <div className="space-y-6">
+                <div className="text-center space-y-1">
+                    <h2 className="text-3xl font-black uppercase tracking-tight italic">How to Compete</h2>
+                    <p className="text-muted-foreground font-medium uppercase tracking-widest text-[10px]">Follow these steps to claim your bounty</p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    {[
+                        { step: "01", title: "Select Sprint", desc: "Choose an active hackathon that match your skill level." },
+                        { step: "02", title: "Build Blueprint", desc: "Solve the challenge and build a production-grade project." },
+                        { step: "03", title: "Submit Work", desc: "Share your GitHub repo and live demo URL for review." },
+                        { step: "04", title: "Win Rewards", desc: "Get upvoted and verified by mentors to win prizes." }
+                    ].map((item, i) => (
+                        <div key={i} className="p-5 rounded-2xl bg-muted/30 border border-dashed text-center space-y-2 font-sans hover:bg-muted/50 transition-colors">
+                            <div className="text-xl font-black text-[#FB923C]/30 italic leading-none">{item.step}</div>
+                            <h4 className="text-xs font-black uppercase tracking-tight">{item.title}</h4>
+                            <p className="text-[11px] text-muted-foreground font-bold leading-tight">{item.desc}</p>
+                        </div>
+                    ))}
+                </div>
             </div>
 
             {/* Why Build? Extra Section */}

@@ -7,8 +7,6 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
-  // const problems = await getProblems() // Moved to RootLayout
-
   return (
     <div className="flex h-screen bg-background text-foreground">
       <DashboardSidebar />

@@ -2,7 +2,7 @@
 
 import React from "react"
 import Link from "next/link"
-import { ArrowRight, Trophy, Code2, Layers, Zap, Star, ShieldCheck, Cpu, PencilRuler, MessageSquare, Users } from "lucide-react"
+import { ArrowRight, Trophy, Code2, Layers, Zap, Star, ShieldCheck, Cpu, PencilRuler, MessageSquare, Users, Linkedin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
@@ -65,9 +65,14 @@ export function LandingPage({ topics }: LandingPageProps) {
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                         <Link href="/dashboard">
-                            <Button size="lg" className="h-16 px-10 rounded-full text-xl font-black uppercase tracking-tight shadow-2xl shadow-[#FB923C]/30 group bg-[#FB923C] text-white hover:bg-[#FB923C]/90">
-                                Start Training Free
-                                <ArrowRight className="ml-2 h-6 w-6 group-hover:translate-x-1 transition-transform" />
+                            <Button size="lg" className="h-16 px-12 rounded-2xl bg-[#FB923C] hover:bg-[#FB923C]/90 text-white font-black uppercase tracking-tight shadow-2xl shadow-[#FB923C]/20 text-lg group">
+                                Start Building <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                            </Button>
+                        </Link>
+                        <Link href="/dashboard/hackathons">
+                            <Button size="lg" variant="outline" className="h-16 px-12 rounded-2xl border-2 font-black uppercase tracking-tight text-lg group">
+                                <Trophy className="mr-2 h-5 w-5 text-[#FB923C]" />
+                                Join Hackathons
                             </Button>
                         </Link>
                         <a href="#paths">
