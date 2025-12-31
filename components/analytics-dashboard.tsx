@@ -9,11 +9,10 @@ import {
   ResponsiveContainer, AreaChart, Area
 } from "recharts"
 import {
-  TrendingUp, Target, BarChart3, Flame, Search, ArrowUpRight, Trophy, Medal
+  TrendingUp, Target, BarChart3, Flame, Trophy, Medal
 } from "lucide-react"
 import { useProblems } from "./problems-provider"
 import { format, parseISO, subDays, eachDayOfInterval, isSameDay } from "date-fns"
-import { Input } from "@/components/ui/input"
 import { toSlug, cn } from "@/lib/utils"
 import Link from "next/link"
 import { DailyGoal } from "./daily-goal"

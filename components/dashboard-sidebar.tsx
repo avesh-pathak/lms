@@ -18,7 +18,9 @@ import {
   Users,
   Trophy,
   Clock,
-  Linkedin
+  Linkedin,
+  Flame,
+  Repeat
 } from "lucide-react"
 
 import { ThemeToggle } from "./theme-toggle"
@@ -111,6 +113,14 @@ export function DashboardSidebar() {
                 Analytics
               </NavLink>
               <NavLink
+                href="/dashboard/revision"
+                icon={Repeat}
+                active={pathname === "/dashboard/revision"}
+                onClick={() => setOpen(false)}
+              >
+                Revision Center
+              </NavLink>
+              <NavLink
                 href="/dashboard/mentorship"
                 icon={MessageSquare}
                 active={pathname === "/dashboard/mentorship"}
@@ -134,72 +144,48 @@ export function DashboardSidebar() {
               >
                 Leaderboard
               </NavLink>
+            </div>
+          </div>
+
+          {/* Engineering Paths */}
+          <div className="space-y-3">
+            <div className="text-[10px] font-black text-muted-foreground px-3 uppercase tracking-widest opacity-70">
+              Engineering Paths
+            </div>
+            <div className="space-y-1">
               <NavLink
                 href="/dashboard?domain=DSA"
                 icon={Layers}
-                active={pathname === "/dashboard" && searchParams.get("domain") === "DSA"}
+                active={pathname === "/dashboard" && (searchParams.get("domain") === "DSA" || !searchParams.get("domain"))}
                 onClick={() => setOpen(false)}
               >
                 DSA Patterns
               </NavLink>
               <NavLink
-                href="/dashboard?domain=System Design"
-                icon={Layers}
-                active={pathname === "/dashboard" && searchParams.get("domain") === "System Design"}
-                onClick={() => setOpen(false)}
-              >
-                System Design
-              </NavLink>
-              <NavLink
-                href="/dashboard?domain=LLD"
-                icon={PencilRuler}
-                active={pathname === "/dashboard" && searchParams.get("domain") === "LLD"}
-                onClick={() => setOpen(false)}
-              >
-                Low Level Design
-              </NavLink>
-              <NavLink
                 href="/dashboard?domain=Core Engineering"
                 icon={Cpu}
-                active={pathname === "/dashboard" && searchParams.get("domain") === "Core Engineering"}
+                active={pathname === "/dashboard" && ["Core Engineering", "System Design", "LLD", "AI/ML"].includes(searchParams.get("domain") || "")}
                 onClick={() => setOpen(false)}
               >
                 Core Engineering
               </NavLink>
-              <NavLink
-                href="/dashboard?domain=AI/ML"
-                icon={Target}
-                active={pathname === "/dashboard" && searchParams.get("domain") === "AI/ML"}
-                onClick={() => setOpen(false)}
-              >
-                AI/ML Fundamentals
-              </NavLink>
             </div>
           </div>
 
-
-
-          {/* Topics Quick Access */}
-          <div>
-            <div className="text-[10px] font-black text-muted-foreground mb-3 px-2 uppercase tracking-widest opacity-70">
-              Quick Access: {searchParams.get("domain") || "DSA"}
+          {/* Community Section */}
+          <div className="space-y-3">
+            <div className="text-[10px] font-black text-muted-foreground px-3 uppercase tracking-widest opacity-70">
+              Community Hub
             </div>
-
             <div className="space-y-1">
-              {topics
-                .filter(t => t.domain === (searchParams.get("domain") || "DSA"))
-                .slice(0, 5)
-                .map((topic) => (
-                  <NavLink
-                    key={topic.id}
-                    href={`/dashboard/topic/${topic.id}`}
-                    icon={BookOpen}
-                    active={pathname === `/dashboard/topic/${topic.id}`}
-                    onClick={() => setOpen(false)}
-                  >
-                    {topic.name}
-                  </NavLink>
-                ))}
+              <NavLink
+                href="/dashboard/community"
+                icon={Users}
+                active={pathname.includes("/dashboard/community") || pathname === "/dashboard/roast"}
+                onClick={() => setOpen(false)}
+              >
+                Community Hub
+              </NavLink>
             </div>
           </div>
         </div>

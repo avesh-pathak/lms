@@ -12,7 +12,7 @@ export const DOMAIN_PROBLEMS: MongoDBProblem[] = [
         starred: true,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        domain: "System Design"
+        domain: "Core Engineering"
     },
     {
         _id: "sd-2",
@@ -24,7 +24,7 @@ export const DOMAIN_PROBLEMS: MongoDBProblem[] = [
         starred: false,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        domain: "System Design"
+        domain: "Core Engineering"
     },
     {
         _id: "sd-3",
@@ -36,7 +36,7 @@ export const DOMAIN_PROBLEMS: MongoDBProblem[] = [
         starred: false,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        domain: "System Design"
+        domain: "Core Engineering"
     },
     {
         _id: "sd-4",
@@ -48,7 +48,7 @@ export const DOMAIN_PROBLEMS: MongoDBProblem[] = [
         starred: true,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        domain: "System Design"
+        domain: "Core Engineering"
     },
 
     // LLD (Low Level Design)
@@ -62,7 +62,7 @@ export const DOMAIN_PROBLEMS: MongoDBProblem[] = [
         starred: false,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        domain: "LLD"
+        domain: "Core Engineering"
     },
     {
         _id: "lld-2",
@@ -74,7 +74,7 @@ export const DOMAIN_PROBLEMS: MongoDBProblem[] = [
         starred: false,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        domain: "LLD"
+        domain: "Core Engineering"
     },
     {
         _id: "lld-3",
@@ -86,7 +86,7 @@ export const DOMAIN_PROBLEMS: MongoDBProblem[] = [
         starred: true,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        domain: "LLD"
+        domain: "Core Engineering"
     },
 
     // Core Engineering
@@ -150,7 +150,7 @@ export const DOMAIN_PROBLEMS: MongoDBProblem[] = [
         starred: false,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        domain: "AI/ML"
+        domain: "Core Engineering"
     },
     {
         _id: "ai-2",
@@ -162,7 +162,7 @@ export const DOMAIN_PROBLEMS: MongoDBProblem[] = [
         starred: true,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        domain: "AI/ML"
+        domain: "Core Engineering"
     },
     {
         _id: "ai-3",
@@ -174,6 +174,6 @@ export const DOMAIN_PROBLEMS: MongoDBProblem[] = [
         starred: true,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        domain: "AI/ML"
+        domain: "Core Engineering"
     }
 ]

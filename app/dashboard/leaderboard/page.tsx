@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react"
 import { MOCK_LEADERBOARD, type LeaderboardEntry } from "@/lib/data/leaderboard"
-import { Trophy, Medal, Flame, Search, Crown, ArrowUpRight, TrendingUp, Users, School, Globe, ChevronRight } from "lucide-react"
+import { Flame, Search, TrendingUp, Users, School, Globe, ChevronRight } from "lucide-react"
 import { toast } from "sonner"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -42,16 +42,11 @@ export default function LeaderboardPage() {
                         let newPoints = u.points + gain
                         if (newPoints > 5000) newPoints = 3000 + (Math.random() * 200)
 
-                        const newTier = newPoints >= 4000 ? "Diamond" :
-                            newPoints >= 3000 ? "Platinum" :
-                                newPoints >= 2000 ? "Gold" :
-                                    newPoints >= 1000 ? "Silver" : "Bronze"
-
                         return {
                             ...u,
                             points: newPoints,
                             weeklyPoints: (u.weeklyPoints || 0) + Math.floor(gain / 2),
-                            tier: newTier as any
+                            tier: getTier(newPoints) as any
                         }
                     }
                     return u
@@ -69,10 +64,7 @@ export default function LeaderboardPage() {
     const pointsMap = { "Easy": 50, "Medium": 100, "Hard": 200 }
     const dynamicPoints = solvedProblems.reduce((acc, p) => acc + (pointsMap[p.difficulty as keyof typeof pointsMap] || 50), 0)
 
-    const dynamicTier = dynamicPoints >= 4000 ? "Diamond" :
-        dynamicPoints >= 3000 ? "Platinum" :
-            dynamicPoints >= 2000 ? "Gold" :
-                dynamicPoints >= 1000 ? "Silver" : "Bronze"
+    const dynamicTier = getTier(dynamicPoints)
 
     const pointsToday = solvedProblems
         .filter(p => p.completedAt && new Date(p.completedAt).toDateString() === new Date().toDateString())
@@ -156,49 +148,49 @@ export default function LeaderboardPage() {
 
                         {/* Top Standing Card */}
                         {currentUser && (
-                            <div className="max-w-[400px] w-full lg:mb-2 self-center">
-                                <div className="bg-white/95 text-black rounded-[24px] p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-black/5 flex items-center justify-between gap-4 animate-in fade-in slide-in-from-right-4 duration-700 backdrop-blur-xl">
+                            <div className="max-w-[550px] w-full lg:mb-2 self-center scale-105 transform origin-right">
+                                <div className="bg-white/95 text-black rounded-[32px] p-4 shadow-[0_30px_60px_rgba(0,0,0,0.15)] border border-black/5 flex items-center justify-between gap-6 animate-in fade-in slide-in-from-right-4 duration-700 backdrop-blur-xl">
                                     {/* Left Section: Compact User Info */}
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-5">
                                         <div className="relative">
-                                            <div className="w-10 h-10 rounded-xl border border-black/10 overflow-hidden shadow-sm">
+                                            <div className="w-14 h-14 rounded-2xl border-2 border-black/10 overflow-hidden shadow-sm">
                                                 <img src={currentUser.avatar} className="w-full h-full object-cover" alt={currentUser.name} />
                                             </div>
-                                            <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white bg-green-500 animate-pulse" />
+                                            <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white bg-green-500 animate-pulse" />
                                         </div>
-                                        <div className="space-y-0.5">
-                                            <div className="flex items-center gap-1.5">
-                                                <span className="text-xs font-black italic">#{currentUserRank}</span>
-                                                <h4 className="font-black text-[11px] uppercase tracking-tighter">Your Standing</h4>
+                                        <div className="space-y-1">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-sm font-black italic">#{currentUserRank}</span>
+                                                <h4 className="font-black text-xs uppercase tracking-tighter">Your Standing</h4>
                                             </div>
-                                            <div className="flex items-center gap-1 text-[9px] font-black text-[#FB923C] uppercase tracking-tighter">
-                                                <TrendingUp className="w-2.5 h-2.5" />
-                                                <span>Top 15%</span>
+                                            <div className="flex items-center gap-1.5 text-[11px] font-black text-[#FB923C] uppercase tracking-tighter">
+                                                <TrendingUp className="w-3.5 h-3.5" />
+                                                <span>Top 15% Elite</span>
                                             </div>
                                         </div>
                                     </div>
 
                                     {/* Center Section: Points Today */}
-                                    <div className="flex flex-col items-center px-3 border-x border-black/5">
-                                        <span className="text-[8px] font-black uppercase text-muted-foreground tracking-widest leading-none">Today</span>
-                                        <div className="text-sm font-black text-green-600">↑ {pointsToday}</div>
+                                    <div className="flex flex-col items-center px-6 border-x border-black/5">
+                                        <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest leading-none mb-1">Today</span>
+                                        <div className="text-xl font-black text-green-600">↑ {pointsToday}</div>
                                     </div>
 
                                     {/* Right Section: Main Points & CTA */}
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-5">
                                         <div className="text-right">
-                                            <div className="text-base font-black text-black italic leading-none">
+                                            <div className="text-2xl font-black text-black italic leading-none">
                                                 {(timeRange === "weekly" ? currentUser.weeklyPoints : currentUser.points)?.toLocaleString()}
                                             </div>
-                                            <div className="text-[8px] font-black uppercase text-muted-foreground leading-none">Total XP</div>
+                                            <div className="text-[10px] font-black uppercase text-muted-foreground leading-none">Total XP</div>
                                         </div>
                                         <Button
                                             onClick={() => toast.info("Viewing Detailed Breakdown", {
                                                 description: "This feature is coming soon in Babua Pro!"
                                             })}
-                                            className="bg-[#FB923C] text-white hover:bg-[#F97316] font-black rounded-xl h-8 px-3 gap-1 shadow-sm border-b-2 border-orange-700 active:border-b-0 transition-all"
+                                            className="bg-[#FB923C] text-white hover:bg-[#F97316] font-black rounded-2xl h-12 w-12 shadow-lg border-b-4 border-orange-700 active:border-b-0 transition-all flex items-center justify-center p-0"
                                         >
-                                            <ChevronRight className="w-3.5 h-3.5" />
+                                            <ChevronRight className="w-6 h-6" />
                                         </Button>
                                     </div>
                                 </div>
@@ -400,6 +392,14 @@ function TabButton({ active, onClick, icon: Icon, children }: { active: boolean,
             {children}
         </button>
     )
+}
+
+function getTier(points: number) {
+    if (points >= 4000) return "Diamond"
+    if (points >= 3000) return "Platinum"
+    if (points >= 2000) return "Gold"
+    if (points >= 1000) return "Silver"
+    return "Bronze"
 }
 
 function getTierColor(tier: string) {

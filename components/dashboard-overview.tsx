@@ -69,27 +69,27 @@ export function DashboardOverview() {
   return (
     <div className="p-6 lg:p-8 space-y-12 max-w-7xl mx-auto">
       {/* Header & Stats */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
-        <div className="space-y-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div className="space-y-3">
           <div className="flex items-center gap-3">
-            <h1 className="text-5xl lg:text-7xl font-black tracking-tighter uppercase italic text-primary">
+            <h1 className="text-4xl lg:text-5xl font-black tracking-tighter uppercase italic text-primary">
               Babua Hub
             </h1>
           </div>
-          <p className="text-muted-foreground font-medium text-xl max-w-2xl">
+          <p className="text-muted-foreground font-medium text-lg max-w-2xl">
             Clean, focused engineering growth. No clutter, just <span className="text-primary font-black decoration-primary/30 underline underline-offset-8">Progress</span>
           </p>
         </div>
 
         <div className="relative group">
-          <div className="absolute -inset-1 bg-gradient-to-r from-primary to-orange-500 rounded-[32px] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-          <div className="relative flex items-center gap-6 bg-card p-6 rounded-[32px] border border-border shadow-2xl">
+          <div className="absolute -inset-1 bg-gradient-to-r from-primary to-orange-500 rounded-[28px] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+          <div className="relative flex items-center gap-6 bg-card p-5 rounded-[28px] border border-border shadow-xl">
             <div className="space-y-1 text-right">
               <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{activeDomain} Mastery</span>
               <div className="flex items-baseline gap-3">
-                <span className="text-5xl font-black tabular-nums">{stats.percent.toFixed(0)}%</span>
+                <span className="text-4xl font-black tabular-nums">{stats.percent.toFixed(0)}%</span>
                 <div className="flex flex-col gap-1">
-                  <div className="h-3 w-40 bg-muted rounded-full overflow-hidden border border-muted-foreground/10">
+                  <div className="h-2.5 w-32 bg-muted rounded-full overflow-hidden border border-muted-foreground/10">
                     <div className="h-full bg-gradient-to-r from-primary to-orange-400 rounded-full shadow-[0_0_15px_rgba(251,146,60,0.6)] animate-pulse" style={{ width: `${stats.percent}%` }} />
                   </div>
                   <span className="text-[9px] font-black uppercase text-primary/60 tracking-tighter self-end">{stats.solved} / {stats.total} Solved</span>
@@ -100,9 +100,9 @@ export function DashboardOverview() {
         </div>
       </div>
 
-      <div className="space-y-12">
+      <div className="space-y-8">
         {/* Main Content Area */}
-        <div className="space-y-12 max-w-5xl mx-auto">
+        <div className="space-y-8 max-w-5xl mx-auto">
           {/* Upcoming Sessions removed */}
 
           <div className="space-y-6">
