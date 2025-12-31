@@ -20,6 +20,7 @@ interface HackathonCardProps {
     pattern: string
     difficulty: "Beginner" | "Intermediate" | "Advanced"
     progress?: number
+    onClick?: () => void
 }
 
 export function HackathonCard({
@@ -32,7 +33,8 @@ export function HackathonCard({
     prize,
     pattern,
     difficulty,
-    progress
+    progress,
+    onClick
 }: HackathonCardProps) {
     const isLive = status === "active"
 
@@ -72,8 +74,8 @@ export function HackathonCard({
                     </div>
                     <div className="flex -space-x-2">
                         {[1, 2, 3].map((i) => (
-                            <div key={i} className="w-6 h-6 rounded-full bg-muted border-2 border-background flex items-center justify-center">
-                                <Users className="h-3 w-3 text-muted-foreground" />
+                            <div key={i} className="w-6 h-6 rounded-full bg-muted border-2 border-background flex items-center justify-center overflow-hidden">
+                                <img src={i % 2 === 0 ? "/assets/mentors/image.png" : "/assets/mentors/image2.png"} className="w-full h-full object-cover" alt="User" />
                             </div>
                         ))}
                         <div className="w-6 h-6 rounded-full bg-muted border-2 border-background flex items-center justify-center">
@@ -116,6 +118,7 @@ export function HackathonCard({
 
             <CardFooter className="p-6 pt-0">
                 <Button
+                    onClick={onClick}
                     className={cn(
                         "w-full h-11 rounded-xl font-black uppercase tracking-tight group/btn transition-all shadow-xl",
                         isLive ? "bg-[#FB923C] text-white hover:bg-[#FB923C]/90 shadow-[#FB923C]/20" : "bg-muted text-muted-foreground"

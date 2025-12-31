@@ -24,6 +24,7 @@ import { toSlug, cn } from "@/lib/utils"
 import { ProblemTimer } from "./problem-timer"
 import { ProblemNotes } from "./problem-notes"
 import { TagManager } from "./tag-manager"
+import { toast } from "sonner"
 
 function slugToTitle(slug: string) {
   return slug
@@ -93,6 +94,18 @@ export function TopicDetail({ topicSlug }: TopicDetailProps) {
     const problem = allProblems.find(p => p._id === id)
     if (!problem) return
     const newStatus = problem.status === "Completed" ? "Pending" : "Completed"
+
+    // Weighted Points
+    const pointsMap = { "Easy": 50, "Medium": 100, "Hard": 200 }
+    const points = pointsMap[problem.difficulty as keyof typeof pointsMap] || 50
+
+    if (newStatus === "Completed") {
+      toast.success(`Problem Solved!`, {
+        description: `You earned ${points} XP. Great job!`,
+        icon: <div className="p-1 bg-green-500 rounded-full text-white"><Check className="h-3 w-3" /></div>,
+      })
+    }
+
     updateProblemData(id, { status: newStatus })
     updateProblem(id, { status: newStatus })
   }, [allProblems, updateProblem])

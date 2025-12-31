@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "DSA Roadmap Tracker",
-  description: "Track your progress through data structures and algorithms",
+  title: "Babua Hub | Engineering Verified",
+  description: "The elite registry for engineering mastery. Track, compete, and evolve.",
   generator: "v0.app",
   icons: {
     icon: [
@@ -38,6 +38,7 @@ export const metadata: Metadata = {
 
 import { ProblemsProvider } from "@/components/problems-provider"
 import { getProblems } from "@/lib/problems"
+import { Toaster } from "@/components/ui/sonner"
 
 export default async function RootLayout({
   children,
@@ -67,6 +68,7 @@ export default async function RootLayout({
         />
         <ProblemsProvider initialProblems={problems}>
           {children}
+          <Toaster />
         </ProblemsProvider>
         <Analytics />
       </body>

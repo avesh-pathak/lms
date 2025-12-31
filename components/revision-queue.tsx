@@ -13,34 +13,44 @@ export function RevisionQueue() {
 
     const queue = useMemo(() => {
         return problems
-            .filter(p => p.starred || p.tags?.includes("Revision"))
-            .slice(0, 5) // Top 5 for the sidebar/widget
+            .filter(p => p.isReviewDue || p.starred || p.tags?.includes("Revision"))
+            .sort((a, b) => {
+                if (a.isReviewDue && !b.isReviewDue) return -1
+                if (!a.isReviewDue && b.isReviewDue) return 1
+                return 0
+            })
+            .slice(0, 5)
     }, [problems])
 
     if (loading || queue.length === 0) return null
 
     return (
         <div className="space-y-4">
-            <div className="flex items-center justify-between">
-                <h3 className="text-base font-black uppercase tracking-wider text-muted-foreground">Revision Queue</h3>
-                <Badge variant="outline" className="text-[10px] font-black">{queue.length}</Badge>
+            <div className="flex items-center justify-between px-1">
+                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground italic">Revision Queue</h3>
+                <Badge variant="outline" className="text-[9px] font-black border-primary/20 bg-primary/5 text-primary rounded-full">{queue.length}</Badge>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-3">
                 {queue.map((prob) => (
                     <Link
                         key={prob._id}
                         href={`/dashboard/topic/${toSlug(prob.topic)}?expand=${prob._id}`}
-                        className="flex items-center gap-3 p-3 rounded-xl border bg-card/30 hover:bg-muted/30 transition-all group border-dashed"
+                        className="flex items-center gap-4 p-4 rounded-3xl border bg-card/60 hover:bg-card hover:border-primary/40 transition-all group shadow-sm"
                     >
-                        <div className="p-2 rounded-full bg-yellow-500/5 text-yellow-500 group-hover:bg-yellow-500/10 transition-colors">
-                            {prob.starred ? <Star className="h-3.5 w-3.5 fill-current" /> : <RefreshCcw className="h-3.5 w-3.5" />}
+                        <div className={cn(
+                            "p-2.5 rounded-2xl transition-all shadow-inner",
+                            prob.isReviewDue
+                                ? "bg-red-500/10 text-red-500 group-hover:bg-red-500 group-hover:text-white"
+                                : "bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white"
+                        )}>
+                            {prob.isReviewDue ? <RefreshCcw className="h-4 w-4 animate-spin-slow" /> : <Star className="h-4 w-4 fill-current" />}
                         </div>
                         <div className="min-w-0 flex-1">
-                            <h4 className="text-sm font-bold truncate group-hover:text-primary transition-colors">{prob.title}</h4>
-                            <p className="text-xs font-medium text-muted-foreground truncate">{prob.topic}</p>
+                            <h4 className="text-[13px] font-black truncate group-hover:text-primary transition-colors leading-tight italic uppercase">{prob.title}</h4>
+                            <p className="text-[10px] font-bold text-muted-foreground truncate uppercase opacity-60">{prob.topic}</p>
                         </div>
-                        <ArrowRight className="h-3 w-3 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                        <ArrowRight className="h-4 w-4 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                     </Link>
                 ))}
             </div>

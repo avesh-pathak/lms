@@ -1,93 +1,90 @@
 "use client"
 
-import React from "react"
-import { Trophy, Users, Star, ArrowRight, Search, Filter, Rocket, Zap, Crown } from "lucide-react"
+import React, { useState, useMemo } from "react"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+import { Trophy, Users, Star, ArrowRight, Search, Filter, Rocket, Zap, Crown, Github } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { HackathonCard } from "./hackathon-card"
+import { MOCK_HACKATHONS, MOCK_HALL_OF_FAME, type LegendaryProject } from "@/lib/data/hackathons"
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+} from "@/components/ui/dialog"
+import { cn } from "@/lib/utils"
 
 export function HackathonHub() {
-    const hackathons = [
-        {
-            id: "1",
-            title: "The Sliding Window Sprint",
-            description: "Build a high-performance analytics dashboard that processes streaming data using the Sliding Window pattern.",
-            status: "active" as const,
-            participants: 142,
-            startDate: "Oct 24",
-            endDate: "Oct 26",
-            prize: "$500 + Babua Pro",
-            pattern: "Sliding Window",
-            difficulty: "Intermediate" as const,
-            progress: 65
-        },
-        {
-            id: "2",
-            title: "System Design: Scalable Cache",
-            description: "Design and implement a distributed caching layer with LRU eviction and Write-through policies.",
-            status: "active" as const,
-            participants: 89,
-            startDate: "Oct 25",
-            endDate: "Oct 27",
-            prize: "Interview with Top VC",
-            pattern: "Caching",
-            difficulty: "Advanced" as const,
-            progress: 0
-        },
-        {
-            id: "3",
-            title: "LLD: Banking System",
-            description: "Create a thread-safe banking system with support for transactions, audits, and interest calculations.",
-            status: "upcoming" as const,
-            participants: 256,
-            startDate: "Nov 01",
-            endDate: "Nov 03",
-            prize: "Engineering Kit",
-            pattern: "Command Pattern",
-            difficulty: "Beginner" as const
-        },
-        {
-            id: "4",
-            title: "AI Agent Builder",
-            description: "Build an autonomous agent that can solve multi-step engineering tasks using LLM tool use.",
-            status: "upcoming" as const,
-            participants: 512,
-            startDate: "Nov 05",
-            endDate: "Nov 10",
-            prize: "$1000 API Credits",
-            pattern: "ReAct Agents",
-            difficulty: "Advanced" as const
-        }
-    ]
+    const router = useRouter()
+    const [searchTerm, setSearchTerm] = useState("")
+    const [activeTab, setActiveTab] = useState<"All" | "Active" | "Upcoming" | "Hall of Fame">("All")
+    const [selectedProject, setSelectedProject] = useState<LegendaryProject | null>(null)
+
+    const filteredHackathons = useMemo(() => {
+        return MOCK_HACKATHONS.filter(h => {
+            const matchesSearch = h.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                h.description.toLowerCase().includes(searchTerm.toLowerCase())
+            const matchesTab = activeTab === "All" ? true :
+                activeTab === "Active" ? h.status === "active" :
+                    h.status === "upcoming"
+
+            return matchesSearch && matchesTab
+        })
+    }, [searchTerm, activeTab])
+
+    const filteredHallOfFame = useMemo(() => {
+        return MOCK_HALL_OF_FAME.filter(p =>
+            p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            p.builder.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            p.techStack.some(t => t.toLowerCase().includes(searchTerm.toLowerCase()))
+        )
+    }, [searchTerm])
+
+    const tabs = ["All", "Active", "Upcoming", "Hall of Fame"] as const
 
     return (
         <div className="space-y-12 pb-20">
             {/* Hero Header */}
-            <div className="relative overflow-hidden rounded-[32px] bg-[#FB923C] p-10 md:p-12 text-white">
-                <div className="absolute top-0 right-0 p-8 opacity-10 blur-sm">
-                    <Trophy className="h-48 w-48" />
+            <div className="relative overflow-hidden rounded-[20px] bg-[#FB923C] p-5 md:p-6 text-white shadow-xl shadow-orange-500/20">
+                <div className="absolute top-0 right-0 p-4 opacity-10 blur-sm">
+                    <Trophy className="h-24 w-24" />
                 </div>
-                <div className="relative z-10 max-w-xl space-y-4">
-                    <Badge className="bg-white/20 hover:bg-white/30 text-white border-0 font-black uppercase tracking-widest py-1 px-4 rounded-full">
-                        Babua Arena
-                    </Badge>
-                    <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-none italic">
+                <div className="relative z-10 max-w-xl space-y-2">
+                    <div className="flex items-center gap-2">
+                        <Badge className="bg-white/20 hover:bg-white/30 text-white border-0 font-black uppercase tracking-widest py-0.5 px-2.5 rounded-full text-[9px]">
+                            Babua Arena
+                        </Badge>
+                        <span className="text-white/60 font-bold text-[10px] uppercase tracking-wider">Season 1</span>
+                    </div>
+
+                    <h1 className="text-2xl md:text-4xl font-black tracking-tighter uppercase leading-none italic">
                         BUILD FAST. <br />
-                        WIN <span className="underline decoration-4 underline-offset-8">REAL</span> REWARDS.
+                        WIN <span className="underline decoration-4 underline-offset-4 decoration-black/80 text-black/90 px-1">REAL</span> REWARDS.
                     </h1>
-                    <p className="text-lg font-bold opacity-90 leading-relaxed font-sans">
-                        Transform your learning into production-grade projects. Compete with top engineers, build your proof-of-work, and win exclusive mentorship and prizes.
+                    <p className="text-xs md:text-sm font-bold opacity-90 leading-relaxed font-sans max-w-md">
+                        Transform your learning into production-grade projects. Win exclusive mentorship and prizes.
                     </p>
-                    <div className="flex gap-4 pt-4">
-                        <Button size="lg" className="bg-white text-[#FB923C] hover:bg-white/90 h-14 px-8 rounded-2xl font-black uppercase tracking-tight shadow-2xl">
+                    <div className="flex gap-3 pt-2">
+                        <Button
+                            size="sm"
+                            onClick={() => {
+                                const activeId = MOCK_HACKATHONS.find(h => h.status === "active")?.id || "1"
+                                router.push(`/dashboard/hackathons/${activeId}`)
+                            }}
+                            className="bg-white text-[#FB923C] hover:bg-white/90 h-9 px-5 rounded-lg font-black uppercase tracking-tight shadow-md text-[10px]"
+                        >
                             Join Active sprint
                         </Button>
-                        <div className="flex items-center gap-3 px-4 py-2 bg-black/10 rounded-2xl border border-white/20 backdrop-blur-sm">
-                            <div className="flex -space-x-2">
-                                {[1, 2, 3].map(i => <div key={i} className="w-8 h-8 rounded-full bg-white/20 border-2 border-[#FB923C]" />)}
+                        <div className="flex items-center gap-2 px-3 py-1 bg-black/10 rounded-lg border border-white/20 backdrop-blur-sm">
+                            <div className="flex -space-x-1.5">
+                                {[1, 2, 3].map(i => <div key={i} className="w-4 h-4 rounded-full bg-white/20 border border-white/50" />)}
                             </div>
-                            <span className="text-sm font-black uppercase tracking-tighter">1,240 Building Now</span>
+                            <span className="text-[9px] font-black uppercase tracking-tighter text-white">1,240 Building</span>
                         </div>
                     </div>
                 </div>
@@ -98,7 +95,12 @@ export function HackathonHub() {
                 <div className="flex items-center gap-2 w-full md:w-auto">
                     <div className="relative w-full md:w-80">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input placeholder="Search sprints..." className="pl-12 h-12 rounded-2xl bg-card border-border/50 focus:border-[#FB923C]/50 transition-all font-bold" />
+                        <Input
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            placeholder="Search sprints..."
+                            className="pl-12 h-12 rounded-2xl bg-card border-border/50 focus:border-[#FB923C]/50 transition-all font-bold"
+                        />
                     </div>
                     <Button variant="outline" className="h-12 w-12 rounded-2xl shrink-0 p-0 border-border/50">
                         <Filter className="h-4 w-4" />
@@ -106,19 +108,170 @@ export function HackathonHub() {
                 </div>
 
                 <div className="flex gap-2 overflow-x-auto pb-2 w-full md:w-auto">
-                    <Badge className="bg-[#FB923C] text-white rounded-xl py-2 px-6 font-black uppercase tracking-tight cursor-pointer">All Sprints</Badge>
-                    <Badge variant="outline" className="rounded-xl py-2 px-6 font-black uppercase tracking-tight cursor-pointer hover:bg-accent hover:text-accent-foreground border-border/50">Active</Badge>
-                    <Badge variant="outline" className="rounded-xl py-2 px-6 font-black uppercase tracking-tight cursor-pointer hover:bg-accent hover:text-accent-foreground border-border/50">Upcoming</Badge>
-                    <Badge variant="outline" className="rounded-xl py-2 px-6 font-black uppercase tracking-tight cursor-pointer hover:bg-accent hover:text-accent-foreground border-border/50">Hall of Fame</Badge>
+                    {tabs.map(tab => (
+                        <Badge
+                            key={tab}
+                            onClick={() => setActiveTab(tab)}
+                            variant={activeTab === tab ? "default" : "outline"}
+                            className={cn(
+                                "rounded-xl py-2 px-6 font-black uppercase tracking-tight cursor-pointer transition-all",
+                                activeTab === tab
+                                    ? "bg-[#FB923C] text-white hover:bg-[#FB923C]/90"
+                                    : "hover:bg-accent hover:text-accent-foreground border-border/50"
+                            )}
+                        >
+                            {tab === "All" ? "All Sprints" : tab}
+                        </Badge>
+                    ))}
                 </div>
             </div>
 
-            {/* Featured Hackathon Grids */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {hackathons.map((hackathon) => (
-                    <HackathonCard key={hackathon.id} {...hackathon} />
-                ))}
-            </div>
+            {/* Feature Content */}
+            {activeTab === "Hall of Fame" ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {filteredHallOfFame.map((project) => (
+                        <Card
+                            key={project.id}
+                            onClick={() => setSelectedProject(project)}
+                            className="group relative overflow-hidden rounded-[32px] border-2 border-border/50 bg-card hover:border-[#FB923C]/50 transition-all cursor-pointer hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#FB923C]/10"
+                        >
+                            <div className="p-8 pb-0 flex items-center justify-between">
+                                <Badge className="bg-yellow-400 text-black border-0 font-black uppercase text-[10px]">Legendary Entry</Badge>
+                                <div className="flex items-center gap-2">
+                                    <div className="w-6 h-6 rounded-full bg-indigo-500/10 flex items-center justify-center">
+                                        <Users className="h-3 w-3 text-indigo-500" />
+                                    </div>
+                                    <span className="text-muted-foreground font-black uppercase text-[9px] tracking-tight">{project.builder}</span>
+                                </div>
+                            </div>
+                            <div className="p-6 space-y-4">
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-black uppercase text-[#FB923C] tracking-widest">{project.hackathonTitle}</p>
+                                    <h4 className="text-xl font-black uppercase tracking-tight">{project.title}</h4>
+                                </div>
+                                <div className="flex flex-wrap gap-1.5">
+                                    {project.techStack.map(tech => (
+                                        <Badge key={tech} variant="secondary" className="text-[8px] font-black uppercase bg-muted/50 border-0">{tech}</Badge>
+                                    ))}
+                                </div>
+                                <p className="text-xs font-medium text-muted-foreground line-clamp-2">{project.description}</p>
+                                <div className="pt-2 flex items-center justify-between">
+                                    <span className="text-[10px] font-black uppercase text-indigo-500">View Case Study</span>
+                                    <ArrowRight className="h-4 w-4 text-indigo-500 group-hover:translate-x-1 transition-transform" />
+                                </div>
+                            </div>
+                        </Card>
+                    ))}
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {filteredHackathons.map((hackathon) => (
+                        <HackathonCard
+                            key={hackathon.id}
+                            {...hackathon}
+                            onClick={() => {
+                                if (hackathon.status === "active") {
+                                    router.push(`/dashboard/hackathons/${hackathon.id}`)
+                                } else {
+                                    toast.success(`Added to ${hackathon.title} waitlist!`, {
+                                        description: "We'll notify you when registration opens.",
+                                    })
+                                }
+                            }}
+                        />
+                    ))}
+                    {filteredHackathons.length === 0 && (
+                        <div className="col-span-full py-12 text-center text-muted-foreground font-bold">
+                            No sprints found matching your search.
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* Case Study Modal */}
+            <Dialog open={!!selectedProject} onOpenChange={() => setSelectedProject(null)}>
+                <DialogContent className="sm:max-w-[700px] p-0 overflow-hidden border-0 rounded-[40px] shadow-2xl">
+                    {selectedProject && (
+                        <div className="flex flex-col h-full bg-card">
+                            <div className="p-10 pb-0 bg-gradient-to-br from-indigo-600/10 to-[#FB923C]/10 border-b border-border/50">
+                                <div className="flex items-center justify-between gap-6 pb-10">
+                                    <div className="space-y-3">
+                                        <Badge className="bg-[#FB923C] text-white border-0 font-black uppercase text-[10px] tracking-widest">{selectedProject.hackathonTitle}</Badge>
+                                        <DialogTitle className="text-5xl font-black text-foreground uppercase tracking-tighter italic leading-none">
+                                            {selectedProject.title}
+                                        </DialogTitle>
+                                    </div>
+                                    <div className="flex items-center gap-3 bg-card rounded-2xl p-3 border border-border/50 shadow-sm">
+                                        <div className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center">
+                                            <Users className="h-5 w-5 text-indigo-500" />
+                                        </div>
+                                        <div className="pr-2">
+                                            <p className="text-[10px] font-black text-muted-foreground uppercase">Architect</p>
+                                            <p className="text-sm font-black text-foreground uppercase">{selectedProject.builder}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="p-10 space-y-10">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                    <div className="space-y-6">
+                                        <div className="space-y-4">
+                                            <h3 className="text-sm font-black uppercase tracking-tight flex items-center gap-2 text-[#FB923C]">
+                                                <Rocket className="h-4 w-4" />
+                                                Languages & Tech
+                                            </h3>
+                                            <div className="flex flex-wrap gap-2">
+                                                {selectedProject.techStack.map(tech => (
+                                                    <Badge key={tech} className="bg-indigo-500/10 text-indigo-500 border-indigo-500/20 font-black uppercase text-[10px] px-3 py-1">
+                                                        {tech}
+                                                    </Badge>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            <h3 className="text-sm font-black uppercase tracking-tight flex items-center gap-2 text-[#FB923C]">
+                                                <Star className="h-4 w-4" />
+                                                Project Mission
+                                            </h3>
+                                            <DialogDescription className="text-sm font-bold text-muted-foreground leading-relaxed italic border-l-4 border-indigo-500/30 pl-4">
+                                                "{selectedProject.description}"
+                                            </DialogDescription>
+                                        </div>
+                                    </div>
+
+                                    <div className="p-8 rounded-[32px] bg-gradient-to-br from-[#FB923C]/5 to-indigo-500/5 border border-border/50 space-y-4 shadow-inner">
+                                        <h3 className="text-sm font-black uppercase tracking-tight flex items-center gap-2 text-indigo-500">
+                                            <Crown className="h-4 w-4" />
+                                            Why this Won
+                                        </h3>
+                                        <p className="text-[13px] font-bold text-muted-foreground leading-relaxed">
+                                            {selectedProject.mentorJustification}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="pt-6 flex gap-4">
+                                    <Button
+                                        onClick={() => window.open(selectedProject.githubUrl, "_blank")}
+                                        className="flex-1 h-14 rounded-2xl bg-black text-white hover:bg-black/90 font-black uppercase tracking-tight shadow-xl shadow-black/10"
+                                    >
+                                        <Github className="mr-2 h-5 w-5" /> Inspect Code
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => window.open(selectedProject.demoUrl, "_blank")}
+                                        className="flex-1 h-14 rounded-2xl border-2 border-border/50 font-black uppercase tracking-tight"
+                                    >
+                                        <Zap className="mr-2 h-5 w-5 text-[#FB923C]" /> Watch Demo
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
 
             {/* How to Compete Section */}
             <div className="space-y-6">
@@ -126,17 +279,17 @@ export function HackathonHub() {
                     <h2 className="text-3xl font-black uppercase tracking-tight italic">How to Compete</h2>
                     <p className="text-muted-foreground font-medium uppercase tracking-widest text-[10px]">Follow these steps to claim your bounty</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     {[
                         { step: "01", title: "Select Sprint", desc: "Choose an active hackathon that match your skill level." },
                         { step: "02", title: "Build Blueprint", desc: "Solve the challenge and build a production-grade project." },
                         { step: "03", title: "Submit Work", desc: "Share your GitHub repo and live demo URL for review." },
                         { step: "04", title: "Win Rewards", desc: "Get upvoted and verified by mentors to win prizes." }
                     ].map((item, i) => (
-                        <div key={i} className="p-5 rounded-2xl bg-muted/30 border border-dashed text-center space-y-2 font-sans hover:bg-muted/50 transition-colors">
-                            <div className="text-xl font-black text-[#FB923C]/30 italic leading-none">{item.step}</div>
-                            <h4 className="text-xs font-black uppercase tracking-tight">{item.title}</h4>
-                            <p className="text-[11px] text-muted-foreground font-bold leading-tight">{item.desc}</p>
+                        <div key={i} className="p-8 md:p-10 rounded-[32px] bg-muted/30 border border-dashed text-center space-y-4 font-sans hover:bg-muted/50 transition-all hover:-translate-y-1">
+                            <div className="text-4xl font-black text-[#FB923C]/30 italic leading-none">{item.step}</div>
+                            <h4 className="text-lg font-black uppercase tracking-tight">{item.title}</h4>
+                            <p className="text-sm text-muted-foreground font-medium leading-relaxed">{item.desc}</p>
                         </div>
                     ))}
                 </div>

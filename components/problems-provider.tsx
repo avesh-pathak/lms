@@ -3,7 +3,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react"
 import type { MongoDBProblem, Topic } from "@/lib/types"
 import { getProblemData } from "@/lib/local-storage"
-import { toSlug } from "@/lib/utils"
+import { toSlug, cn } from "@/lib/utils"
+import { addDays, isPast, parseISO } from "date-fns"
 
 interface ProblemsContextType {
     problems: MongoDBProblem[]
@@ -26,6 +27,8 @@ const extractTitleFromLink = (problemLink: string): string => {
     }
 }
 
+import { DOMAIN_PROBLEMS } from "@/lib/data/domain-data"
+
 export function ProblemsProvider({
     children,
     initialProblems = []
@@ -41,17 +44,22 @@ export function ProblemsProvider({
         const topicMap = new Map<string, Topic>()
         problems.forEach(p => {
             const topicId = toSlug(p.topic)
+            const domain = p.domain || "DSA" // Default to DSA
+
             if (!topicMap.has(topicId)) {
                 topicMap.set(topicId, {
                     id: topicId,
                     name: p.topic,
                     solved: 0,
-                    total: 0
+                    total: 0,
+                    domain: domain as any,
+                    reviewCount: 0
                 })
             }
             const t = topicMap.get(topicId)!
             t.total++
             if (p.status === "Completed") t.solved++
+            if (p.isReviewDue) t.reviewCount = (t.reviewCount || 0) + 1
         })
         return Array.from(topicMap.values())
     }, [problems])
@@ -62,15 +70,39 @@ export function ProblemsProvider({
         if (title === "None" && p.problem_link) {
             title = extractTitleFromLink(p.problem_link)
         }
-        return stored ? { ...p, ...stored, title } : { ...p, title }
+        // Ensure p.domain is set or defaulted
+        const domain = p.domain || "DSA"
+
+        const merged: MongoDBProblem = stored ? { ...p, ...stored, title, domain } : { ...p, title, domain }
+
+        // --- SRS Logic ---
+        if (merged.status === "Completed" && merged.completedAt) {
+            const completedDate = parseISO(merged.completedAt)
+            // Review due in 3 days for the first revision after completion
+            const reviewDueAt = addDays(completedDate, 3).toISOString()
+            merged.reviewDueAt = reviewDueAt
+            merged.isReviewDue = isPast(parseISO(reviewDueAt))
+        }
+
+        return merged
+    }
+
+    const mergeWithDomainData = (apiProblems: MongoDBProblem[]) => {
+        const mergedApi = apiProblems.map(mergeProblem)
+        const allProblems = [...mergedApi]
+        DOMAIN_PROBLEMS.forEach(dp => {
+            if (!allProblems.find(p => p._id === dp._id)) {
+                allProblems.push(mergeProblem(dp))
+            }
+        })
+        return allProblems
     }
 
     const fetchData = async () => {
         try {
             const res = await fetch("/api/problems")
             const data = await res.json()
-            const mergedProblems = (data.problems ?? []).map(mergeProblem)
-            setProblems(mergedProblems)
+            setProblems(mergeWithDomainData(data.problems ?? []))
         } catch (err) {
             console.error("Failed to load problems in provider", err)
         } finally {
@@ -84,7 +116,7 @@ export function ProblemsProvider({
 
     useEffect(() => {
         if (initialProblems.length > 0) {
-            setProblems(initialProblems.map(mergeProblem))
+            setProblems(mergeWithDomainData(initialProblems))
             setLoading(false)
         } else {
             fetchData()

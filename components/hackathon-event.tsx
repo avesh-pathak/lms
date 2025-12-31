@@ -2,12 +2,21 @@
 
 import React, { useState } from "react"
 import { Trophy, Users, Clock, Star, ArrowLeft, Github, ExternalLink, MessageSquare, Flame, Zap, ShieldCheck, Crown } from "lucide-react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+    DialogDescription,
+} from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
@@ -21,6 +30,7 @@ interface Submission {
     demoUrl: string
     upvotes: number
     score: number
+    hasUpvoted?: boolean
 }
 
 interface HackathonEventProps {
@@ -55,8 +65,11 @@ export function HackathonEvent({
     const [activeTab, setActiveTab] = useState<"overview" | "submissions" | "leaderboard">("overview")
     const [isJoining, setIsJoining] = useState(false)
     const [hasJoined, setHasJoined] = useState(false)
+    const [isSubmitOpen, setIsSubmitOpen] = useState(false)
+    const [submitting, setSubmitting] = useState(false)
+    const [urls, setUrls] = useState({ github: "", demo: "" })
 
-    // Mock submissions
+    // Mock submissions data
     const submissions: Submission[] = [
         {
             id: "s1",
@@ -79,6 +92,45 @@ export function HackathonEvent({
             score: 85
         }
     ]
+
+    // Local state for interactive upvotes
+    const [submissionData, setSubmissionData] = useState<Submission[]>(submissions)
+
+    const handleUpvote = (id: string) => {
+        setSubmissionData(prev => prev.map(s => {
+            if (s.id === id) {
+                const isAdding = !s.hasUpvoted
+                if (isAdding) {
+                    toast.success("Upvoted!")
+                } else {
+                    toast.info("Upvote removed")
+                }
+                return {
+                    ...s,
+                    upvotes: isAdding ? s.upvotes + 1 : s.upvotes - 1,
+                    hasUpvoted: isAdding
+                }
+            }
+            return s
+        }))
+    }
+
+    const handleSubmitProject = async (e: React.FormEvent) => {
+        e.preventDefault()
+        if (!urls.github) {
+            toast.error("GitHub URL is required")
+            return
+        }
+        setSubmitting(true)
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1500))
+        setSubmitting(false)
+        setIsSubmitOpen(false)
+        setUrls({ github: "", demo: "" })
+        toast.success("Project submitted successfully!", {
+            description: "Our mentors will review your work shortly."
+        })
+    }
 
     return (
         <div className="max-w-7xl mx-auto space-y-12 pb-20">
@@ -202,15 +254,24 @@ export function HackathonEvent({
                             <div className="space-y-8">
                                 <div className="flex items-center justify-between">
                                     <h3 className="text-2xl font-black uppercase tracking-tighter italic">Live Submissions</h3>
-                                    <Button className="rounded-xl bg-[#FB923C] font-black uppercase tracking-tight">Submit Your Project</Button>
+                                    <Button
+                                        onClick={() => setIsSubmitOpen(true)}
+                                        className="rounded-xl bg-[#FB923C] font-black uppercase tracking-tight"
+                                    >
+                                        Submit Your Project
+                                    </Button>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    {submissions.map((sub) => (
+                                    {submissionData.map((sub) => (
                                         <Card key={sub.id} className="p-6 rounded-[30px] border-border/50 hover:border-[#FB923C]/50 transition-all bg-card/50">
                                             <div className="space-y-6">
                                                 <div className="flex items-center justify-between">
                                                     <div className="flex items-center gap-3">
-                                                        <div className="w-10 h-10 rounded-full bg-muted animate-pulse" />
+                                                        <img
+                                                            src="/assets/mentors/image.png"
+                                                            alt={sub.user}
+                                                            className="w-10 h-10 rounded-full object-cover border-2 border-background shadow-sm"
+                                                        />
                                                         <div>
                                                             <p className="text-sm font-black uppercase tracking-tight">{sub.user}</p>
                                                             <p className="text-[10px] text-muted-foreground">Submitted 2h ago</p>
@@ -225,16 +286,27 @@ export function HackathonEvent({
                                                     <h4 className="text-lg font-black uppercase tracking-tight">{sub.title}</h4>
                                                     <p className="text-xs text-muted-foreground font-medium leading-relaxed">{sub.description}</p>
                                                 </div>
-                                                <div className="flex items-center gap-4">
-                                                    <Button variant="ghost" size="sm" className="rounded-xl gap-2 text-[10px] font-black uppercase">
-                                                        <Github className="h-3 w-3" /> GitHub
-                                                    </Button>
-                                                    <Button variant="ghost" size="sm" className="rounded-xl gap-2 text-[10px] font-black uppercase">
-                                                        <ExternalLink className="h-3 w-3" /> Live Demo
-                                                    </Button>
-                                                    <div className="flex-grow" />
-                                                    <Button variant="outline" size="sm" className="rounded-xl gap-2 font-black uppercase text-[10px] hover:bg-[#FB923C]/10 hover:text-[#FB923C] border-border/50">
-                                                        <Flame className="h-3 w-3" /> Upvote {sub.upvotes}
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <Button variant="ghost" size="sm" className="rounded-xl gap-2 text-[10px] font-black uppercase px-2">
+                                                            <Github className="h-3 w-3" /> GitHub
+                                                        </Button>
+                                                        <Button variant="ghost" size="sm" className="rounded-xl gap-2 text-[10px] font-black uppercase px-2">
+                                                            <ExternalLink className="h-3 w-3" /> Link
+                                                        </Button>
+                                                    </div>
+                                                    <Button
+                                                        variant={sub.hasUpvoted ? "default" : "outline"}
+                                                        size="sm"
+                                                        onClick={() => handleUpvote(sub.id)}
+                                                        className={cn(
+                                                            "rounded-xl gap-1.5 font-black uppercase text-[10px] h-8 px-3 transition-all",
+                                                            sub.hasUpvoted
+                                                                ? "bg-[#FB923C] text-white hover:bg-[#FB923C]/90 border-transparent shadow-lg shadow-[#FB923C]/20"
+                                                                : "hover:bg-[#FB923C]/10 hover:text-[#FB923C] border-border/50"
+                                                        )}
+                                                    >
+                                                        <Flame className={cn("h-3.5 w-3.5", sub.hasUpvoted && "fill-current")} /> {sub.upvotes}
                                                     </Button>
                                                 </div>
                                             </div>
@@ -252,7 +324,8 @@ export function HackathonEvent({
                                     </div>
                                     <div className="relative z-10 grid grid-cols-3 items-end gap-4 text-center">
                                         <div className="space-y-4">
-                                            <div className="w-16 h-16 rounded-full bg-white/20 mx-auto relative border-2 border-white/50">
+                                            <div className="w-16 h-16 rounded-full bg-white/20 mx-auto relative border-2 border-white/50 overflow-hidden">
+                                                <img src="/assets/mentors/image2.png" className="w-full h-full object-cover" alt="Sarah_B" />
                                                 <div className="absolute -top-2 -left-2 bg-indigo-500 text-white px-2 py-0.5 rounded-full font-black text-[10px]">#2</div>
                                             </div>
                                             <p className="font-black uppercase tracking-tight">Sarah_B</p>
@@ -260,14 +333,16 @@ export function HackathonEvent({
                                         </div>
                                         <div className="space-y-4">
                                             <Crown className="h-8 w-8 text-yellow-300 mx-auto animate-bounce" />
-                                            <div className="w-20 h-20 rounded-full bg-white/20 mx-auto relative border-4 border-yellow-300">
+                                            <div className="w-20 h-20 rounded-full bg-white/20 mx-auto relative border-4 border-yellow-300 overflow-hidden">
+                                                <img src="/assets/mentors/image.png" className="w-full h-full object-cover" alt="Alex.dev" />
                                                 <div className="absolute -top-3 -left-3 bg-yellow-300 text-[#FB923C] px-3 py-1 rounded-full font-black text-xs">#1</div>
                                             </div>
                                             <p className="text-xl font-black uppercase tracking-tight">Alex.dev</p>
                                             <div className="h-36 bg-white/20 rounded-t-2xl flex items-center justify-center font-black text-4xl shadow-lg shadow-black/10">1,240</div>
                                         </div>
                                         <div className="space-y-4">
-                                            <div className="w-14 h-14 rounded-full bg-white/10 mx-auto relative border-2 border-white/30">
+                                            <div className="w-14 h-14 rounded-full bg-white/10 mx-auto relative border-2 border-white/30 overflow-hidden">
+                                                <img src="/assets/mentors/image.png" className="w-full h-full object-cover" alt="Coder_X" />
                                                 <div className="absolute -top-2 -left-2 bg-emerald-500 text-white px-2 py-0.5 rounded-full font-black text-[10px]">#3</div>
                                             </div>
                                             <p className="font-black uppercase tracking-tight">Coder_X</p>
@@ -277,17 +352,19 @@ export function HackathonEvent({
                                 </div>
 
                                 <div className="rounded-[40px] border overflow-hidden">
-                                    {[1, 2, 3, 4, 5].map((pos) => (
-                                        <div key={pos} className="flex items-center gap-6 p-6 border-b last:border-0 hover:bg-muted/30 transition-colors">
-                                            <span className="w-8 text-center text-lg font-black text-muted-foreground">4</span>
-                                            <div className="w-10 h-10 rounded-full bg-muted" />
+                                    {["Master_Architect", "Build_Wizard", "Cloud_Native", "Kernel_Dev", "Prompt_Eng"].map((name, idx) => (
+                                        <div key={name} className="flex items-center gap-6 p-6 border-b last:border-0 hover:bg-muted/30 transition-colors">
+                                            <span className="w-8 text-center text-lg font-black text-muted-foreground">{idx + 4}</span>
+                                            <div className="w-10 h-10 rounded-full bg-muted border-2 border-border/50 overflow-hidden">
+                                                <img src={idx % 2 === 0 ? "/assets/mentors/image.png" : "/assets/mentors/image2.png"} alt={name} className="w-full h-full object-cover" />
+                                            </div>
                                             <div className="flex-grow">
-                                                <p className="font-black uppercase tracking-tight">Master_Architect</p>
-                                                <p className="text-[10px] text-muted-foreground font-bold">5 Submissions Verified</p>
+                                                <p className="font-black uppercase tracking-tight">{name}</p>
+                                                <p className="text-[10px] text-muted-foreground font-bold">{10 - idx} Submissions Verified</p>
                                             </div>
                                             <div className="text-right">
-                                                <p className="font-black text-[#FB923C]">680 PTS</p>
-                                                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-tighter">Gold Tier</p>
+                                                <p className="font-black text-[#FB923C]">{700 - (idx * 50)} PTS</p>
+                                                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-tighter">{idx < 2 ? "Gold" : "Silver"} Tier</p>
                                             </div>
                                         </div>
                                     ))}
@@ -327,6 +404,9 @@ export function HackathonEvent({
                                         setTimeout(() => {
                                             setIsJoining(false)
                                             setHasJoined(true)
+                                            toast.success("Successfully registered!", {
+                                                description: "You can now start building and submit your project.",
+                                            })
                                         }, 1000)
                                     }}
                                     disabled={isJoining}
@@ -340,7 +420,10 @@ export function HackathonEvent({
                                         <Zap className="h-5 w-5 fill-current" />
                                         <p className="text-xs font-black uppercase tracking-tighter">You're in! Start Building.</p>
                                     </div>
-                                    <Button className="w-full h-16 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black uppercase tracking-tight text-lg">
+                                    <Button
+                                        onClick={() => setIsSubmitOpen(true)}
+                                        className="w-full h-16 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black uppercase tracking-tight text-lg"
+                                    >
                                         Submit Code
                                     </Button>
                                 </div>
@@ -384,6 +467,58 @@ export function HackathonEvent({
                     </div>
                 </div>
             </div>
+            <Dialog open={isSubmitOpen} onOpenChange={setIsSubmitOpen}>
+                <DialogContent className="sm:max-w-[500px] rounded-[32px] border-border/50 shadow-2xl">
+                    <DialogHeader className="space-y-3">
+                        <DialogTitle className="text-2xl font-black uppercase tracking-tighter italic">Submit Your Project</DialogTitle>
+                        <DialogDescription className="font-medium text-sm">
+                            Ready to ship? Provide your project links below to complete your submission for <span className="text-[#FB923C] font-bold">{title}</span>.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleSubmitProject} className="space-y-6 pt-4">
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="github" className="text-xs font-black uppercase tracking-wider text-muted-foreground">GitHub Repository URL</Label>
+                                <Input
+                                    id="github"
+                                    placeholder="https://github.com/username/repo"
+                                    value={urls.github}
+                                    onChange={(e) => setUrls(prev => ({ ...prev, github: e.target.value }))}
+                                    className="h-12 rounded-xl bg-muted/30 border-border/50 focus:ring-[#FB923C] focus:border-[#FB923C] font-medium"
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="demo" className="text-xs font-black uppercase tracking-wider text-muted-foreground">Live Demo URL (Optional)</Label>
+                                <Input
+                                    id="demo"
+                                    placeholder="https://project-demo.vercel.app"
+                                    value={urls.demo}
+                                    onChange={(e) => setUrls(prev => ({ ...prev, demo: e.target.value }))}
+                                    className="h-12 rounded-xl bg-muted/30 border-border/50 focus:ring-[#FB923C] focus:border-[#FB923C] font-medium"
+                                />
+                            </div>
+                        </div>
+                        <DialogFooter className="pt-4">
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                onClick={() => setIsSubmitOpen(false)}
+                                className="font-bold uppercase tracking-tight rounded-xl"
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                disabled={submitting}
+                                className="bg-[#FB923C] hover:bg-[#FB923C]/90 text-white font-black uppercase tracking-tight px-8 h-12 rounded-xl shadow-lg shadow-[#FB923C]/20"
+                            >
+                                {submitting ? "Submitting..." : "Submit Project"}
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }

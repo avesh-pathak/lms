@@ -31,19 +31,19 @@ export function DailyGoal({ completedToday }: DailyGoalProps) {
     const isCompleted = completedToday >= goal
 
     return (
-        <div className="p-5 border rounded-xl bg-card/50 space-y-4">
+        <div className="p-6 border rounded-[32px] bg-card hover:shadow-xl transition-all space-y-5 border-border/60">
             <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                     <div className={cn(
-                        "p-2 rounded-lg",
-                        isCompleted ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"
+                        "p-3 rounded-2xl shadow-inner transition-all",
+                        isCompleted ? "bg-primary text-white" : "bg-primary/10 text-primary"
                     )}>
-                        {isCompleted ? <Trophy className="h-4 w-4" /> : <Target className="h-4 w-4" />}
+                        {isCompleted ? <Trophy className="h-5 w-5" /> : <Target className="h-5 w-5" />}
                     </div>
-                    <div>
-                        <h3 className="text-sm font-semibold">Daily Goal</h3>
-                        <p className="text-xs text-muted-foreground">
-                            {completedToday} of {goal} solved
+                    <div className="space-y-0.5">
+                        <h3 className="text-sm font-black uppercase tracking-tight italic">Daily Target</h3>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase opacity-60">
+                            {completedToday} / {goal} SOLVED
                         </p>
                     </div>
                 </div>
@@ -51,21 +51,24 @@ export function DailyGoal({ completedToday }: DailyGoalProps) {
                 <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8"
+                    className="h-9 w-9 rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
                     onClick={() => setIsEditing(!isEditing)}
                 >
-                    <Edit2 className="h-3.5 w-3.5" />
+                    <Edit2 className="h-4 w-4" />
                 </Button>
             </div>
 
             {isEditing ? (
-                <div className="flex items-center gap-2 animate-in fade-in slide-in-from-top-1">
+                <div className="p-2 bg-muted/30 rounded-2xl flex items-center gap-2 animate-in fade-in zoom-in-95 duration-200">
                     {[1, 3, 5, 10].map((val) => (
                         <Button
                             key={val}
-                            variant={goal === val ? "default" : "outline"}
+                            variant={goal === val ? "default" : "ghost"}
                             size="sm"
-                            className="flex-1 h-8 text-xs"
+                            className={cn(
+                                "flex-1 h-9 rounded-xl text-xs font-black uppercase tracking-widest",
+                                goal === val ? "shadow-lg shadow-primary/25" : "hover:bg-primary/5"
+                            )}
                             onClick={() => handleSave(val)}
                         >
                             {val}
@@ -73,18 +76,25 @@ export function DailyGoal({ completedToday }: DailyGoalProps) {
                     ))}
                 </div>
             ) : (
-                <div className="space-y-2">
-                    <Progress value={progress} className="h-2" />
+                <div className="space-y-3">
+                    <div className="relative h-2.5 bg-muted rounded-full overflow-hidden border border-muted-foreground/10 shadow-inner">
+                        <div
+                            className="absolute inset-y-0 left-0 bg-primary transition-all duration-700 ease-out shadow-[0_0_12px_rgba(251,146,60,0.5)]"
+                            style={{ width: `${progress}%` }}
+                        />
+                    </div>
                     {isCompleted && (
-                        <p className="text-[10px] text-primary font-medium animate-pulse">
-                            Goal achieved! Keep it up! 🚀
-                        </p>
+                        <div className="flex items-center gap-2 text-[10px] text-primary font-black uppercase tracking-widest italic animate-pulse">
+                            <Zap className="h-3 w-3" /> System Optimized. Milestone Reached.
+                        </div>
                     )}
                 </div>
             )}
         </div>
     )
 }
+
+import { Zap } from "lucide-react"
 
 // Utility to fix the cn import if needed (I'll just import it in the file)
 import { cn } from "@/lib/utils"

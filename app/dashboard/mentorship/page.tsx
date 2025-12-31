@@ -1,8 +1,10 @@
 "use client"
+// Refreshing page
 
 import React, { useState } from "react"
 import { MOCK_MENTORS } from "@/lib/data/mentors"
 import { MentorCard } from "@/components/mentor-card"
+import { UpcomingSessions } from "@/components/upcoming-sessions"
 import { Search, Filter, Sparkles } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -18,6 +20,11 @@ export default function MentorshipPage() {
 
     return (
         <div className="p-6 lg:p-10 max-w-7xl mx-auto space-y-12">
+            {/* Upcoming Sessions Section */}
+            <div className="md:col-span-full">
+                <UpcomingSessions />
+            </div>
+
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div className="space-y-2 max-w-2xl">

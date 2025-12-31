@@ -323,7 +323,7 @@ export function LandingPage({ topics }: LandingPageProps) {
                         </Badge>
                         <h2 className="text-5xl md:text-6xl font-black tracking-tighter uppercase leading-none italic">
                             OPTIONAL MENTORSHIP <br />
-                            FOR <span className="text-[#FB923C]">EXTREME GROWTH</span>.
+                            FOR <span className="text-[#FB923C]">EXTREME GROWTH</span>
                         </h2>
                         <p className="text-lg text-muted-foreground font-medium leading-relaxed">
                             Everything is 100% free. We sustain the platform through optional, high-value human interactions.

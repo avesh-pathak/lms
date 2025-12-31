@@ -141,18 +141,46 @@ export default function MentorProfilePage({ params }: { params: Promise<{ id: st
                     <div className="w-full max-w-xl space-y-8">
 
                         {isSuccess ? (
-                            <div className="text-center space-y-6 animate-in fade-in zoom-in duration-500">
-                                <div className="w-24 h-24 rounded-full bg-green-500/10 text-green-500 flex items-center justify-center mx-auto mb-6">
-                                    <CheckCircle2 className="w-12 h-12" />
+                            <div className="text-center space-y-8 animate-in fade-in zoom-in duration-500 w-full">
+                                <div className="bg-card border-2 border-dashed border-[#FB923C]/30 rounded-[32px] p-8 relative overflow-hidden">
+                                    <div className="absolute top-0 left-0 w-full h-2 bg-[#FB923C]/20" />
+
+                                    <div className="w-20 h-20 rounded-full bg-green-500/10 text-green-500 flex items-center justify-center mx-auto mb-6 shadow-sm">
+                                        <CheckCircle2 className="w-10 h-10" />
+                                    </div>
+
+                                    <h2 className="text-3xl font-black tracking-tighter uppercase italic mb-2">Booking Confirmed!</h2>
+                                    <p className="text-muted-foreground font-medium text-sm mb-8">Order #{Math.floor(Math.random() * 10000)}</p>
+
+                                    <div className="space-y-4 text-left bg-muted/30 p-6 rounded-2xl">
+                                        <div className="flex justify-between">
+                                            <span className="text-xs font-bold uppercase text-muted-foreground">Mentor</span>
+                                            <span className="font-black">{mentor.name}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-xs font-bold uppercase text-muted-foreground">Date</span>
+                                            <span className="font-black">{selectedDate.toDateString()}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-xs font-bold uppercase text-muted-foreground">Time</span>
+                                            <span className="font-black">{selectedTime}</span>
+                                        </div>
+                                        <div className="flex justify-between text-[#FB923C]">
+                                            <span className="text-xs font-bold uppercase">Meeting Link</span>
+                                            <span className="font-black text-xs">Sent via Email</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <h2 className="text-4xl font-black tracking-tighter">Booking Confirmed!</h2>
-                                <p className="text-xl text-muted-foreground font-medium max-w-md mx-auto">
-                                    You're scheduled with <span className="text-foreground font-bold">{mentor.name}</span> for <span className="text-foreground font-bold">{selectedDate.toDateString()}</span> at <span className="text-foreground font-bold">{selectedTime}</span>.
-                                </p>
-                                <div className="pt-8">
-                                    <Button onClick={() => window.location.href = "/dashboard"} className="h-14 px-8 rounded-2xl font-bold text-lg bg-[#FB923C] hover:bg-[#FB923C]/90 text-white shadow-xl shadow-[#FB923C]/20">
-                                        Back to Dashboard
-                                    </Button>
+
+                                <div className="space-y-3">
+                                    <Link href="/dashboard">
+                                        <Button className="w-full h-14 rounded-2xl font-bold text-lg bg-[#FB923C] hover:bg-[#FB923C]/90 text-white shadow-xl shadow-[#FB923C]/20 uppercase tracking-wide">
+                                            Back to Dashboard
+                                        </Button>
+                                    </Link>
+                                    <p className="text-[10px] text-muted-foreground font-medium">
+                                        A calendar invite has been sent to your email.
+                                    </p>
                                 </div>
                             </div>
                         ) : step === "calendar" ? (

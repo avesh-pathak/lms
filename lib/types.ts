@@ -18,12 +18,15 @@ export interface MongoDBProblem {
   completedAt?: string // ✅ REQUIRED for analytics (streaks, weekly activity)
 
   // optional user data
+  domain?: "DSA" | "System Design" | "LLD" | "Core Engineering" | "AI/ML"
   timeSpent?: number
   notes?: string
   solution?: string
   approach?: string
   tags?: string[]
   confidence?: number
+  reviewDueAt?: string
+  isReviewDue?: boolean
 }
 
 // Represents a topic summary used in dashboard & analytics
@@ -32,4 +35,6 @@ export type Topic = {
   name: string
   solved: number
   total: number
+  domain?: "DSA" | "System Design" | "LLD" | "Core Engineering" | "AI/ML"
+  reviewCount?: number
 }

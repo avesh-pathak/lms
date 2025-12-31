@@ -1,53 +1,59 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 import { toSlug, cn } from "@/lib/utils"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { SearchFilterBar, type FilterState } from "./search-filter-bar"
-import { format, isSameDay, parseISO } from "date-fns"
-import { Search, Trophy, Medal } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Separator } from "./ui/separator"
+import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useProblems } from "./problems-provider"
+import { Topic } from "@/lib/types"
+
+import { useSearchParams, useRouter } from "next/navigation"
 
 export function DashboardOverview() {
   const { topics, problems, loading } = useProblems()
-  const [searchTerm, setSearchTerm] = useState("")
-  const [filters, setFilters] = useState<FilterState>({
-    difficulties: new Set(),
-    statuses: new Set(),
-    companies: new Set(),
-  })
+  const searchParams = useSearchParams()
+  const router = useRouter()
 
-  // Calculate Today's Completion
-  const completedToday = useMemo(() => {
-    const today = new Date()
-    return problems.filter(p =>
-      p.status === "Completed" &&
-      p.completedAt &&
-      isSameDay(parseISO(p.completedAt), today)
-    ).length
-  }, [problems])
 
-  const filteredTopics = useMemo(() => {
-    if (!searchTerm) return topics
-    return topics.filter((t) =>
-      t.name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  }, [topics, searchTerm])
+  const activeDomain = searchParams.get("domain") || "DSA"
+
+  const setActiveDomain = (domain: string) => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set("domain", domain)
+    router.push(`/dashboard?${params.toString()}`, { scroll: false })
+  }
 
   const stats = useMemo(() => {
-    const total = topics.reduce((acc, t) => acc + t.total, 0)
-    const solved = topics.reduce((acc, t) => acc + t.solved, 0)
+    const domainTopics = topics.filter(t => t.domain === activeDomain)
+    const total = domainTopics.reduce((acc, t) => acc + t.total, 0)
+    const solved = domainTopics.reduce((acc, t) => acc + t.solved, 0)
     return {
       total,
       solved,
       percent: total > 0 ? (solved / total) * 100 : 0,
     }
+  }, [topics, activeDomain])
+
+  const domains = useMemo(() => {
+    const d = new Set<string>()
+    topics.forEach(t => {
+      if (t.domain) d.add(t.domain)
+    })
+    const domainList = Array.from(d)
+    if (domainList.includes("DSA")) {
+      return ["DSA", ...domainList.filter(item => item !== "DSA")]
+    }
+    return domainList
   }, [topics])
+
+  const filteredTopics = useMemo(() => {
+    return topics.filter((t: Topic) => {
+      return t.domain === activeDomain
+    })
+  }, [topics, activeDomain])
 
   const getMasteryRank = (percent: number) => {
     if (percent === 100) return { label: "Gold", color: "text-yellow-600 bg-yellow-500/10 border-yellow-500/20" }
@@ -63,83 +69,126 @@ export function DashboardOverview() {
   return (
     <div className="p-6 lg:p-8 space-y-12 max-w-7xl mx-auto">
       {/* Header & Stats */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="space-y-1">
-          <h1 className="text-4xl font-black tracking-tight uppercase">Main Dashboard</h1>
-          <p className="text-muted-foreground font-medium">
-            Keep pushing! You've solved <span className="text-foreground font-bold">{stats.solved}</span> problems.
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <h1 className="text-5xl lg:text-7xl font-black tracking-tighter uppercase italic text-primary">
+              Babua Hub
+            </h1>
+          </div>
+          <p className="text-muted-foreground font-medium text-xl max-w-2xl">
+            Clean, focused engineering growth. No clutter, just <span className="text-primary font-black decoration-primary/30 underline underline-offset-8">Progress</span>
           </p>
         </div>
-        <div className="flex items-center gap-4 bg-muted/30 p-4 rounded-3xl border border-border shadow-sm">
-          <div className="space-y-0.5 text-right">
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Course Completion</span>
-            <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-black">{stats.percent.toFixed(0)}%</span>
-              <div className="h-2 w-32 bg-muted rounded-full overflow-hidden">
-                <div className="h-full bg-muted-foreground/20 rounded-full" style={{ width: `${stats.percent}%` }} />
+
+        <div className="relative group">
+          <div className="absolute -inset-1 bg-gradient-to-r from-primary to-orange-500 rounded-[32px] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+          <div className="relative flex items-center gap-6 bg-card p-6 rounded-[32px] border border-border shadow-2xl">
+            <div className="space-y-1 text-right">
+              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{activeDomain} Mastery</span>
+              <div className="flex items-baseline gap-3">
+                <span className="text-5xl font-black tabular-nums">{stats.percent.toFixed(0)}%</span>
+                <div className="flex flex-col gap-1">
+                  <div className="h-3 w-40 bg-muted rounded-full overflow-hidden border border-muted-foreground/10">
+                    <div className="h-full bg-gradient-to-r from-primary to-orange-400 rounded-full shadow-[0_0_15px_rgba(251,146,60,0.6)] animate-pulse" style={{ width: `${stats.percent}%` }} />
+                  </div>
+                  <span className="text-[9px] font-black uppercase text-primary/60 tracking-tighter self-end">{stats.solved} / {stats.total} Solved</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main Content Areas */}
-      <div className="space-y-16">
-        {/* DSA Patterns */}
-        <div className="space-y-8">
-          <div className="flex items-center justify-between">
-            <h3 className="text-3xl font-black uppercase tracking-tight">DSA Patterns</h3>
-            <div className="relative w-72">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search patterns..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-muted/30 h-11 border-none rounded-xl focus-visible:ring-1 focus-visible:ring-primary/20"
-                id="problem-search"
-              />
+      <div className="space-y-12">
+        {/* Main Content Area */}
+        <div className="space-y-12 max-w-5xl mx-auto">
+          {/* Upcoming Sessions removed */}
+
+          <div className="space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="flex items-center gap-2 p-1.5 bg-muted/40 rounded-full border border-border/50 overflow-x-auto scrollbar-hide">
+                {domains.map(d => (
+                  <Button
+                    key={d}
+                    variant={activeDomain === d ? "default" : "ghost"}
+                    onClick={() => setActiveDomain(d)}
+                    className={cn(
+                      "rounded-full font-black uppercase text-[10px] px-8 h-10 transition-all shrink-0",
+                      activeDomain === d
+                        ? "shadow-lg shadow-primary/25 bg-primary text-primary-foreground hover:bg-primary/90"
+                        : "text-muted-foreground hover:bg-muted font-bold"
+                    )}
+                  >
+                    {d}
+                  </Button>
+                ))}
+              </div>
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredTopics.map((topic) => {
-              const progress = (topic.solved / topic.total) * 100
-              const rank = getMasteryRank(progress)
-              return (
-                <Link
-                  key={topic.id}
-                  href={`/dashboard/topic/${toSlug(topic.name)}`}
-                  className="group p-5 border rounded-2xl bg-card hover:border-primary/50 hover:shadow-xl transition-all space-y-4 relative overflow-hidden"
-                >
-                  <div className="absolute top-0 right-0 w-20 h-20 bg-primary/5 -mr-10 -mt-10 rounded-full group-hover:bg-primary/10 transition-all duration-500" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredTopics.map((topic: Topic) => {
+                const progress = (topic.solved / topic.total) * 100
+                const rank = getMasteryRank(progress)
+                return (
+                  <Link
+                    key={topic.id}
+                    href={`/dashboard/topic/${toSlug(topic.name)}`}
+                    className="group p-5 border rounded-[24px] bg-card hover:border-primary/50 hover:shadow-xl transition-all space-y-6 relative overflow-hidden"
+                  >
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 -mr-12 -mt-12 rounded-full group-hover:bg-primary/10 transition-all duration-500" />
 
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <h4 className="text-lg font-black group-hover:text-primary transition-colors leading-tight truncate max-w-[150px]">{topic.name}</h4>
-                        {rank && (
-                          <Badge className={cn("text-[8px] h-4 py-0 uppercase font-bold", rank.color, "shrink-0")}>
-                            <Medal className="h-2.5 w-2.5" />
-                          </Badge>
-                        )}
+                    <div className="flex justify-between items-start relative z-10">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-lg font-black group-hover:text-primary transition-colors leading-tight italic truncate max-w-[150px] uppercase">
+                            {topic.name}
+                          </h4>
+                          {rank && (
+                            <Badge className={cn("text-[8px] h-4 py-0 uppercase font-black", rank.color, "shrink-0 shadow-sm")}>
+                              {rank.label}
+                            </Badge>
+                          )}
+                          {(topic.reviewCount || 0) > 0 && (
+                            <Badge className="text-[8px] h-4 py-0 uppercase font-black bg-red-500/10 text-red-500 border-red-500/20 animate-bounce">
+                              Revise Now
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-[10px] font-black text-muted-foreground tracking-widest uppercase opacity-60">
+                          {topic.solved} / {topic.total} Completed
+                        </p>
                       </div>
-                      <span className="text-xs font-bold text-muted-foreground tracking-wide uppercase">{topic.solved} / {topic.total} solved</span>
+                      <div className="h-8 w-8 rounded-full bg-muted/50 flex items-center justify-center group-hover:bg-primary/20 group-hover:text-primary transition-all">
+                        <ArrowRight className="h-4 w-4" />
+                      </div>
                     </div>
-                    <Badge variant={topic.solved === topic.total ? "default" : "outline"} className="font-bold border-muted-foreground/20 h-5 px-1.5 text-[8px] shrink-0">
-                      {topic.solved === topic.total ? "DONE" : "ING"}
-                    </Badge>
-                  </div>
 
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between text-xs font-black opacity-50 uppercase tracking-tighter">
-                      <span>Mastery</span>
-                      <span>{progress.toFixed(0)}%</span>
+                    <div className="space-y-2 relative z-10">
+                      <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                        <span className="opacity-40">Proficiency</span>
+                        <span className="text-primary font-black">{progress.toFixed(0)}%</span>
+                      </div>
+                      <div className="h-2 bg-muted rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-primary rounded-full transition-all duration-500 shadow-[0_0_8px_rgba(251,146,60,0.4)]"
+                          style={{ width: `${progress}%` }}
+                        />
+                      </div>
                     </div>
-                    <Progress value={progress} className="h-1.5 bg-muted rounded-full" />
+                  </Link>
+                )
+              })}
+              {filteredTopics.length === 0 && (
+                <div className="col-span-full py-12 text-center space-y-4 bg-muted/5 rounded-[32px] border border-dashed border-primary/20">
+                  <div className="text-4xl">🔍</div>
+                  <div className="space-y-1">
+                    <h4 className="font-black uppercase tracking-tighter">No topics found</h4>
+                    <p className="text-xs font-medium text-muted-foreground">Try adjusting your search or switching domains.</p>
                   </div>
-                </Link>
-              )
-            })}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
