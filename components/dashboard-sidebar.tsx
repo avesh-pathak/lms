@@ -20,7 +20,11 @@ import {
   Clock,
   Linkedin,
   Flame,
-  Repeat
+  Repeat,
+  ChevronLeft,
+  ChevronRight,
+  PanelLeftClose,
+  PanelLeftOpen
 } from "lucide-react"
 
 import { ThemeToggle } from "./theme-toggle"
@@ -34,6 +38,7 @@ export function DashboardSidebar() {
   const searchParams = useSearchParams()
   const { topics, problems, loading } = useProblems()
   const [open, setOpen] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(false)
 
   const stats = useMemo(() => {
     const solved = topics.reduce((acc, t) => acc + t.solved, 0)
@@ -63,21 +68,34 @@ export function DashboardSidebar() {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed z-50 top-0 left-0 h-screen w-80 border-r bg-card flex flex-col transition-transform",
+          "fixed z-50 top-0 left-0 h-screen border-r bg-card flex flex-col transition-all duration-300 ease-in-out overflow-y-auto scrollbar-hide",
+          isCollapsed ? "w-[80px]" : "w-[320px]",
           open ? "translate-x-0" : "-translate-x-full",
           "lg:translate-x-0 lg:static"
         )}
       >
         {/* Header */}
-        <div className="flex h-16 items-center justify-between border-b px-6 shrink-0 bg-background/50 backdrop-blur-sm">
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="w-6 h-6 rounded bg-[#FB923C] flex items-center justify-center shrink-0">
-              <ShieldCheck className="h-4 w-4 text-white" />
-            </div>
-            <h1 className="text-base font-black uppercase tracking-tighter">Babua LMS</h1>
-          </Link>
-          <div className="flex items-center gap-1">
-            <ThemeToggle />
+        <div className={cn(
+          "flex h-16 items-center border-b px-6 shrink-0 bg-background/50 backdrop-blur-sm transition-all",
+          isCollapsed ? "justify-center px-0 text-center" : "justify-between"
+        )}>
+          {!isCollapsed && (
+            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <div className="w-6 h-6 rounded bg-[#FB923C] flex items-center justify-center shrink-0">
+                <ShieldCheck className="h-4 w-4 text-white" />
+              </div>
+              <h1 className="text-base font-black uppercase tracking-tighter">Babua LMS</h1>
+            </Link>
+          )}
+          <div className={cn("flex items-center", isCollapsed ? "flex-col gap-2" : "gap-1")}>
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="p-2 hover:bg-muted rounded-lg transition-colors hidden lg:block text-[#FB923C]"
+              title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+            >
+              {isCollapsed ? <PanelLeftOpen className="h-5 w-5" /> : <PanelLeftClose className="h-5 w-5" />}
+            </button>
+            {!isCollapsed && <ThemeToggle />}
             <button
               onClick={() => setOpen(false)}
               className="lg:hidden ml-2"
@@ -101,6 +119,7 @@ export function DashboardSidebar() {
                 icon={LayoutDashboard}
                 active={pathname === "/dashboard" && !searchParams.get("domain")}
                 onClick={() => setOpen(false)}
+                isCollapsed={isCollapsed}
               >
                 Overview
               </NavLink>
@@ -109,6 +128,7 @@ export function DashboardSidebar() {
                 icon={BarChart3}
                 active={pathname === "/dashboard/analytics"}
                 onClick={() => setOpen(false)}
+                isCollapsed={isCollapsed}
               >
                 Analytics
               </NavLink>
@@ -117,6 +137,7 @@ export function DashboardSidebar() {
                 icon={Repeat}
                 active={pathname === "/dashboard/revision"}
                 onClick={() => setOpen(false)}
+                isCollapsed={isCollapsed}
               >
                 Revision Center
               </NavLink>
@@ -125,6 +146,7 @@ export function DashboardSidebar() {
                 icon={MessageSquare}
                 active={pathname === "/dashboard/mentorship"}
                 onClick={() => setOpen(false)}
+                isCollapsed={isCollapsed}
               >
                 Mentorship
               </NavLink>
@@ -133,6 +155,7 @@ export function DashboardSidebar() {
                 icon={Trophy}
                 active={pathname === "/dashboard/hackathons"}
                 onClick={() => setOpen(false)}
+                isCollapsed={isCollapsed}
               >
                 Hackathons
               </NavLink>
@@ -141,6 +164,7 @@ export function DashboardSidebar() {
                 icon={Trophy}
                 active={pathname === "/dashboard/leaderboard"}
                 onClick={() => setOpen(false)}
+                isCollapsed={isCollapsed}
               >
                 Leaderboard
               </NavLink>
@@ -149,15 +173,18 @@ export function DashboardSidebar() {
 
           {/* Engineering Paths */}
           <div className="space-y-3">
-            <div className="text-[10px] font-black text-muted-foreground px-3 uppercase tracking-widest opacity-70">
-              Engineering Paths
-            </div>
+            {!isCollapsed && (
+              <div className="text-[10px] font-black text-muted-foreground px-3 uppercase tracking-widest opacity-70">
+                Engineering Paths
+              </div>
+            )}
             <div className="space-y-1">
               <NavLink
                 href="/dashboard?domain=DSA"
                 icon={Layers}
                 active={pathname === "/dashboard" && (searchParams.get("domain") === "DSA" || !searchParams.get("domain"))}
                 onClick={() => setOpen(false)}
+                isCollapsed={isCollapsed}
               >
                 DSA Patterns
               </NavLink>
@@ -166,6 +193,7 @@ export function DashboardSidebar() {
                 icon={Cpu}
                 active={pathname === "/dashboard" && ["Core Engineering", "System Design", "LLD", "AI/ML"].includes(searchParams.get("domain") || "")}
                 onClick={() => setOpen(false)}
+                isCollapsed={isCollapsed}
               >
                 Core Engineering
               </NavLink>
@@ -174,15 +202,18 @@ export function DashboardSidebar() {
 
           {/* Community Section */}
           <div className="space-y-3">
-            <div className="text-[10px] font-black text-muted-foreground px-3 uppercase tracking-widest opacity-70">
-              Community Hub
-            </div>
+            {!isCollapsed && (
+              <div className="text-[10px] font-black text-muted-foreground px-3 uppercase tracking-widest opacity-70">
+                Community Hub
+              </div>
+            )}
             <div className="space-y-1">
               <NavLink
                 href="/dashboard/community"
                 icon={Users}
                 active={pathname.includes("/dashboard/community") || pathname === "/dashboard/roast"}
                 onClick={() => setOpen(false)}
+                isCollapsed={isCollapsed}
               >
                 Community Hub
               </NavLink>
@@ -205,26 +236,30 @@ function NavLink({
   active,
   children,
   onClick,
+  isCollapsed,
 }: {
   href: string
   icon: any
   active: boolean
   children: React.ReactNode
   onClick?: () => void
+  isCollapsed?: boolean
 }) {
   return (
     <Link
       href={href}
       onClick={onClick}
+      title={isCollapsed ? (typeof children === 'string' ? children : '') : ''}
       className={cn(
         "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200",
         active
           ? "bg-primary/10 text-primary font-black shadow-sm"
-          : "text-foreground/80 hover:bg-muted hover:text-foreground font-bold"
+          : "text-foreground/80 hover:bg-muted hover:text-foreground font-bold",
+        isCollapsed ? "justify-center px-0 h-12 w-12 mx-auto" : ""
       )}
     >
       <Icon className={cn("h-4 w-4", active ? "text-primary" : "text-foreground/60")} />
-      {children}
+      {!isCollapsed && children}
     </Link>
   )
 }

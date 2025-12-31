@@ -36,8 +36,8 @@ export function LandingPage({ topics }: LandingPageProps) {
                     </Link>
                     <div className="hidden md:flex items-center gap-8 text-sm font-bold uppercase tracking-widest text-muted-foreground">
                         <a href="#paths" className="hover:text-[#FB923C] transition-colors">Paths</a>
+                        <Link href="/dashboard" className="hover:text-[#FB923C] transition-colors">Dashboard</Link>
                         <a href="#mentor" className="hover:text-[#FB923C] transition-colors">Mentorship</a>
-                        <a href="#proof-of-work-detail" className="hover:text-[#FB923C] transition-colors">Proof of Work</a>
                     </div>
                     <Link href="/dashboard">
                         <Button variant="default" className="rounded-full px-6 font-bold shadow-lg shadow-[#FB923C]/20 hover:scale-105 transition-all">

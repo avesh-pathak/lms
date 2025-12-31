@@ -310,45 +310,51 @@ export default function StudySprintsPage() {
 
             {/* Squad Detailed View */}
             <Dialog open={!!selectedSquad} onOpenChange={(open) => !open && setSelectedSquad(null)}>
-                <DialogContent className="sm:max-w-[700px] p-0 overflow-hidden border-0 rounded-[40px] shadow-2xl bg-card">
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0 border-none bg-background/95 backdrop-blur-xl shadow-2xl rounded-[40px] gap-0 scrollbar-hide">
                     {selectedSquad && (
-                        <div className="flex flex-col h-full">
-                            <DialogHeader className="p-10 bg-blue-500/5 border-b border-border/50 text-left">
+                        <>
+                            {/* Engineering Grid Background */}
+                            <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+                                style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+
+                            <DialogHeader className="p-8 pb-4 border-b bg-muted/20 relative">
                                 <div className="flex items-center gap-2 mb-4">
                                     <Badge className="bg-blue-500/10 text-blue-500 border-blue-500/20 text-[10px] font-black uppercase px-3 py-1 h-auto">
                                         {selectedSquad.level}
                                     </Badge>
-                                    <Badge variant="outline" className="border-blue-500/20 text-blue-500 font-bold text-[10px] px-3 py-1 h-auto">
+                                    <Badge variant="outline" className="border-blue-500/20 text-blue-500 font-bold text-[10px] px-3 py-1 h-auto bg-white/50">
                                         {selectedSquad.members}/{selectedSquad.capacity} Builders Joined
                                     </Badge>
                                 </div>
-                                <DialogTitle className="text-4xl font-black uppercase italic tracking-tighter leading-none mb-4">
+                                <DialogTitle className="text-3xl font-black uppercase italic tracking-tighter leading-none break-words">
                                     {selectedSquad.title}
                                 </DialogTitle>
-                                <DialogDescription className="flex items-center gap-4 text-sm font-bold text-muted-foreground uppercase tracking-widest">
-                                    <span className="flex items-center gap-1.5"><Timer className="h-4 w-4 text-blue-500" /> {selectedSquad.startTime}</span>
-                                    <span className="flex items-center gap-1.5"><BookOpen className="h-4 w-4 text-blue-500" /> Focus Session</span>
+                                <DialogDescription className="flex items-center gap-4 mt-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                                    <span className="flex items-center gap-1.5 font-black text-blue-500"><Timer className="h-4 w-4" /> {selectedSquad.startTime}</span>
+                                    <span className="flex items-center gap-1.5 font-black text-blue-500"><BookOpen className="h-4 w-4" /> Deep Focus Mode</span>
                                 </DialogDescription>
                             </DialogHeader>
-                            <div className="p-10 space-y-8">
-                                <div className="grid grid-cols-2 gap-6">
-                                    <div className="p-6 rounded-[24px] bg-muted/20 border border-border/50">
-                                        <h4 className="text-[10px] font-black uppercase tracking-widest text-[#FB923C] mb-2">Current Mission</h4>
-                                        <p className="text-sm font-bold leading-relaxed italic text-muted-foreground">
+
+                            <div className="p-8 space-y-10 relative">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="p-6 rounded-[32px] bg-blue-500/5 border border-blue-500/10 space-y-3">
+                                        <h4 className="text-[10px] font-black uppercase tracking-widest text-blue-600">Current Mission</h4>
+                                        <p className="text-lg font-black italic leading-tight text-blue-900/80 dark:text-blue-200">
                                             "Co-building production-grade systems with peer review."
                                         </p>
                                     </div>
-                                    <div className="p-6 rounded-[24px] bg-muted/20 border border-border/50">
-                                        <h4 className="text-[10px] font-black uppercase tracking-widest text-blue-500 mb-2">Requirements</h4>
-                                        <p className="text-sm font-bold leading-relaxed italic text-muted-foreground">
-                                            "Proof of Work history and verified Git profile."
+                                    <div className="p-6 rounded-[32px] bg-[#FB923C]/5 border border-[#FB923C]/10 space-y-3">
+                                        <h4 className="text-[10px] font-black uppercase tracking-widest text-[#FB923C]">Requirements</h4>
+                                        <p className="text-lg font-black italic leading-tight text-[#FB923C]/80">
+                                            "Proof of Work history and verified Git profile required."
                                         </p>
                                     </div>
                                 </div>
-                                <div className="flex gap-4">
+
+                                <div className="flex gap-4 pt-10 border-t">
                                     <Button
                                         className={cn(
-                                            "flex-1 h-14 rounded-2xl font-black uppercase tracking-tight shadow-xl",
+                                            "flex-1 h-14 rounded-2xl font-black uppercase tracking-tight shadow-xl transition-all",
                                             selectedSquad.joined ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-emerald-500/20" : "bg-blue-500 hover:bg-blue-600 text-white shadow-blue-500/20"
                                         )}
                                         onClick={() => {
@@ -356,22 +362,27 @@ export default function StudySprintsPage() {
                                             setSelectedSquad(null)
                                         }}
                                     >
+                                        <Zap className="mr-2 h-5 w-5 fill-current" />
                                         {selectedSquad.joined ? "Enter Arena" : "Join Squad"}
                                     </Button>
-                                    <Button variant="outline" className="flex-1 h-14 rounded-2xl border-2 font-black uppercase tracking-tight">
-                                        Notify Others
+                                    <Button variant="outline" className="h-14 w-14 rounded-2xl shrink-0" onClick={() => setSelectedSquad(null)}>
+                                        <X className="h-5 w-5" />
                                     </Button>
                                 </div>
                             </div>
-                        </div>
+                        </>
                     )}
                 </DialogContent>
             </Dialog>
             {/* Sprint Arena Overlay */}
             {activeArenaSquad && (
-                <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex flex-col animate-in fade-in zoom-in duration-300">
+                <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex flex-col animate-in fade-in zoom-in duration-300 overflow-hidden scrollbar-hide">
+                    {/* Engineering Grid Background */}
+                    <div className="absolute inset-0 opacity-[0.05] pointer-events-none"
+                        style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+
                     {/* Arena Header */}
-                    <div className="h-20 border-b border-white/10 flex items-center justify-between px-8 bg-black/50">
+                    <div className="h-20 border-b border-white/10 flex items-center justify-between px-8 bg-black/50 relative z-10">
                         <div className="flex items-center gap-6">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 rounded-lg bg-emerald-500/20 text-emerald-500 animate-pulse">

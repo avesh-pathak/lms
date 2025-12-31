@@ -10,7 +10,8 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.75 0.185 45); /* #FB923C variant */
+  --primary: oklch(0.75 0.185 45);
+  /* #FB923C variant */
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.95 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -124,6 +125,12 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  *::-webkit-scrollbar {
+    display: none;
   }
 
   body {

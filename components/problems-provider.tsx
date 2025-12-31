@@ -64,6 +64,25 @@ export function ProblemsProvider({
         return Array.from(topicMap.values())
     }, [problems])
 
+    const applySRS = (p: MongoDBProblem): MongoDBProblem => {
+        const merged = { ...p }
+        // --- SRS Logic ---
+        if (merged.status === "Completed" && merged.completedAt) {
+            const completedDate = parseISO(merged.completedAt)
+            // Review due in 3 days for the first revision after completion
+            const reviewDueAt = addDays(completedDate, 3).toISOString()
+            merged.reviewDueAt = reviewDueAt
+            merged.isReviewDue = isPast(parseISO(reviewDueAt)) || (merged.tags?.includes("Revision") ?? false)
+        } else if (merged.tags?.includes("Revision")) {
+            // Manually tagged for revision
+            merged.isReviewDue = true
+        } else {
+            // Reset if tag removed or not completed
+            merged.isReviewDue = false
+        }
+        return merged
+    }
+
     const mergeProblem = (p: MongoDBProblem) => {
         const stored = getProblemData(p._id)
         let title = p.title
@@ -74,17 +93,7 @@ export function ProblemsProvider({
         const domain = p.domain || "DSA"
 
         const merged: MongoDBProblem = stored ? { ...p, ...stored, title, domain } : { ...p, title, domain }
-
-        // --- SRS Logic ---
-        if (merged.status === "Completed" && merged.completedAt) {
-            const completedDate = parseISO(merged.completedAt)
-            // Review due in 3 days for the first revision after completion
-            const reviewDueAt = addDays(completedDate, 3).toISOString()
-            merged.reviewDueAt = reviewDueAt
-            merged.isReviewDue = isPast(parseISO(reviewDueAt))
-        }
-
-        return merged
+        return applySRS(merged)
     }
 
     const mergeWithDomainData = (apiProblems: MongoDBProblem[]) => {
@@ -111,7 +120,14 @@ export function ProblemsProvider({
     }
 
     const updateProblem = React.useCallback((id: string, updates: Partial<MongoDBProblem>) => {
-        setProblems(prev => prev.map(p => p._id === id ? { ...p, ...updates } : p))
+        setProblems(prev => prev.map(p => {
+            if (p._id === id) {
+                const updated = { ...p, ...updates }
+                // Re-apply SRS logic to the updated problem for immediate reactivity
+                return applySRS(updated)
+            }
+            return p
+        }))
     }, [])
 
     useEffect(() => {

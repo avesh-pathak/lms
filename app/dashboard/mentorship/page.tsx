@@ -36,9 +36,7 @@ export default function MentorshipPage() {
                         Mastery Requires <br /> <span className="text-[#FB923C]">Mentorship.</span>
                     </h1>
                     <p className="text-muted-foreground font-medium text-lg leading-relaxed">
-                        Book optional 1-on-1 sessions with top engineers.
-                        <br className="hidden md:block" />
-                        Your fees directly support the platform to keep core learning free.
+                        Book optional 1-on-1 sessions with top engineers to accelerate your growth.
                     </p>
                 </div>
 

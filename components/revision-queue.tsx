@@ -32,27 +32,55 @@ export function RevisionQueue() {
             </div>
 
             <div className="space-y-3">
-                {queue.map((prob) => (
-                    <Link
-                        key={prob._id}
-                        href={`/dashboard/topic/${toSlug(prob.topic)}?expand=${prob._id}`}
-                        className="flex items-center gap-4 p-4 rounded-3xl border bg-card/60 hover:bg-card hover:border-primary/40 transition-all group shadow-sm"
-                    >
-                        <div className={cn(
-                            "p-2.5 rounded-2xl transition-all shadow-inner",
-                            prob.isReviewDue
-                                ? "bg-red-500/10 text-red-500 group-hover:bg-red-500 group-hover:text-white"
-                                : "bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white"
-                        )}>
-                            {prob.isReviewDue ? <RefreshCcw className="h-4 w-4 animate-spin-slow" /> : <Star className="h-4 w-4 fill-current" />}
+                {queue.map((prob) => {
+                    const topicUrl = `/dashboard/topic/${toSlug(prob.topic)}?expand=${prob._id}`
+                    const problemUrl = prob.problem_link && prob.problem_link !== "None" ? prob.problem_link : topicUrl
+
+                    return (
+                        <div
+                            key={prob._id}
+                            className="flex items-center gap-4 p-4 rounded-3xl border bg-card/60 hover:bg-card hover:border-primary/40 transition-all group shadow-sm"
+                        >
+                            <a
+                                href={problemUrl}
+                                target={problemUrl === topicUrl ? "_self" : "_blank"}
+                                rel="noopener noreferrer"
+                                className={cn(
+                                    "p-2.5 rounded-2xl transition-all shadow-inner shrink-0",
+                                    prob.isReviewDue
+                                        ? "bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white"
+                                        : "bg-primary/10 text-primary hover:bg-primary hover:text-white"
+                                )}
+                            >
+                                {prob.isReviewDue ? <RefreshCcw className="h-4 w-4 animate-spin-slow" /> : <Star className="h-4 w-4 fill-current" />}
+                            </a>
+                            <div className="min-w-0 flex-1">
+                                <a
+                                    href={problemUrl}
+                                    target={problemUrl === topicUrl ? "_self" : "_blank"}
+                                    rel="noopener noreferrer"
+                                >
+                                    <h4 className="text-[13px] font-black truncate hover:text-primary transition-colors leading-tight italic uppercase cursor-pointer">
+                                        {prob.title}
+                                    </h4>
+                                </a>
+                                <Link href={topicUrl}>
+                                    <p className="text-[10px] font-bold text-muted-foreground truncate uppercase opacity-60 hover:opacity-100 hover:text-primary transition-all cursor-pointer">
+                                        {prob.topic}
+                                    </p>
+                                </Link>
+                            </div>
+                            <a
+                                href={problemUrl}
+                                target={problemUrl === topicUrl ? "_self" : "_blank"}
+                                rel="noopener noreferrer"
+                                className="shrink-0"
+                            >
+                                <ArrowRight className="h-4 w-4 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-1 transition-all cursor-pointer" />
+                            </a>
                         </div>
-                        <div className="min-w-0 flex-1">
-                            <h4 className="text-[13px] font-black truncate group-hover:text-primary transition-colors leading-tight italic uppercase">{prob.title}</h4>
-                            <p className="text-[10px] font-bold text-muted-foreground truncate uppercase opacity-60">{prob.topic}</p>
-                        </div>
-                        <ArrowRight className="h-4 w-4 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-1 transition-all" />
-                    </Link>
-                ))}
+                    )
+                })}
             </div>
         </div>
     )

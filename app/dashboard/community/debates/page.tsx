@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { MessageSquare, Zap, ShieldAlert, ArrowLeft, TrendingUp, ArrowRight, Search } from "lucide-react"
+import { MessageSquare, Zap, ShieldAlert, ArrowLeft, TrendingUp, ArrowRight, Search, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
@@ -316,68 +316,95 @@ export default function TechDebatesPage() {
 
             {/* Debate Detailed View */}
             <Dialog open={!!selectedDebate} onOpenChange={(open) => !open && setSelectedDebate(null)}>
-                <DialogContent className="sm:max-w-[700px] p-0 overflow-hidden border-0 rounded-[40px] shadow-2xl bg-card">
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0 border-none bg-background/95 backdrop-blur-xl shadow-2xl rounded-[40px] gap-0 scrollbar-hide">
                     {selectedDebate && (
-                        <div className="flex flex-col h-full">
-                            <DialogHeader className="p-10 bg-purple-500/5 border-b border-border/50 text-left">
-                                <Badge className="bg-purple-500/10 text-purple-500 border-purple-500/20 text-[10px] font-black uppercase px-3 py-1 mb-4 h-auto w-fit">
-                                    {selectedDebate.status}
-                                </Badge>
-                                <DialogTitle className="text-4xl font-black uppercase italic tracking-tighter leading-none mb-4">
+                        <>
+                            {/* Engineering Grid Background */}
+                            <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+                                style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+
+                            <DialogHeader className="p-8 pb-4 border-b bg-muted/20 relative">
+                                <div className="flex items-center gap-2 mb-4">
+                                    <Badge className="bg-purple-500/10 text-purple-500 border-purple-500/20 text-[10px] font-black uppercase px-3 py-1 h-auto w-fit">
+                                        {selectedDebate.status}
+                                    </Badge>
+                                </div>
+                                <DialogTitle className="text-3xl font-black uppercase tracking-tighter italic leading-none break-words">
                                     {selectedDebate.title}
                                 </DialogTitle>
-                                <DialogDescription className="flex items-center gap-4 text-sm font-bold text-muted-foreground uppercase tracking-widest">
+                                <DialogDescription className="flex items-center gap-4 mt-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                                     <span>Authored by @{selectedDebate.author}</span>
-                                    <span className="flex items-center gap-1"><MessageSquare className="h-4 w-4" /> {selectedDebate.comments} Contributions</span>
+                                    <span className="flex items-center gap-1 font-black text-purple-500"><MessageSquare className="h-3 w-3" /> {selectedDebate.comments} Contributions</span>
                                 </DialogDescription>
                             </DialogHeader>
-                            <div className="p-10 space-y-8 flex-1 overflow-y-auto max-h-[60vh] scrollbar-thin">
-                                <div className="p-8 rounded-[32px] bg-purple-500/10 border-2 border-purple-500/20 shadow-inner">
-                                    <p className="text-xl font-black italic text-foreground leading-relaxed">
+
+                            <div className="p-8 space-y-10 relative">
+                                {/* The Argument */}
+                                <div className="p-8 rounded-[32px] bg-purple-500/5 border-2 border-purple-500/10 shadow-inner relative overflow-hidden group">
+                                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+                                        <TrendingUp className="h-12 w-12 text-purple-500" />
+                                    </div>
+                                    <p className="text-xl font-black italic text-foreground leading-relaxed relative z-10">
                                         "{selectedDebate.content}"
                                     </p>
                                 </div>
 
+                                {/* Community Heatmap/Replies */}
                                 <div className="space-y-6">
-                                    <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Community Rebuttal & Support</h4>
-                                    {(selectedDebate.discussion || []).map((msg: any, i: number) => (
-                                        <div key={i} className={cn(
-                                            "p-6 rounded-[24px] border transition-all",
-                                            msg.type === "Pro" ? "bg-emerald-500/5 border-emerald-500/10" : "bg-red-500/5 border-red-500/10"
-                                        )}>
-                                            <div className="flex justify-between items-center mb-3">
-                                                <span className="text-[10px] font-black uppercase text-foreground">@{msg.user}</span>
-                                                <Badge className={cn(
-                                                    "text-[8px] font-black uppercase px-2 py-0 h-4",
-                                                    msg.type === "Pro" ? "bg-emerald-500 text-black" : "bg-red-500 text-white"
-                                                )}>
-                                                    {msg.type} Position
-                                                </Badge>
+                                    <div className="flex items-center gap-2">
+                                        <span className="h-px flex-1 bg-border" />
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-4">The Counter-Strike</span>
+                                        <span className="h-px flex-1 bg-border" />
+                                    </div>
+
+                                    <div className="grid grid-cols-1 gap-4">
+                                        {(selectedDebate.discussion || []).map((msg: any, i: number) => (
+                                            <div key={i} className={cn(
+                                                "p-6 rounded-[24px] border transition-all hover:scale-[1.01]",
+                                                msg.type === "Pro" ? "bg-emerald-500/5 border-emerald-500/10" : "bg-red-500/5 border-red-500/10"
+                                            )}>
+                                                <div className="flex justify-between items-center mb-3">
+                                                    <span className="text-[10px] font-black uppercase text-foreground">@{msg.user}</span>
+                                                    <Badge className={cn(
+                                                        "text-[8px] font-black uppercase px-2 py-0 h-4",
+                                                        msg.type === "Pro" ? "bg-emerald-500 text-black border-none" : "bg-red-500 text-white border-none"
+                                                    )}>
+                                                        {msg.type} Position
+                                                    </Badge>
+                                                </div>
+                                                <p className="text-sm font-bold text-muted-foreground leading-relaxed italic">
+                                                    {msg.msg}
+                                                </p>
                                             </div>
-                                            <p className="text-sm font-medium text-muted-foreground leading-relaxed italic">
-                                                {msg.msg}
-                                            </p>
-                                        </div>
-                                    ))}
+                                        ))}
+                                    </div>
+
                                     {(!selectedDebate.discussion || selectedDebate.discussion.length === 0) && (
-                                        <div className="py-10 text-center border-2 border-dashed rounded-[32px] border-border/50">
-                                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">No arguments indexed yet.</p>
+                                        <div className="py-20 text-center border-2 border-dashed rounded-[40px] border-muted/30">
+                                            <p className="text-xs font-black text-muted-foreground/50 uppercase tracking-[0.2em]">Signal Jammed: No Counters Yet.</p>
                                         </div>
                                     )}
                                 </div>
-                            </div>
-                            <div className="p-8 bg-muted/20 border-t">
-                                <div className="flex gap-3">
-                                    <Input
-                                        placeholder="Add your technical take..."
-                                        className="h-14 rounded-2xl bg-card border-border/50 font-medium text-sm focus:border-purple-500/50"
-                                    />
+
+                                {/* Action Zone */}
+                                <div className="flex gap-4 pt-10 border-t items-end">
+                                    <div className="flex-1 space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-purple-500">Your Technical Input</label>
+                                        <Input
+                                            placeholder="Enter the arena..."
+                                            className="h-14 rounded-2xl bg-muted/30 border-border/50 font-medium text-sm focus:border-purple-500/50 transition-all"
+                                        />
+                                    </div>
                                     <Button className="h-14 px-8 rounded-2xl bg-purple-500 hover:bg-purple-600 text-white font-black uppercase tracking-tight shadow-xl shadow-purple-500/20">
+                                        <Zap className="mr-2 h-5 w-5 fill-current" />
                                         Argue
+                                    </Button>
+                                    <Button variant="outline" className="h-14 w-14 rounded-2xl shrink-0" onClick={() => setSelectedDebate(null)}>
+                                        <X className="h-5 w-5" />
                                     </Button>
                                 </div>
                             </div>
-                        </div>
+                        </>
                     )}
                 </DialogContent>
             </Dialog>

@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator"
 import { Star, Clock, Video, ShieldCheck, ArrowRight, CheckCircle2, Linkedin } from "lucide-react"
 import { saveSessionData, getSessionData } from "@/lib/local-storage"
 
+
 export default function MentorProfilePage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params)
     const mentor = MOCK_MENTORS.find(m => m.id === id)
@@ -31,10 +32,9 @@ export default function MentorProfilePage({ params }: { params: Promise<{ id: st
 
     const handlePayment = async () => {
         setIsProcessing(true)
-        // Simulate API call / Payment Gateway
-        await new Promise(resolve => setTimeout(resolve, 2000))
+        // Simulate immediate confirmation (No payment needed)
+        await new Promise(resolve => setTimeout(resolve, 800))
 
-        // Save session to local storage
         const newSession = {
             id: crypto.randomUUID(),
             mentorId: mentor.id,
@@ -45,7 +45,7 @@ export default function MentorProfilePage({ params }: { params: Promise<{ id: st
             date: selectedDate.toISOString(),
             time: selectedTime!,
             status: "upcoming" as const,
-            meetingLink: "https://meet.google.com/abc-defg-hij" // Mock link
+            meetingLink: "https://meet.google.com/abc-defg-hij"
         }
 
         const currentData = getSessionData()
