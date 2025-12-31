@@ -1,7 +1,5 @@
 import { Suspense } from "react"
 import { DashboardSidebar } from "@/components/dashboard-sidebar"
-import { ProblemsProvider } from "@/components/problems-provider"
-import { getProblems } from "@/lib/problems"
 
 export default async function DashboardLayout({
   children,

@@ -281,7 +281,7 @@ export function HackathonHub() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     {[
-                        { step: "01", title: "Select Sprint", desc: "Choose an active hackathon that match your skill level." },
+                        { step: "01", title: "Select Sprint", desc: "Choose an active hackathon that matches your skill level." },
                         { step: "02", title: "Build Blueprint", desc: "Solve the challenge and build a production-grade project." },
                         { step: "03", title: "Submit Work", desc: "Share your GitHub repo and live demo URL for review." },
                         { step: "04", title: "Win Rewards", desc: "Get upvoted and verified by mentors to win prizes." }
