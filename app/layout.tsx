@@ -14,8 +14,9 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Babua Hub | Engineering Verified",
-  description: "The elite registry for engineering mastery. Track, compete, and evolve.",
+  title: "Babua Hub | 90 Days Pattern DSA Mastery",
+  description: "Master the Babua 90-day pattern-based DSA roadmap. The elite registry for engineering mastery, system design, and distributed protocols. No courses, just proof of work.",
+  keywords: ["Babua DSA", "90 Days Pattern", "Pattern DSA", "Babua Hub", "Engineering Mastery", "System Design", "Low Level Design", "Distributed Systems", "90 Days Plan", "Pattern Based Learning"],
   generator: "v0.app",
   icons: {
     icon: [

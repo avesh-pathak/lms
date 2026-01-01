@@ -34,7 +34,7 @@ export const MOCK_ROASTS: RoastSubmission[] = [
             {
                 id: "c1",
                 userName: "SeniorRoaster",
-                avatar: "/assets/mentors/image2.png",
+                avatar: "/assets/mentors/image1.png",
                 content: "Your 'Skills' section has 45 keywords. Are you an engineer or a dictionary?",
                 burnLevel: "Hot",
                 createdAt: new Date(Date.now() - 3600000 * 2).toISOString()
@@ -53,7 +53,7 @@ export const MOCK_ROASTS: RoastSubmission[] = [
         id: "r2",
         title: "Backend Specialist CV",
         builder: "RustLover",
-        avatar: "/assets/mentors/image2.png",
+        avatar: "/assets/mentors/image1.png",
         resumeUrl: "#",
         burnCount: 89,
         roastCount: 5,
@@ -62,7 +62,7 @@ export const MOCK_ROASTS: RoastSubmission[] = [
             {
                 id: "c3",
                 userName: "PerfGeek",
-                avatar: "/assets/mentors/image2.png",
+                avatar: "/assets/mentors/image1.png",
                 content: "10 years of experience but you still use white space for indentation? My eyes are leaking.",
                 burnLevel: "Mild",
                 createdAt: new Date(Date.now() - 3600000 * 24).toISOString()

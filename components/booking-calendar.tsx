@@ -64,7 +64,7 @@ export function BookingCalendar({ onSelectSlot, selectedDate, selectedTime }: Bo
                                 "text-center p-2 rounded-xl text-sm font-medium transition-colors border",
                                 isSelected ? "bg-primary/10 border-primary text-primary" : "bg-muted/30 border-transparent text-muted-foreground"
                             )}>
-                                <div className="text-[10px] uppercase font-bold tracking-wider opacity-70">{format(day, "EEE")}</div>
+                                <div className="text-[10px] uppercase font-black tracking-wider text-muted-foreground/90">{format(day, "EEE")}</div>
                                 <div className="font-black text-lg">{format(day, "d")}</div>
                             </div>
 

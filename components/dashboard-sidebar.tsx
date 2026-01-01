@@ -154,6 +154,15 @@ export function DashboardSidebar() {
                 Mentorship
               </NavLink>
               <NavLink
+                href="/dashboard/groups"
+                icon={Users}
+                active={pathname === "/dashboard/groups"}
+                onClick={() => setOpen(false)}
+                isCollapsed={isCollapsed}
+              >
+                Squads
+              </NavLink>
+              <NavLink
                 href="/dashboard/hackathons"
                 icon={Trophy}
                 active={pathname === "/dashboard/hackathons"}

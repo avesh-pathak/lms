@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, use } from "react"
@@ -8,19 +7,19 @@ import { MOCK_MENTORS } from "@/lib/data/mentors"
 import { BookingCalendar } from "@/components/booking-calendar"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { Star, Clock, Video, ShieldCheck, ArrowRight, CheckCircle2, Linkedin } from "lucide-react"
+import { ShieldCheck, ArrowRight, CheckCircle2, ChevronLeft, Star, Clock, Zap } from "lucide-react"
 import { saveSessionData, getSessionData } from "@/lib/local-storage"
-
+import { cn } from "@/lib/utils"
 
 export default function MentorProfilePage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params)
     const mentor = MOCK_MENTORS.find(m => m.id === id)
+
     const [selectedDate, setSelectedDate] = useState<Date>(new Date())
     const [selectedTime, setSelectedTime] = useState<string | null>(null)
-    const [step, setStep] = useState<"calendar" | "confirm">("calendar")
+    const [step, setStep] = useState<"calendar" | "checkout" | "success">("calendar")
     const [isProcessing, setIsProcessing] = useState(false)
-    const [isSuccess, setIsSuccess] = useState(false)
+    const [orderId] = useState(() => `BABUA-${Math.floor(Math.random() * 90000) + 10000}`)
 
     if (!mentor) return notFound()
 
@@ -29,11 +28,10 @@ export default function MentorProfilePage({ params }: { params: Promise<{ id: st
         setSelectedTime(time)
     }
 
-
-    const handlePayment = async () => {
+    const handleConfirm = async () => {
         setIsProcessing(true)
-        // Simulate immediate confirmation (No payment needed)
-        await new Promise(resolve => setTimeout(resolve, 800))
+        // Simulated latency for professional feel
+        await new Promise(resolve => setTimeout(resolve, 1200))
 
         const newSession = {
             id: crypto.randomUUID(),
@@ -45,7 +43,7 @@ export default function MentorProfilePage({ params }: { params: Promise<{ id: st
             date: selectedDate.toISOString(),
             time: selectedTime!,
             status: "upcoming" as const,
-            meetingLink: "https://meet.google.com/abc-defg-hij"
+            meetingLink: "https://meet.google.com/babua-mentorship-link"
         }
 
         const currentData = getSessionData()
@@ -54,143 +52,97 @@ export default function MentorProfilePage({ params }: { params: Promise<{ id: st
         })
 
         setIsProcessing(false)
-        setIsSuccess(true)
+        setStep("success")
     }
 
     return (
-        <div className="min-h-screen bg-background">
-            {/* Split Layout */}
-            <div className="flex flex-col lg:flex-row h-full">
+        <div className="min-h-screen bg-background flex flex-col lg:flex-row animate-in fade-in duration-700">
+            {/* LEFT PROFILE SIDEBAR */}
+            <div className="w-full lg:w-[400px] border-r bg-muted/5 p-8 lg:p-10 space-y-10 lg:sticky top-0 h-fit lg:h-screen overflow-y-auto scrollbar-hide">
+                <Link href="/dashboard/mentorship">
+                    <Button variant="ghost" className="group -ml-4 px-4 text-muted-foreground hover:text-foreground mb-4">
+                        <ChevronLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" /> Back to Mentors
+                    </Button>
+                </Link>
 
-                {/* Left: Mentor Profile */}
-                <div className="w-full lg:w-[40%] p-6 lg:p-10 border-r bg-muted/10 space-y-8 lg:sticky top-0 h-fit lg:h-screen overflow-y-auto">
-                    <div>
-                        <Button variant="link" className="px-0 text-muted-foreground hover:text-foreground mb-4" onClick={() => window.history.back()}>
-                            ← Back to mentors
-                        </Button>
-                        <div className="flex items-start gap-5">
-                            <img
-                                src={mentor.image}
-                                alt={mentor.name}
-                                className="w-24 h-24 rounded-[32px] object-cover border-4 border-background shadow-lg"
-                            />
-                            <div className="space-y-1 pt-2">
-                                <div className="flex items-center gap-3">
-                                    <h1 className="text-2xl font-black tracking-tight">{mentor.name}</h1>
-                                    <Link href="https://www.linkedin.com/in/avesh-pathak/" target="_blank" className="p-1.5 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors">
-                                        <Linkedin className="w-4 h-4 fill-current" />
-                                    </Link>
-                                </div>
-                                <p className="text-muted-foreground font-medium">{mentor.title} at {mentor.company}</p>
-                                <div className="flex items-center gap-1">
-                                    <Star className="w-4 h-4 fill-yellow-500 text-yellow-500" />
-                                    <span className="font-bold">{mentor.rating}</span>
-                                    <span className="text-muted-foreground text-sm">({mentor.sessionsCompleted} sessions)</span>
-                                </div>
-                            </div>
+                <div className="space-y-6">
+                    <div className="relative inline-block">
+                        <img
+                            src={mentor.image}
+                            alt={mentor.name}
+                            className="w-32 h-32 rounded-[40px] object-cover border-4 border-background shadow-2xl"
+                        />
+                        <div className="absolute -bottom-2 -right-2 h-10 w-10 bg-primary rounded-2xl flex items-center justify-center border-4 border-background shadow-lg">
+                            <Zap className="h-5 w-5 text-white" />
                         </div>
                     </div>
 
-                    <div className="space-y-4">
-                        <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">About</h3>
-                        <p className="text-base leading-relaxed text-foreground/90 font-medium">{mentor.bio}</p>
+                    <div className="space-y-1">
+                        <h1 className="text-3xl font-black italic uppercase tracking-tighter leading-none">{mentor.name}</h1>
+                        <p className="text-sm font-bold text-muted-foreground uppercase opacity-80 tracking-tight">{mentor.title} @ <span className="text-primary italic">{mentor.company}</span></p>
                     </div>
 
-                    <div className="space-y-4">
-                        <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">Qualification</h3>
-                        <div className="space-y-3">
-                            <div className="space-y-1">
-                                <div className="text-xs font-bold uppercase text-muted-foreground/70">Education</div>
-                                <div className="font-medium">{mentor.education}</div>
-                            </div>
-                            <div className="space-y-1">
-                                <div className="text-xs font-bold uppercase text-muted-foreground/70">Experience</div>
-                                <ul className="space-y-1">
-                                    {mentor.experience?.map((exp, i) => (
-                                        <li key={i} className="text-sm font-medium border-l-2 border-muted pl-3">{exp}</li>
-                                    ))}
-                                </ul>
-                            </div>
+                    <div className="flex items-center gap-4 pt-1">
+                        <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-yellow-500/5 border border-yellow-500/10">
+                            <Star className="w-3.5 h-3.5 fill-yellow-500 text-yellow-500" />
+                            <span className="text-xs font-black text-yellow-600">{mentor.rating}</span>
+                        </div>
+                        <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest opacity-40">
+                            {mentor.sessionsCompleted} Sessions
                         </div>
                     </div>
+                </div>
 
-                    <div className="space-y-4">
-                        <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">Expertise</h3>
+                <div className="space-y-8 pt-6 border-t border-border/50">
+                    <div className="space-y-3">
+                        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary italic">Bio</h3>
+                        <p className="text-sm font-medium leading-relaxed italic opacity-70">"{mentor.bio}"</p>
+                    </div>
+
+                    <div className="space-y-3">
+                        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary italic">Expertise</h3>
                         <div className="flex flex-wrap gap-2">
                             {mentor.expertise.map(skill => (
-                                <Badge key={skill} variant="secondary" className="px-3 py-1.5 text-xs font-bold uppercase tracking-wide">
+                                <Badge key={skill} variant="secondary" className="bg-primary/5 text-primary border-primary/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest italic">
                                     {skill}
                                 </Badge>
                             ))}
                         </div>
                     </div>
 
-                    <div className="p-6 rounded-3xl bg-blue-500/5 border border-blue-500/10 space-y-3">
-                        <div className="flex items-center gap-2 text-blue-600">
-                            <ShieldCheck className="w-5 h-5" />
-                            <span className="font-black text-sm uppercase tracking-wide">Babua Guarantee</span>
+                    {/* BABUA GUARANTEE */}
+                    <div className="p-6 rounded-[32px] bg-emerald-500/[0.03] border-2 border-emerald-500/10 space-y-3 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                            <ShieldCheck className="h-20 w-20 text-emerald-500" />
                         </div>
-                        <p className="text-sm text-blue-900/70 font-medium">
-                            If you're not satisfied with the session, we'll refund 100% of your money. No questions asked.
+                        <div className="flex items-center gap-2 text-emerald-500 relative z-10">
+                            <ShieldCheck className="w-5 h-5" />
+                            <span className="font-black text-[10px] uppercase tracking-[0.2em] italic">Babua Guarantee</span>
+                        </div>
+                        <p className="text-[11px] text-emerald-900/60 font-medium leading-relaxed italic relative z-10">
+                            If the session doesn't yield measurable throughput, we will issue a <span className="text-emerald-600 font-black tracking-widest">100% REFUND</span> instantly.
                         </p>
                     </div>
                 </div>
+            </div>
 
-                {/* Right: Booking Flow */}
-                <div className="flex-1 p-6 lg:p-10 flex flex-col items-center justify-center min-h-[600px]">
-                    <div className="w-full max-w-xl space-y-8">
+            {/* RIGHT BOOKING FLOW */}
+            <div className="flex-1 flex flex-col bg-background/50 relative overflow-hidden">
+                {/* Background Decor */}
+                <div className="absolute inset-0 pointer-events-none opacity-20">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
+                </div>
 
-                        {isSuccess ? (
-                            <div className="text-center space-y-8 animate-in fade-in zoom-in duration-500 w-full">
-                                <div className="bg-card border-2 border-dashed border-[#FB923C]/30 rounded-[32px] p-8 relative overflow-hidden">
-                                    <div className="absolute top-0 left-0 w-full h-2 bg-[#FB923C]/20" />
-
-                                    <div className="w-20 h-20 rounded-full bg-green-500/10 text-green-500 flex items-center justify-center mx-auto mb-6 shadow-sm">
-                                        <CheckCircle2 className="w-10 h-10" />
-                                    </div>
-
-                                    <h2 className="text-3xl font-black tracking-tighter uppercase italic mb-2">Booking Confirmed!</h2>
-                                    <p className="text-muted-foreground font-medium text-sm mb-8">Order #{Math.floor(Math.random() * 10000)}</p>
-
-                                    <div className="space-y-4 text-left bg-muted/30 p-6 rounded-2xl">
-                                        <div className="flex justify-between">
-                                            <span className="text-xs font-bold uppercase text-muted-foreground">Mentor</span>
-                                            <span className="font-black">{mentor.name}</span>
-                                        </div>
-                                        <div className="flex justify-between">
-                                            <span className="text-xs font-bold uppercase text-muted-foreground">Date</span>
-                                            <span className="font-black">{selectedDate.toDateString()}</span>
-                                        </div>
-                                        <div className="flex justify-between">
-                                            <span className="text-xs font-bold uppercase text-muted-foreground">Time</span>
-                                            <span className="font-black">{selectedTime}</span>
-                                        </div>
-                                        <div className="flex justify-between text-[#FB923C]">
-                                            <span className="text-xs font-bold uppercase">Meeting Link</span>
-                                            <span className="font-black text-xs">Sent via Email</span>
-                                        </div>
-                                    </div>
+                <div className="flex-1 flex flex-col items-center justify-center p-6 lg:p-12 relative z-10">
+                    <div className="w-full max-w-2xl">
+                        {step === "calendar" && (
+                            <div className="space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700">
+                                <div className="space-y-2 text-center">
+                                    <h2 className="text-4xl font-black italic uppercase tracking-tighter leading-none">Schedule Synchronization</h2>
+                                    <p className="text-xs font-black text-muted-foreground uppercase tracking-[0.4em] opacity-70">Select a temporal node for execution</p>
                                 </div>
 
-                                <div className="space-y-3">
-                                    <Link href="/dashboard">
-                                        <Button className="w-full h-14 rounded-2xl font-bold text-lg bg-[#FB923C] hover:bg-[#FB923C]/90 text-white shadow-xl shadow-[#FB923C]/20 uppercase tracking-wide">
-                                            Back to Dashboard
-                                        </Button>
-                                    </Link>
-                                    <p className="text-[10px] text-muted-foreground font-medium">
-                                        A calendar invite has been sent to your email.
-                                    </p>
-                                </div>
-                            </div>
-                        ) : step === "calendar" ? (
-                            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                <div className="space-y-2 text-center lg:text-left">
-                                    <h2 className="text-3xl font-black tracking-tight">Book a Session</h2>
-                                    <p className="text-muted-foreground">Select a time that works for you. All times are 1 hour.</p>
-                                </div>
-
-                                <div className="p-6 rounded-[32px] border bg-card shadow-sm">
+                                <div className="p-8 rounded-[48px] bg-card border-2 border-border/50 shadow-[0_20px_50px_rgba(0,0,0,0.05)]">
                                     <BookingCalendar
                                         selectedDate={selectedDate}
                                         selectedTime={selectedTime}
@@ -199,72 +151,118 @@ export default function MentorProfilePage({ params }: { params: Promise<{ id: st
                                     />
                                 </div>
 
-                                <div className="flex items-center justify-between p-6 rounded-[32px] bg-muted/30 border border-dashed">
+                                <div className="flex items-center justify-between p-8 rounded-[40px] bg-primary/[0.02] border-2 border-dashed border-primary/20">
                                     <div className="space-y-1">
-                                        <div className="text-xs font-bold uppercase text-muted-foreground tracking-wider">Total Amount</div>
-                                        <div className="text-2xl font-black">₹{mentor.hourlyRate}</div>
+                                        <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Required Credit</div>
+                                        <div className="text-4xl font-black italic tracking-tighter text-primary">₹{mentor.hourlyRate}</div>
                                     </div>
                                     <Button
                                         disabled={!selectedTime}
-                                        onClick={() => setStep("confirm")}
-                                        className="h-12 px-8 rounded-xl font-bold uppercase tracking-wide bg-[#FB923C] hover:bg-[#FB923C]/90 text-white shadow-lg shadow-[#FB923C]/20"
+                                        onClick={() => setStep("checkout")}
+                                        className="h-16 px-10 rounded-2xl font-black italic uppercase tracking-[0.2em] bg-primary text-white shadow-2xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all duration-300 disabled:grayscale"
                                     >
-                                        Continue <ArrowRight className="w-4 h-4 ml-2" />
+                                        Proceed to Checkout <ArrowRight className="w-5 h-5 ml-3" />
                                     </Button>
                                 </div>
-                            </div>
-                        ) : (
-                            <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
-                                <div className="text-center space-y-2">
-                                    <div className="w-16 h-16 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center mx-auto mb-4">
-                                        <ShieldCheck className="w-8 h-8" />
-                                    </div>
-                                    <h2 className="text-3xl font-black tracking-tight">Confirm Booking</h2>
-                                    <p className="text-muted-foreground">You're almost there! Review the details below.</p>
-                                </div>
-
-                                <div className="p-8 rounded-[32px] border bg-card shadow-sm space-y-6 relative overflow-hidden">
-                                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#FB923C]/10 to-transparent rounded-bl-[100px] -mr-8 -mt-8" />
-
-                                    <div className="space-y-4">
-                                        <div className="flex items-center justify-between pb-4 border-b border-dashed">
-                                            <span className="text-muted-foreground font-medium">Mentor</span>
-                                            <span className="font-bold">{mentor.name}</span>
-                                        </div>
-                                        <div className="flex items-center justify-between pb-4 border-b border-dashed">
-                                            <span className="text-muted-foreground font-medium">Date</span>
-                                            <span className="font-bold">{selectedDate.toDateString()}</span>
-                                        </div>
-                                        <div className="flex items-center justify-between pb-4 border-b border-dashed">
-                                            <span className="text-muted-foreground font-medium">Time</span>
-                                            <span className="font-bold">{selectedTime}</span>
-                                        </div>
-                                        <div className="flex items-center justify-between pt-2">
-                                            <span className="font-black text-lg">Total</span>
-                                            <span className="font-black text-2xl text-[#FB923C]">₹{mentor.hourlyRate}</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    <Button variant="outline" onClick={() => setStep("calendar")} className="h-12 rounded-xl font-bold">
-                                        Back
-                                    </Button>
-                                    <Button
-                                        onClick={handlePayment}
-                                        disabled={isProcessing}
-                                        className="h-12 rounded-xl font-bold bg-foreground text-background hover:bg-foreground/90 disabled:opacity-50"
-                                    >
-                                        {isProcessing ? "Processing..." : "Pay & Confirm"}
-                                    </Button>
-                                </div>
-
-                                <p className="text-xs text-center text-muted-foreground">
-                                    By confirming, you agree to Babua's terms of service.
-                                </p>
                             </div>
                         )}
 
+                        {step === "checkout" && (
+                            <div className="space-y-10 animate-in fade-in slide-in-from-right-10 duration-700">
+                                <div className="space-y-2 text-center">
+                                    <h2 className="text-4xl font-black italic uppercase tracking-tighter leading-none">Checkout Confirmation</h2>
+                                    <p className="text-xs font-black text-muted-foreground uppercase tracking-[0.4em] opacity-40">Initialize technical linkage protocols</p>
+                                </div>
+
+                                <div className="p-10 rounded-[48px] bg-card border-2 border-border/50 shadow-2xl space-y-10 relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-[100px] -mr-8 -mt-8" />
+
+                                    <div className="flex items-center gap-6">
+                                        <img src={mentor.image} alt={mentor.name} className="h-20 w-20 rounded-[28px] object-cover border shadow-xl" />
+                                        <div className="space-y-1">
+                                            <h3 className="text-2xl font-black uppercase italic tracking-tighter italic">{mentor.name}</h3>
+                                            <p className="text-xs font-bold text-muted-foreground uppercase opacity-70 tracking-widest">{mentor.title} @ {mentor.company}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-8 py-8 border-y border-dashed border-border/50">
+                                        <div className="space-y-2 text-left">
+                                            <span className="text-[10px] font-black uppercase tracking-widest opacity-80 text-primary italic">Temporal Node</span>
+                                            <div className="text-xl font-black italic tracking-tighter flex items-center gap-3">
+                                                <Clock className="w-5 h-5 text-primary" /> {selectedDate.toDateString()}
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2 text-left">
+                                            <span className="text-[10px] font-black uppercase tracking-widest opacity-80 text-primary italic">Synchronization</span>
+                                            <div className="text-xl font-black italic tracking-tighter flex items-center gap-3">
+                                                <Zap className="w-5 h-5 text-primary" /> {selectedTime}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex justify-between items-center text-left">
+                                        <div className="space-y-1">
+                                            <span className="text-xs font-black uppercase italic tracking-[0.3em] opacity-30">Total Value</span>
+                                            <div className="text-4xl font-black italic tracking-tighter text-primary leading-none">₹{mentor.hourlyRate}</div>
+                                        </div>
+                                        <Button
+                                            onClick={handleConfirm}
+                                            disabled={isProcessing}
+                                            className="h-16 px-12 rounded-2xl font-black italic uppercase tracking-[0.3em] bg-foreground text-background hover:bg-foreground/90 shadow-2xl transition-all duration-300 disabled:opacity-50"
+                                        >
+                                            {isProcessing ? "INITIALIZING..." : "Pay & Confirm"}
+                                        </Button>
+                                    </div>
+                                </div>
+
+                                <div className="flex gap-4">
+                                    <Button variant="outline" onClick={() => setStep("calendar")} className="flex-1 h-14 rounded-2xl font-black italic uppercase tracking-widest text-[10px] border-2">
+                                        Modify Schedule
+                                    </Button>
+                                    <div className="flex-[1.5] flex items-center justify-center p-4 rounded-2xl bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">
+                                        <ShieldCheck className="w-4 h-4 mr-2" />
+                                        <span className="text-[9px] font-black uppercase tracking-widest italic leading-tight">Secured via Babua Protocol</span>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {step === "success" && (
+                            <div className="text-center space-y-10 animate-in fade-in zoom-in duration-700">
+                                <div className="relative inline-block">
+                                    <div className="w-32 h-32 rounded-[48px] bg-emerald-500/20 text-emerald-600 flex items-center justify-center border-2 border-emerald-500/30 shadow-2xl">
+                                        <CheckCircle2 className="w-16 h-16" />
+                                    </div>
+                                    <div className="absolute -bottom-4 -right-4 h-12 w-12 bg-white rounded-2xl border-2 flex items-center justify-center shadow-lg">
+                                        <Zap className="h-6 w-6 text-primary fill-current" />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <h2 className="text-5xl font-black italic uppercase tracking-tighter leading-none">Node Established.</h2>
+                                    <p className="text-xs font-black text-muted-foreground uppercase tracking-[0.4em] opacity-80">Order ID: {orderId}</p>
+                                </div>
+
+                                <div className="p-10 rounded-[64px] bg-card border-2 border-emerald-500/10 shadow-2xl space-y-8 relative overflow-hidden group">
+                                    <div className="absolute inset-0 bg-emerald-500/[0.01] pointer-events-none" />
+                                    <div className="space-y-1">
+                                        <h3 className="text-2xl font-black italic uppercase tracking-tighter text-emerald-600">Protocol Synchronized</h3>
+                                        <p className="text-sm font-medium italic opacity-60">You are now scheduled for a high-bandwidth session with <span className="text-foreground font-black">{mentor.name}</span>.</p>
+                                    </div>
+
+                                    <div className="space-y-3 pt-6 border-t border-dashed border-border/50">
+                                        <Link href="/dashboard">
+                                            <Button className="w-full h-16 rounded-2xl font-black italic uppercase tracking-[0.2em] bg-primary text-white shadow-2xl shadow-primary/30 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                                                Return to Mission Control
+                                            </Button>
+                                        </Link>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-30 italic px-8">
+                                            A secure meeting link and calendar node has been transmitted to your primary terminal email.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

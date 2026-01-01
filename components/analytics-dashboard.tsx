@@ -1,9 +1,7 @@
 "use client"
 
-import React, { useMemo, useState } from "react"
+import React, { useMemo, useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as ReTooltip,
   ResponsiveContainer, AreaChart, Area
@@ -13,8 +11,7 @@ import {
 } from "lucide-react"
 import { useProblems } from "./problems-provider"
 import { format, parseISO, subDays, eachDayOfInterval, isSameDay } from "date-fns"
-import { toSlug, cn } from "@/lib/utils"
-import Link from "next/link"
+import { cn } from "@/lib/utils"
 import { DailyGoal } from "./daily-goal"
 import { ContinueLearning } from "./continue-learning"
 import { SmartRecommendations } from "./smart-recommendations"
@@ -23,6 +20,11 @@ import { Separator } from "@/components/ui/separator"
 
 export function AnalyticsDashboard() {
   const { topics, problems, loading } = useProblems()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const pointsMap = { "Easy": 50, "Medium": 100, "Hard": 200 }
 
@@ -56,17 +58,11 @@ export function AnalyticsDashboard() {
 
     return last30Days.map(date => {
       const dateStr = format(date, "MMM d")
-      const count = problems.filter(p =>
-        p.status === "Completed" &&
-        p.completedAt &&
-        isSameDay(parseISO(p.completedAt), date)
-      ).length
-
       const xp = problems
         .filter(p => p.status === "Completed" && p.completedAt && isSameDay(parseISO(p.completedAt), date))
         .reduce((acc, p) => acc + (pointsMap[p.difficulty as keyof typeof pointsMap] || 50), 0)
 
-      return { date: dateStr, count, xp }
+      return { date: dateStr, xp }
     })
   }, [problems])
 
@@ -95,7 +91,7 @@ export function AnalyticsDashboard() {
     const yesterday = format(subDays(new Date(), 1), "yyyy-MM-dd")
     let checkDate = uniqueDates[0] === today ? today : (uniqueDates[0] === yesterday ? yesterday : null)
     if (!checkDate) return 0
-    let dateIterator = parseISO(checkDate)
+    let dateIterator = parseISO(checkDate!)
     for (const dateStr of uniqueDates) {
       if (dateStr === format(dateIterator, "yyyy-MM-dd")) {
         currentStreak++
@@ -125,10 +121,7 @@ export function AnalyticsDashboard() {
     return sorted[0] || null
   }, [problems])
 
-
-
-
-  if (loading) return <div className="p-8 text-center text-muted-foreground">Initializing analytics...</div>
+  if (!mounted || loading) return <div className="p-8 text-center text-muted-foreground animate-pulse font-black uppercase tracking-widest text-[10px] italic">Initializing analytics terminal...</div>
 
   return (
     <div className="p-6 lg:p-8 space-y-8 max-w-7xl mx-auto">
@@ -198,8 +191,9 @@ export function AnalyticsDashboard() {
             <Card className="rounded-[32px] border-none bg-muted/20 shadow-none overflow-hidden">
               <CardHeader>
                 <CardTitle className="text-sm font-black uppercase tracking-widest text-muted-foreground">Strongest Patterns</CardTitle>
+                <CardDescription className="text-[10px] font-bold italic opacity-60">High-fidelity mastery distribution</CardDescription>
               </CardHeader>
-              <CardContent className="h-[350px]">
+              <CardContent className="h-[350px] pb-8">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={topicChartData} layout="vertical" margin={{ left: 20 }}>
                     <CartesianGrid strokeDasharray="3 3" horizontal={false} opacity={0.1} />

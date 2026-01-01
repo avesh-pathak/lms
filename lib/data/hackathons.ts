@@ -97,7 +97,7 @@ export const MOCK_HALL_OF_FAME: LegendaryProject[] = [
         id: "p2",
         title: "VizShift Engine",
         builder: "Sarah_B",
-        avatar: "/assets/mentors/image2.png",
+        avatar: "/assets/mentors/image1.png",
         hackathonTitle: "Season 2: Data Viz",
         techStack: ["TypeScript", "React", "Canvas", "Three.js"],
         description: "A high-fidelity visualization engine for mapping sliding window shifts over complex data structures in 3D space.",
