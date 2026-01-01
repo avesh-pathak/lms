@@ -1,5 +1,7 @@
 # Babua LMS: Real Engineering, Not Just Certificates
 
+[**Live Demo**](https://aveshpathaklms.vercel.app/)
+
 **Babua LMS** is a premium, pattern-focused Learning Management System designed for the modern software engineer. Moving beyond rote memorization and certificate-chasing, this platform focuses on mastering the core **patterns** of Data Structures, System Design, and Core Engineering.
 
 ## 🚀 Key Modules
