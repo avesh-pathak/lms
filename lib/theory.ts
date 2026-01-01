@@ -14,6 +14,55 @@ export interface TopicTheory {
     complexity: string
 }
 
+export const getAllTheory = cache(async (): Promise<TopicTheory[]> => {
+    try {
+        const client = await clientPromise
+        const db = client.db("dsa_tracker")
+
+        // Fetch all documents from the collection
+        const docs = await db.collection("topics_theory").find({}).toArray()
+
+        let allTopics: TopicTheory[] = []
+
+        for (const doc of docs) {
+            if (doc.topics && Array.isArray(doc.topics)) {
+                // It's a wrapper doc
+                allTopics = [...allTopics, ...doc.topics.map((t: any) => ({
+                    _id: (t._id || t.id || Math.random().toString()).toString(),
+                    topicSlug: t.topicSlug,
+                    name: t.name || "Unknown Topic",
+                    category: t.category || doc.category || "DSA Patterns",
+                    one_liner: t.one_liner || "",
+                    core_concept: t.core_concept || "",
+                    how_it_works: t.how_it_works || "",
+                    visual_walkthrough: t.visual_walkthrough || "",
+                    pattern_signals: t.pattern_signals || "",
+                    complexity: t.complexity || "",
+                }))]
+            } else {
+                // It's a single topic doc
+                allTopics.push({
+                    _id: (doc._id || doc.id).toString(),
+                    topicSlug: doc.topicSlug,
+                    name: doc.name || "Unknown Topic",
+                    category: doc.category || "DSA Patterns",
+                    one_liner: doc.one_liner || "",
+                    core_concept: doc.core_concept || "",
+                    how_it_works: doc.how_it_works || "",
+                    visual_walkthrough: doc.visual_walkthrough || "",
+                    pattern_signals: doc.pattern_signals || "",
+                    complexity: doc.complexity || "",
+                })
+            }
+        }
+
+        return allTopics
+    } catch (err) {
+        console.error(`[Theory] Error fetching all theory:`, err)
+        return []
+    }
+})
+
 export const getTopicTheory = cache(async (slug: string): Promise<TopicTheory | null> => {
     try {
         const client = await clientPromise

@@ -44,6 +44,7 @@ export function TopicDetail({ topicSlug }: TopicDetailProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState("problems")
   const [theory, setTheory] = useState<TopicTheory | null>(null)
+  const [allTheories, setAllTheories] = useState<TopicTheory[]>([])
   const [loadingTheory, setLoadingTheory] = useState(false)
 
   const [searchTerm, setSearchTerm] = useState("")
@@ -412,7 +413,18 @@ export function TopicDetail({ topicSlug }: TopicDetailProps) {
           ) : theory ? (
             <TheoryContent
               theory={theory}
+              allTheories={allTheories}
               onPracticeClick={() => setActiveTab("problems")}
+              onDownloadAll={async () => {
+                if (allTheories.length === 0) {
+                  const res = await fetch('/api/theory')
+                  const data = await res.json()
+                  if (Array.isArray(data)) {
+                    setAllTheories(data)
+                  }
+                }
+                setTimeout(() => window.print(), 500)
+              }}
             />
           ) : (
             <div className="space-y-12">
