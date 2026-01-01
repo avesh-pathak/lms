@@ -37,7 +37,6 @@ A reactive hub for pattern maintenance.
 ## 💻 Tech Stack
 
 - **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
-- **Authentication**: [Clerk](https://clerk.com/)
 - **Database**: [MongoDB](https://www.mongodb.com/) (Atlas)
 - **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) & Vanilla CSS
 - **Design System**: Shadcn UI (Customized with High-Contrast Bold Italic typography)
@@ -49,7 +48,6 @@ A reactive hub for pattern maintenance.
 ### Prerequisites
 - Node.js (v18+)
 - MongoDB Connection String
-- Clerk Environment Variables
 
 ### Installation
 
@@ -70,9 +68,6 @@ A reactive hub for pattern maintenance.
    # MongoDB
    MONGODB_URI=your_mongodb_uri
 
-   # Clerk Authentication
-   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_pub_key
-   CLERK_SECRET_KEY=your_clerk_secret_key
    ```
 
 4. **Launch Dev Environment**:
