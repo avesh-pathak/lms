@@ -80,15 +80,13 @@ export function MentorCard({ mentor, onBook }: { mentor: Mentor, onBook?: (mento
                     <span className="text-muted-foreground font-medium text-xs ml-1.5">/ hour</span>
                 </div>
 
-                <Button
-                    className="relative z-10 rounded-xl px-6 font-bold uppercase tracking-wide bg-[#FB923C] hover:bg-[#FB923C]/90 text-white shadow-lg shadow-[#FB923C]/20 transition-transform active:scale-95"
-                    onClick={(e) => {
-                        e.stopPropagation()
-                        onBook?.(mentor)
-                    }}
-                >
-                    Book Now
-                </Button>
+                <Link href={`/dashboard/mentorship/${mentor.id}`} className="relative z-10">
+                    <Button
+                        className="rounded-xl px-6 font-bold uppercase tracking-wide bg-[#FB923C] hover:bg-[#FB923C]/90 text-white shadow-lg shadow-[#FB923C]/20 transition-transform active:scale-95"
+                    >
+                        Book Now
+                    </Button>
+                </Link>
             </div>
         </div>
     )

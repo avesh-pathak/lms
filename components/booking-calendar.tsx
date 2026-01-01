@@ -6,26 +6,26 @@ import { ChevronLeft, ChevronRight, Clock } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
+import { TimeSlot } from "@/lib/types/mentor"
+
 interface BookingCalendarProps {
     onSelectSlot: (date: Date, time: string) => void
     selectedDate: Date
     selectedTime: string | null
-    availability: any[] // In real app, this would be specific types
+    availability: TimeSlot[]
 }
 
-export function BookingCalendar({ onSelectSlot, selectedDate, selectedTime }: BookingCalendarProps) {
+export function BookingCalendar({ onSelectSlot, selectedDate, selectedTime, availability }: BookingCalendarProps) {
     const today = startOfToday()
     const [currentStartDate, setCurrentStartDate] = useState(today)
 
     // Generate next 14 days
     const days = Array.from({ length: 5 }).map((_, i) => addDays(currentStartDate, i))
 
-    // Mock time slots logic
-    const getTimeSlots = (date: Date) => {
-        // In reality, filtered by availability
-        return [
-            "10:00 AM", "11:00 AM", "1:00 PM", "2:30 PM", "4:00 PM", "5:30 PM"
-        ]
+    // Filter available slots for a specific date
+    const getAvailableSlots = (date: Date) => {
+        const dateStr = format(date, "yyyy-MM-dd")
+        return availability.filter(slot => slot.day === dateStr && !slot.isBooked)
     }
 
     const nextDays = () => setCurrentStartDate(addDays(currentStartDate, 5))
@@ -56,7 +56,7 @@ export function BookingCalendar({ onSelectSlot, selectedDate, selectedTime }: Bo
             <div className="grid grid-cols-5 gap-2">
                 {days.map((day) => {
                     const isSelected = isSameDay(day, selectedDate)
-                    const slots = getTimeSlots(day)
+                    const slots = getAvailableSlots(day)
 
                     return (
                         <div key={day.toString()} className="space-y-3">
@@ -69,20 +69,27 @@ export function BookingCalendar({ onSelectSlot, selectedDate, selectedTime }: Bo
                             </div>
 
                             <div className="space-y-2">
-                                {slots.map(time => (
-                                    <button
-                                        key={time}
-                                        onClick={() => onSelectSlot(day, time)}
-                                        className={cn(
-                                            "w-full text-xs font-bold py-2 rounded-lg border transition-all hover:scale-105 active:scale-95",
-                                            isSelected && selectedTime === time
-                                                ? "bg-[#FB923C] text-white border-[#FB923C] shadow-md shadow-[#FB923C]/20"
-                                                : "bg-background border-border hover:border-primary/50 text-foreground"
-                                        )}
-                                    >
-                                        {time}
-                                    </button>
-                                ))}
+                                {slots.length === 0 ? (
+                                    <div className="text-[10px] text-center text-muted-foreground py-2 italic opacity-50">
+                                        No slots
+                                    </div>
+                                ) : (
+                                    slots.map(slot => (
+                                        <button
+                                            type="button"
+                                            key={slot.id}
+                                            onClick={() => onSelectSlot(day, slot.startTime)}
+                                            className={cn(
+                                                "w-full text-xs font-bold py-2 rounded-lg border transition-all hover:scale-105 active:scale-95 cursor-pointer",
+                                                isSelected && selectedTime === slot.startTime
+                                                    ? "bg-[#FB923C] text-white border-[#FB923C] shadow-md shadow-[#FB923C]/20"
+                                                    : "bg-background border-border hover:border-primary/50 text-foreground"
+                                            )}
+                                        >
+                                            {slot.startTime}
+                                        </button>
+                                    ))
+                                )}
                             </div>
                         </div>
                     )
