@@ -42,6 +42,19 @@ export function ProblemsProvider({
     // Derive topics from the problems state to stay reactive
     const topics = React.useMemo(() => {
         const topicMap = new Map<string, Topic>()
+
+        // Subject mapping for Core Engineering
+        const getSubjectForTopic = (topicName: string): string | undefined => {
+            const name = topicName.toLowerCase()
+            if (["scalability", "distributed systems", "api design", "message queues", "caching", "load balancing"].some(t => name.includes(t))) return "System Design"
+            if (["ood patterns", "design patterns", "creational patterns", "structural patterns", "behavioral patterns"].some(t => name.includes(t))) return "Low Level Design"
+            if (name.includes("operating systems") || name.includes("os fundamentals")) return "Operating Systems"
+            if (name.includes("computer networks") || name.includes("tcp") || name.includes("http")) return "Computer Networks"
+            if (name.includes("dbms") || name.includes("database") || name.includes("sql") || name.includes("nosql")) return "DBMS"
+            if (["neural networks", "supervised learning", "genai", "machine learning", "deep learning", "nlp"].some(t => name.includes(t))) return "AI/ML"
+            return undefined
+        }
+
         problems.forEach(p => {
             const topicId = toSlug(p.topic)
             const domain = p.domain || "DSA" // Default to DSA
@@ -53,6 +66,7 @@ export function ProblemsProvider({
                     solved: 0,
                     total: 0,
                     domain: domain as any,
+                    subject: getSubjectForTopic(p.topic),
                     reviewCount: 0
                 })
             }

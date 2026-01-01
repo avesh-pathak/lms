@@ -2,7 +2,7 @@
 
 import React from "react"
 import Link from "next/link"
-import { ArrowRight, Trophy, Code2, Layers, Zap, Star, ShieldCheck, Cpu, PencilRuler, MessageSquare, Users, Linkedin } from "lucide-react"
+import { ArrowRight, Trophy, Code2, Layers, Zap, Star, ShieldCheck, Cpu, PencilRuler, MessageSquare, Users, Linkedin, Radio, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
@@ -110,7 +110,7 @@ export function LandingPage({ topics }: LandingPageProps) {
                                     <p className="text-sm text-muted-foreground font-medium italic underline decoration-[#FB923C]/30 underline-offset-4">Sliding Window • Graphs • DP</p>
                                 </div>
                                 <p className="text-muted-foreground text-sm font-medium">Master the intuition behind 20+ DSA patterns. Solve problems by pattern, not by rote memorization.</p>
-                                <Link href="/dashboard" className="block w-full">
+                                <Link href="/dashboard?domain=DSA" className="block w-full">
                                     <Button variant="outline" className="w-full rounded-2xl group-hover:bg-[#FB923C] group-hover:text-white transition-all font-bold uppercase tracking-tight">Start Training</Button>
                                 </Link>
                             </div>
@@ -127,7 +127,9 @@ export function LandingPage({ topics }: LandingPageProps) {
                                     <p className="text-sm text-muted-foreground font-medium italic underline decoration-[#FB923C]/30 underline-offset-4">Scalability • Caching • Queues</p>
                                 </div>
                                 <p className="text-muted-foreground text-sm font-medium">From Load Balancers to Microservices. Learn how to architect systems that scale to millions.</p>
-                                <Button variant="outline" className="w-full rounded-2xl group-hover:bg-[#FB923C] group-hover:text-white transition-all font-bold uppercase tracking-tight">Explore Systems</Button>
+                                <Link href="/dashboard?domain=Core Engineering" className="block w-full">
+                                    <Button variant="outline" className="w-full rounded-2xl group-hover:bg-[#FB923C] group-hover:text-white transition-all font-bold uppercase tracking-tight">Explore Systems</Button>
+                                </Link>
                             </div>
                         </div>
 
@@ -142,7 +144,9 @@ export function LandingPage({ topics }: LandingPageProps) {
                                     <p className="text-sm text-muted-foreground font-medium italic underline decoration-[#FB923C]/30 underline-offset-4">SOLID • Design Patterns • OOPS</p>
                                 </div>
                                 <p className="text-muted-foreground text-sm font-medium">Write clean, maintainable, and extensible code. Master the patterns that separate juniors from seniors.</p>
-                                <Button variant="outline" className="w-full rounded-2xl group-hover:bg-[#FB923C] group-hover:text-white transition-all font-bold uppercase tracking-tight">Master Design</Button>
+                                <Link href="/dashboard?domain=Core Engineering" className="block w-full">
+                                    <Button variant="outline" className="w-full rounded-2xl group-hover:bg-[#FB923C] group-hover:text-white transition-all font-bold uppercase tracking-tight">Master Design</Button>
+                                </Link>
                             </div>
                         </div>
 
@@ -157,7 +161,9 @@ export function LandingPage({ topics }: LandingPageProps) {
                                     <p className="text-sm text-muted-foreground font-medium italic underline decoration-[#FB923C]/30 underline-offset-4">OS • DBMS • Networks</p>
                                 </div>
                                 <p className="text-muted-foreground text-sm font-medium">Under the hood. Understand how kernels work, how DBs index data, and how packets flow.</p>
-                                <Button variant="outline" className="w-full rounded-2xl group-hover:bg-[#FB923C] group-hover:text-white transition-all font-bold uppercase tracking-tight">Build Core</Button>
+                                <Link href="/dashboard?domain=Core Engineering" className="block w-full">
+                                    <Button variant="outline" className="w-full rounded-2xl group-hover:bg-[#FB923C] group-hover:text-white transition-all font-bold uppercase tracking-tight">Build Core</Button>
+                                </Link>
                             </div>
                         </div>
 
@@ -172,23 +178,25 @@ export function LandingPage({ topics }: LandingPageProps) {
                                     <p className="text-sm text-muted-foreground font-medium italic underline decoration-[#FB923C]/30 underline-offset-4">LLMs • Prompt Eng • Applied AI</p>
                                 </div>
                                 <p className="text-muted-foreground text-sm font-medium">The practical guide to AI. Build and integrate intelligence into your applications today.</p>
-                                <Button variant="outline" className="w-full rounded-2xl group-hover:bg-[#FB923C] group-hover:text-white transition-all font-bold uppercase tracking-tight">Master AI</Button>
+                                <Link href="/dashboard?domain=AI/ML" className="block w-full">
+                                    <Button variant="outline" className="w-full rounded-2xl group-hover:bg-[#FB923C] group-hover:text-white transition-all font-bold uppercase tracking-tight">Master AI</Button>
+                                </Link>
                             </div>
                         </div>
 
-                        {/* Proof of Work Card */}
+                        {/* Expert Mentorship Card */}
                         <div className="group p-8 rounded-[40px] border-2 border-dashed border-[#FB923C]/30 bg-[#FB923C]/5 hover:border-[#FB923C] transition-all hover:-translate-y-2 relative overflow-hidden shadow-sm">
                             <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform">
-                                <Star className="h-20 w-20 text-[#FB923C]" />
+                                <Sparkles className="h-20 w-20 text-[#FB923C]" />
                             </div>
                             <div className="space-y-6 relative">
                                 <div className="space-y-2">
-                                    <h3 className="text-2xl font-black uppercase tracking-tight">Proof of Work</h3>
-                                    <p className="text-sm text-muted-foreground font-medium italic text-[#FB923C]">Your Engineering Legacy</p>
+                                    <h3 className="text-2xl font-black uppercase tracking-tight">Expert Mentorship</h3>
+                                    <p className="text-sm text-muted-foreground font-medium italic text-[#FB923C]">Premier 1:1 Support</p>
                                 </div>
-                                <p className="text-muted-foreground text-sm font-medium">Forget PDFs. Your public "Babua Profile" live-tracks your solved patterns and real building growth.</p>
-                                <Link href="/dashboard/analytics">
-                                    <Button variant="outline" className="w-full rounded-2xl border-[#FB923C] text-[#FB923C] hover:bg-[#FB923C] hover:text-white transition-all font-bold uppercase tracking-tight">View Registry</Button>
+                                <p className="text-muted-foreground text-sm font-medium">Stuck on a production bug or complex architecture? Connect with top engineers for 1:1 rapid guidance.</p>
+                                <Link href="/dashboard/mentorship">
+                                    <Button variant="outline" className="w-full rounded-2xl border-[#FB923C] text-[#FB923C] hover:bg-[#FB923C] hover:text-white transition-all font-bold uppercase tracking-tight">View Support Hub</Button>
                                 </Link>
                             </div>
                         </div>

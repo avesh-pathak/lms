@@ -36,5 +36,6 @@ export type Topic = {
   solved: number
   total: number
   domain?: "DSA" | "System Design" | "LLD" | "Core Engineering" | "AI/ML"
+  subject?: string
   reviewCount?: number
 }

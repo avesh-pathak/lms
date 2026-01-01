@@ -5,7 +5,7 @@ import { Star, MessageSquare, Briefcase, Globe, Linkedin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 
-export function MentorCard({ mentor }: { mentor: Mentor }) {
+export function MentorCard({ mentor, onBook }: { mentor: Mentor, onBook?: (mentor: Mentor) => void }) {
     return (
         <div className="group relative flex flex-col p-6 rounded-[32px] border bg-card hover:border-[#FB923C]/50 hover:shadow-lg transition-all overflow-hidden">
             {/* Background Gradient */}
@@ -68,11 +68,12 @@ export function MentorCard({ mentor }: { mentor: Mentor }) {
                     <span className="text-muted-foreground font-medium text-xs ml-1.5">/ hour</span>
                 </div>
 
-                <Link href={`/dashboard/mentorship/${mentor.id}`}>
-                    <Button className="rounded-xl px-6 font-bold uppercase tracking-wide bg-[#FB923C] hover:bg-[#FB923C]/90 text-white shadow-lg shadow-[#FB923C]/20 transition-transform active:scale-95">
-                        Book Now
-                    </Button>
-                </Link>
+                <Button
+                    className="rounded-xl px-6 font-bold uppercase tracking-wide bg-[#FB923C] hover:bg-[#FB923C]/90 text-white shadow-lg shadow-[#FB923C]/20 transition-transform active:scale-95"
+                    onClick={() => onBook?.(mentor)}
+                >
+                    Book Now
+                </Button>
             </div>
         </div>
     )

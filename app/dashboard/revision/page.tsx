@@ -37,7 +37,7 @@ export default function RevisionPage() {
                         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Revision Center</span>
                     </div>
                     <h1 className="text-5xl lg:text-7xl font-black tracking-tighter uppercase italic leading-[0.85]">
-                        Mastery is <br /> <span className="text-primary truncate">Retention.</span>
+                        Mastery is <br /> <span className="text-primary truncate">Retention</span>
                     </h1>
                     <p className="text-muted-foreground font-bold text-lg max-w-xl leading-snug">
                         Spaced Repetition (SRS) ensures your technical depth doesn't decay. Review what matters, when it matters.
@@ -72,7 +72,7 @@ export default function RevisionPage() {
                     <div className="flex items-center justify-between border-b-2 border-muted/30 pb-4">
                         <h2 className="text-3xl font-black uppercase italic tracking-tighter flex items-center gap-4">
                             <Clock className="h-8 w-8 text-red-500" />
-                            Due for <span className="text-red-500">Review</span>
+                            <span>Due for <span className="text-red-500">Review</span></span>
                         </h2>
                         <Badge className="bg-red-500/10 text-red-500 border-red-500/20 font-black uppercase text-[11px] h-7 px-4 rounded-full">
                             {reviewProblems.length} Pending

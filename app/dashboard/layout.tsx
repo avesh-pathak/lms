@@ -1,5 +1,6 @@
 import { Suspense } from "react"
 import { DashboardSidebar } from "@/components/dashboard-sidebar"
+import { Breadcrumbs } from "@/components/breadcrumbs"
 
 export default async function DashboardLayout({
   children,
@@ -12,6 +13,7 @@ export default async function DashboardLayout({
         <DashboardSidebar />
       </Suspense>
       <main className="flex-1 overflow-y-auto pt-20 lg:pt-0">
+        <Breadcrumbs />
         <Suspense fallback={null}>
           {children}
         </Suspense>

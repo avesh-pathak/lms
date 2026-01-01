@@ -24,7 +24,10 @@ import {
   ChevronLeft,
   ChevronRight,
   PanelLeftClose,
-  PanelLeftOpen
+  PanelLeftOpen,
+  Radio,
+  Wifi,
+  Signal
 } from "lucide-react"
 
 import { ThemeToggle } from "./theme-toggle"
@@ -168,6 +171,15 @@ export function DashboardSidebar() {
               >
                 Leaderboard
               </NavLink>
+              <NavLink
+                href="/dashboard/quiz"
+                icon={BookOpen}
+                active={pathname === "/dashboard/quiz"}
+                onClick={() => setOpen(false)}
+                isCollapsed={isCollapsed}
+              >
+                Quiz
+              </NavLink>
             </div>
           </div>
 
@@ -182,7 +194,7 @@ export function DashboardSidebar() {
               <NavLink
                 href="/dashboard?domain=DSA"
                 icon={Layers}
-                active={pathname === "/dashboard" && (searchParams.get("domain") === "DSA" || !searchParams.get("domain"))}
+                active={pathname === "/dashboard" && searchParams.get("domain") === "DSA"}
                 onClick={() => setOpen(false)}
                 isCollapsed={isCollapsed}
               >

@@ -14,8 +14,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-import { Check, Circle, Star, ExternalLink, ChevronDown, ChevronRight, Shuffle } from "lucide-react"
+import { Check, Circle, Star, ExternalLink, ChevronDown, ChevronRight, Shuffle, BookOpen, List, Video } from "lucide-react"
 import { SearchFilterBar, type FilterState } from "./search-filter-bar"
 import { getProblemData, updateProblemData } from "@/lib/local-storage"
 
@@ -25,6 +26,8 @@ import { ProblemTimer } from "./problem-timer"
 import { ProblemNotes } from "./problem-notes"
 import { TagManager } from "./tag-manager"
 import { toast } from "sonner"
+import { TheoryContent } from "./theory-content"
+import type { TopicTheory } from "@/lib/theory"
 
 function slugToTitle(slug: string) {
   return slug
@@ -39,6 +42,9 @@ type TopicDetailProps = {
 export function TopicDetail({ topicSlug }: TopicDetailProps) {
   const { problems: allProblems, loading, updateProblem } = useProblems()
   const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState("problems")
+  const [theory, setTheory] = useState<TopicTheory | null>(null)
+  const [loadingTheory, setLoadingTheory] = useState(false)
 
   const [searchTerm, setSearchTerm] = useState("")
   const [filters, setFilters] = useState<FilterState>({
@@ -46,6 +52,20 @@ export function TopicDetail({ topicSlug }: TopicDetailProps) {
     statuses: new Set(),
     companies: new Set(),
   })
+
+  // Fetch theory when tab changes to theory
+  useEffect(() => {
+    if (activeTab === "theory" && !theory) {
+      setLoadingTheory(true)
+      fetch(`/api/theory/${topicSlug}`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data.error) setTheory(data)
+        })
+        .catch(err => console.error("Theory fetch error:", err))
+        .finally(() => setLoadingTheory(false))
+    }
+  }, [activeTab, topicSlug, theory])
 
   /* ---------------- FILTER BY TOPIC ---------------- */
   const topicProblems = useMemo(() => {
@@ -165,7 +185,7 @@ export function TopicDetail({ topicSlug }: TopicDetailProps) {
     <div className="p-6 lg:p-8 space-y-6">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="space-y-1">
-          <h2 className="text-4xl font-black tracking-tight uppercase">
+          <h2 className="text-4xl font-black tracking-tight uppercase italic">
             {slugToTitle(topicSlug)}
           </h2>
           <p className="text-sm text-muted-foreground font-medium">
@@ -175,198 +195,235 @@ export function TopicDetail({ topicSlug }: TopicDetailProps) {
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <SearchFilterBar
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          filters={filters}
-          onFilterChange={setFilters}
-        />
-        <Button
-          variant="outline"
-          className="gap-2 shrink-0 h-10 px-4 border-dashed hover:border-primary hover:text-primary transition-all"
-          onClick={pickRandomProblem}
-        >
-          <Shuffle className="h-4 w-4" />
-          Pick Random
-        </Button>
-      </div>
+      <Tabs value={activeTab} defaultValue="problems" className="w-full" onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-2 max-w-[400px] mb-8 bg-muted/50 p-1 border border-border/50 rounded-xl">
+          <TabsTrigger value="problems" className="flex items-center gap-2 font-bold uppercase tracking-tighter italic data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-lg transition-all">
+            <List className="h-4 w-4" />
+            Problems
+          </TabsTrigger>
+          <TabsTrigger value="theory" className="flex items-center gap-2 font-bold uppercase tracking-tighter italic data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-lg transition-all">
+            <BookOpen className="h-4 w-4" />
+            Theory
+          </TabsTrigger>
+        </TabsList>
 
-      <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow className="hover:bg-transparent">
-              <TableHead className="w-10 px-2"></TableHead>
-              <TableHead className="w-10 px-2 font-bold uppercase tracking-wider text-[10px]">#</TableHead>
-              <TableHead className="font-bold uppercase tracking-wider text-[10px]">Problem</TableHead>
-              <TableHead className="w-24 font-bold uppercase tracking-wider text-[10px]">Difficulty</TableHead>
-              <TableHead className="w-32 font-bold uppercase tracking-wider text-[10px]">Timer</TableHead>
-              <TableHead className="w-24 font-bold uppercase tracking-wider text-[10px]">Status</TableHead>
-              <TableHead className="w-24 text-right font-bold uppercase tracking-wider text-[10px]">Action</TableHead>
-            </TableRow>
-          </TableHeader>
+        <TabsContent value="problems" className="space-y-6 mt-0">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <SearchFilterBar
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              filters={filters}
+              onFilterChange={setFilters}
+            />
+            <Button
+              variant="outline"
+              className="gap-2 shrink-0 h-10 px-4 border-dashed hover:border-primary hover:text-primary transition-all font-bold uppercase tracking-tighter italic"
+              onClick={pickRandomProblem}
+            >
+              <Shuffle className="h-4 w-4" />
+              Pick Random
+            </Button>
+          </div>
 
-          <TableBody>
-            {filteredProblems.map((problem, index) => (
-              <React.Fragment key={problem._id}>
-                <TableRow
-                  id={`problem-${problem._id}`}
-                  className={cn(
-                    "group transition-colors cursor-pointer",
-                    expandedId === problem._id && "bg-muted/50"
-                  )}
-                  onClick={() => setExpandedId(expandedId === problem._id ? null : problem._id)}
-                >
-                  <TableCell className="align-top py-4" onClick={(e) => e.stopPropagation()}>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setExpandedId(expandedId === problem._id ? null : problem._id)
-                      }}
-                    >
-                      {expandedId === problem._id ? (
-                        <ChevronDown className="h-4 w-4" />
-                      ) : (
-                        <ChevronRight className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground px-2 align-top py-4">{index + 1}</TableCell>
-
-                  <TableCell className="whitespace-normal py-4 min-w-[300px] align-top">
-                    <div className="flex items-start gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          toggleStar(problem._id)
-                        }}
-                        className="transition-transform active:scale-125 pt-0.5"
-                      >
-                        <Star
-                          className={cn(
-                            "h-4 w-4 transition-colors",
-                            problem.starred
-                              ? "fill-yellow-400 text-yellow-400"
-                              : "text-muted-foreground group-hover:text-muted-foreground/80"
-                          )}
-                        />
-                      </button>
-
-                      <span className="text-base font-bold leading-tight break-words flex-1 group-hover/row:text-primary transition-colors">{problem.title}</span>
-
-                      <a
-                        href={problem.problem_link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-muted-foreground hover:text-primary transition-colors pt-0.5 shrink-0"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <ExternalLink className="h-3.5 w-3.5" />
-                      </a>
-                    </div>
-                  </TableCell>
-
-                  <TableCell className="align-top py-4">
-                    <Badge
-                      variant="secondary"
-                      className={cn(
-                        "font-bold uppercase text-[10px] h-5",
-                        problem.difficulty === "Easy" && "bg-green-500/10 text-green-500 hover:bg-green-500/20",
-                        problem.difficulty === "Medium" && "bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20",
-                        problem.difficulty === "Hard" && "bg-red-500/10 text-red-500 hover:bg-red-500/20"
-                      )}
-                    >
-                      {problem.difficulty}
-                    </Badge>
-                  </TableCell>
-
-                  <TableCell className="align-top py-4" onClick={(e) => e.stopPropagation()}>
-                    <ProblemTimer
-                      problemId={problem._id}
-                      onTimeUpdate={handleTimeUpdate}
-                    />
-                  </TableCell>
-
-                  <TableCell className="align-top py-4">
-                    <div className="flex items-center gap-2">
-                      {problem.status === "Completed" ? (
-                        <div className="flex items-center gap-1.5 text-success">
-                          <Check className="h-4 w-4" />
-                          <span className="text-sm font-bold uppercase tracking-tight">Solved</span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-1.5 text-muted-foreground">
-                          <Circle className="h-4 w-4" />
-                          <span className="text-sm font-bold uppercase tracking-tight">Pending</span>
-                        </div>
-                      )}
-                    </div>
-                  </TableCell>
-
-                  <TableCell className="text-right align-top py-4" onClick={(e) => e.stopPropagation()}>
-                    <Button
-                      size="sm"
-                      variant={problem.status === "Completed" ? "outline" : "default"}
-                      className="h-8"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        toggleStatus(problem._id)
-                      }}
-                    >
-                      {problem.status === "Completed" ? "Undo" : "Done"}
-                    </Button>
-                  </TableCell>
+          <div className="rounded-xl border bg-card/50 backdrop-blur-sm shadow-sm overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow className="hover:bg-transparent border-b border-border/50">
+                  <TableHead className="w-10 px-2"></TableHead>
+                  <TableHead className="w-10 px-2 font-black uppercase tracking-wider text-[10px]">#</TableHead>
+                  <TableHead className="font-black uppercase tracking-wider text-[10px]">Problem</TableHead>
+                  <TableHead className="w-24 font-black uppercase tracking-wider text-[10px]">Difficulty</TableHead>
+                  <TableHead className="w-32 font-black uppercase tracking-wider text-[10px]">Timer</TableHead>
+                  <TableHead className="w-24 font-black uppercase tracking-wider text-[10px]">Status</TableHead>
+                  <TableHead className="w-24 text-right font-black uppercase tracking-wider text-[10px]">Action</TableHead>
                 </TableRow>
+              </TableHeader>
 
-                {expandedId === problem._id && (
-                  <TableRow className="bg-muted/30 hover:bg-muted/30 border-t-0">
-                    <TableCell colSpan={7} className="p-0">
-                      <div className="p-4 md:p-6 bg-card border-x border-b rounded-b-xl mx-4 mb-4 shadow-inner animate-in fade-in slide-in-from-top-2 duration-200 space-y-6">
-                        <div className="flex flex-col gap-2">
-                          <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Tags</label>
-                          <TagManager
-                            availableTags={allAvailableTags}
-                            selectedTags={problem.tags || []}
-                            onTagsChange={(tags) => handleTagsChange(problem._id, tags)}
-                            onCreateTag={(tag) => handleTagsChange(problem._id, [...(problem.tags || []), tag])}
-                          />
-                        </div>
+              <TableBody>
+                {filteredProblems.map((problem, index) => (
+                  <React.Fragment key={problem._id}>
+                    <TableRow
+                      id={`problem-${problem._id}`}
+                      className={cn(
+                        "group transition-colors cursor-pointer border-b border-border/50 last:border-0",
+                        expandedId === problem._id && "bg-muted/50"
+                      )}
+                      onClick={() => setExpandedId(expandedId === problem._id ? null : problem._id)}
+                    >
+                      <TableCell className="align-top py-4" onClick={(e) => e.stopPropagation()}>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setExpandedId(expandedId === problem._id ? null : problem._id)
+                          }}
+                        >
+                          {expandedId === problem._id ? (
+                            <ChevronDown className="h-4 w-4" />
+                          ) : (
+                            <ChevronRight className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground px-2 align-top py-4 font-bold">{index + 1}</TableCell>
 
-                        <div className="flex flex-col gap-2">
-                          <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Problem Details</label>
-                          <ProblemNotes
-                            problemId={problem._id}
-                            initialNotes={problem.notes || ""}
-                            initialSolution={problem.solution || ""}
-                            initialApproach={problem.approach || ""}
-                            onSave={handleNotesSave}
-                          />
+                      <TableCell className="whitespace-normal py-4 min-w-[300px] align-top">
+                        <div className="flex items-start gap-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              toggleStar(problem._id)
+                            }}
+                            className="transition-transform active:scale-125 pt-0.5"
+                          >
+                            <Star
+                              className={cn(
+                                "h-4 w-4 transition-colors",
+                                problem.starred
+                                  ? "fill-yellow-400 text-yellow-400"
+                                  : "text-muted-foreground group-hover:text-muted-foreground/80"
+                              )}
+                            />
+                          </button>
+
+                          <span className="text-base font-bold leading-tight break-words flex-1 group-hover/row:text-primary transition-colors tracking-tight italic">{problem.title}</span>
+
+                          <a
+                            href={problem.problem_link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-muted-foreground hover:text-primary transition-colors pt-0.5 shrink-0"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <ExternalLink className="h-3.5 w-3.5" />
+                          </a>
                         </div>
+                      </TableCell>
+
+                      <TableCell className="align-top py-4">
+                        <Badge
+                          variant="secondary"
+                          className={cn(
+                            "font-black uppercase text-[10px] h-5 tracking-tighter",
+                            problem.difficulty === "Easy" && "bg-green-500/10 text-green-500 hover:bg-green-500/20",
+                            problem.difficulty === "Medium" && "bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20",
+                            problem.difficulty === "Hard" && "bg-red-500/10 text-red-500 hover:bg-red-500/20"
+                          )}
+                        >
+                          {problem.difficulty}
+                        </Badge>
+                      </TableCell>
+
+                      <TableCell className="align-top py-4" onClick={(e) => e.stopPropagation()}>
+                        <ProblemTimer
+                          problemId={problem._id}
+                          onTimeUpdate={handleTimeUpdate}
+                        />
+                      </TableCell>
+
+                      <TableCell className="align-top py-4">
+                        <div className="flex items-center gap-2">
+                          {problem.status === "Completed" ? (
+                            <div className="flex items-center gap-1.5 text-success">
+                              <Check className="h-4 w-4" />
+                              <span className="text-sm font-black uppercase tracking-tight italic">Solved</span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1.5 text-muted-foreground">
+                              <Circle className="h-4 w-4" />
+                              <span className="text-sm font-black uppercase tracking-tight italic">Pending</span>
+                            </div>
+                          )}
+                        </div>
+                      </TableCell>
+
+                      <TableCell className="text-right align-top py-4" onClick={(e) => e.stopPropagation()}>
+                        <Button
+                          size="sm"
+                          variant={problem.status === "Completed" ? "outline" : "default"}
+                          className="h-8 font-black uppercase tracking-tighter italic"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            toggleStatus(problem._id)
+                          }}
+                        >
+                          {problem.status === "Completed" ? "Undo" : "Done"}
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+
+                    {expandedId === problem._id && (
+                      <TableRow className="bg-muted/30 hover:bg-muted/30 border-t-0">
+                        <TableCell colSpan={7} className="p-0">
+                          <div className="p-4 md:p-6 bg-card border-x border-b rounded-b-xl mx-4 mb-4 shadow-inner animate-in fade-in slide-in-from-top-2 duration-200 space-y-6">
+                            <div className="flex flex-col gap-2">
+                              <label className="text-xs font-black text-muted-foreground uppercase tracking-wider">Tags</label>
+                              <TagManager
+                                availableTags={allAvailableTags}
+                                selectedTags={problem.tags || []}
+                                onTagsChange={(tags) => handleTagsChange(problem._id, tags)}
+                                onCreateTag={(tag) => handleTagsChange(problem._id, [...(problem.tags || []), tag])}
+                              />
+                            </div>
+
+                            <div className="flex flex-col gap-2">
+                              <label className="text-xs font-black text-muted-foreground uppercase tracking-wider">Problem Details</label>
+                              <ProblemNotes
+                                problemId={problem._id}
+                                initialNotes={problem.notes || ""}
+                                initialSolution={problem.solution || ""}
+                                initialApproach={problem.approach || ""}
+                                onSave={handleNotesSave}
+                              />
+                            </div>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </React.Fragment>
+                ))}
+
+                {filteredProblems.length === 0 && (
+                  <TableRow>
+                    <TableCell
+                      colSpan={7}
+                      className="text-center py-20 text-muted-foreground"
+                    >
+                      <div className="flex flex-col items-center gap-2">
+                        <p className="font-bold uppercase tracking-tighter italic">No problems found</p>
+                        <p className="text-xs opacity-60">Try adjusting your filters or search term</p>
                       </div>
                     </TableCell>
                   </TableRow>
                 )}
-              </React.Fragment>
-            ))}
+              </TableBody>
+            </Table>
+          </div>
+        </TabsContent>
 
-            {filteredProblems.length === 0 && (
-              <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="text-center py-12 text-muted-foreground"
-                >
-                  <div className="flex flex-col items-center gap-2">
-                    <p>No problems found in this topic matching your search</p>
-                  </div>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+        <TabsContent value="theory" className="mt-0 min-h-[400px]">
+          {loadingTheory ? (
+            <div className="flex flex-col items-center justify-center py-32 space-y-4">
+              <div className="h-10 w-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+              <p className="text-sm font-black uppercase tracking-widest italic animate-pulse">Analyzing Theory...</p>
+            </div>
+          ) : theory ? (
+            <TheoryContent
+              theory={theory}
+              onPracticeClick={() => setActiveTab("problems")}
+            />
+          ) : (
+            <div className="space-y-12">
+              <div className="text-center py-20 bg-muted/20 rounded-[40px] border border-dashed border-border/50">
+                <p className="text-muted-foreground font-bold uppercase tracking-tighter italic text-xl">Theory content coming soon for this module.</p>
+                <p className="text-xs text-muted-foreground/60 mt-2 font-medium">We're still distilling the core patterns for {slugToTitle(topicSlug)}.</p>
+              </div>
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }
