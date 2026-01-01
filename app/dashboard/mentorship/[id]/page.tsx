@@ -133,16 +133,16 @@ export default function MentorProfilePage({ params }: { params: Promise<{ id: st
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
                 </div>
 
-                <div className="flex-1 flex flex-col items-center justify-center p-6 lg:p-12 relative z-10">
+                <div className="flex-1 flex flex-col items-center justify-center p-4 lg:p-6 relative z-10">
                     <div className="w-full max-w-2xl">
                         {step === "calendar" && (
-                            <div className="space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700">
-                                <div className="space-y-2 text-center">
-                                    <h2 className="text-4xl font-black italic uppercase tracking-tighter leading-none">Schedule Synchronization</h2>
-                                    <p className="text-xs font-black text-muted-foreground uppercase tracking-[0.4em] opacity-70">Select a temporal node for execution</p>
+                            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
+                                <div className="space-y-1 text-center">
+                                    <h2 className="text-2xl font-black italic uppercase tracking-tighter leading-none">Schedule Synchronization</h2>
+                                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] opacity-70">Select a temporal node for execution</p>
                                 </div>
 
-                                <div className="p-8 rounded-[48px] bg-card border-2 border-border/50 shadow-[0_20px_50px_rgba(0,0,0,0.05)]">
+                                <div className="p-6 rounded-[32px] bg-card border-2 border-border/50 shadow-[0_20px_50px_rgba(0,0,0,0.05)]">
                                     <BookingCalendar
                                         selectedDate={selectedDate}
                                         selectedTime={selectedTime}
@@ -151,17 +151,17 @@ export default function MentorProfilePage({ params }: { params: Promise<{ id: st
                                     />
                                 </div>
 
-                                <div className="flex items-center justify-between p-8 rounded-[40px] bg-primary/[0.02] border-2 border-dashed border-primary/20">
-                                    <div className="space-y-1">
-                                        <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Required Credit</div>
-                                        <div className="text-4xl font-black italic tracking-tighter text-primary">₹{mentor.hourlyRate}</div>
+                                <div className="flex items-center justify-between p-6 rounded-[32px] bg-primary/[0.02] border-2 border-dashed border-primary/20">
+                                    <div className="space-y-0.5">
+                                        <div className="text-[9px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Required Credit</div>
+                                        <div className="text-2xl font-black italic tracking-tighter text-primary">₹{mentor.hourlyRate}</div>
                                     </div>
                                     <Button
                                         disabled={!selectedTime}
                                         onClick={() => setStep("checkout")}
-                                        className="h-16 px-10 rounded-2xl font-black italic uppercase tracking-[0.2em] bg-primary text-white shadow-2xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all duration-300 disabled:grayscale"
+                                        className="h-12 px-8 rounded-xl font-black italic uppercase tracking-[0.15em] bg-primary text-white shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all duration-300 disabled:grayscale text-xs"
                                     >
-                                        Proceed to Checkout <ArrowRight className="w-5 h-5 ml-3" />
+                                        Proceed <ArrowRight className="w-4 h-4 ml-2" />
                                     </Button>
                                 </div>
                             </div>
