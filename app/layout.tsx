@@ -25,13 +25,11 @@ import { ProblemsProvider } from "@/components/problems-provider"
 import { getProblems } from "@/lib/problems"
 import { Toaster } from "@/components/ui/sonner"
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const problems = await getProblems()
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`} suppressHydrationWarning>
@@ -51,7 +49,7 @@ export default async function RootLayout({
             `,
           }}
         />
-        <ProblemsProvider initialProblems={problems}>
+        <ProblemsProvider initialProblems={[]}>
           {children}
           <Toaster />
         </ProblemsProvider>

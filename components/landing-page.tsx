@@ -1,5 +1,3 @@
-"use client"
-
 import React from "react"
 import Link from "next/link"
 import { ArrowRight, Trophy, Code2, Layers, Zap, Star, ShieldCheck, Cpu, PencilRuler, MessageSquare, Users, Linkedin, Radio, Sparkles } from "lucide-react"
@@ -9,23 +7,13 @@ import { Progress } from "@/components/ui/progress"
 import { toSlug, cn } from "@/lib/utils"
 // Note: We use the local types
 import type { Topic } from "@/lib/types"
-import { useProblems } from "@/components/problems-provider"
+import { ProofOfWorkStats } from "./proof-of-work-stats"
 
 interface LandingPageProps {
     topics: Topic[]
 }
 
 export function LandingPage({ topics }: LandingPageProps) {
-    const { problems } = useProblems()
-
-    // Memoize stats to avoid recalculated on every render (improves INP)
-    const { solvedProblems, progress, totalProblems } = React.useMemo(() => {
-        const total = 20
-        const solved = problems ? problems.filter(p => p.status === "Completed").length : 0
-        const prog = Math.min(Math.round((solved / total) * 100), 100)
-        return { solvedProblems: solved, progress: prog, totalProblems: total }
-    }, [problems])
-
     return (
         <div className="min-h-screen bg-background text-foreground selection:bg-primary/20">
             {/* Navbar */}
@@ -43,7 +31,7 @@ export function LandingPage({ topics }: LandingPageProps) {
                         <a href="#mentor" className="hover:text-[#FB923C] transition-colors">Mentorship</a>
                     </div>
                     <Link href="/dashboard">
-                        <Button variant="default" className="rounded-full px-6 font-bold shadow-lg shadow-[#FB923C]/20 hover:scale-105 transition-all">
+                        <Button variant="default" className="rounded-full px-6 font-bold shadow-lg shadow-[#FB923C]/20 hover:scale-105 transition-all text-white bg-[#FB923C] hover:bg-[#FB923C]/90">
                             Launch Hub
                         </Button>
                     </Link>
@@ -56,7 +44,6 @@ export function LandingPage({ topics }: LandingPageProps) {
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-primary/20 blur-[120px] rounded-full -z-10 opacity-50" />
 
                 <div className="max-w-7xl mx-auto px-6 text-center space-y-8">
-
                     <h1 className="text-4xl md:text-6xl lg:text-8xl font-black tracking-tighter leading-[0.85] max-w-5xl mx-auto uppercase">
                         REAL ENGINEERING <br />
                         NOT JUST <span className="text-[#FB923C] italic underline decoration-4 underline-offset-8">CERTIFICATES</span>
@@ -68,7 +55,7 @@ export function LandingPage({ topics }: LandingPageProps) {
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                         <Link href="/dashboard">
-                            <Button size="lg" className="h-16 px-12 rounded-2xl bg-[#FB923C] hover:bg-[#FB923C]/90 text-white font-black uppercase tracking-tight shadow-2xl shadow-[#FB923C]/20 text-lg group">
+                            <Button size="lg" className="h-16 px-12 rounded-2xl bg-[#FB923C] hover:bg-[#FB923C]/90 text-white font-black uppercase tracking-tight shadow-2xl shadow-[#FB923C]/20 text-lg group border-none">
                                 Start Building <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                             </Button>
                         </Link>
@@ -267,7 +254,7 @@ export function LandingPage({ topics }: LandingPageProps) {
                                 <div className="space-y-6">
                                     <div className="flex items-center gap-4">
                                         <div className="w-16 h-16 rounded-3xl bg-muted overflow-hidden border-2 border-[#FB923C]/20 shrink-0 aspect-square">
-                                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Amit" alt="User" className="w-full h-full object-cover" loading="eager" />
+                                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Amit" alt="Student Profile: Amit Patel" className="w-full h-full object-cover" loading="eager" />
                                         </div>
                                         <div className="space-y-1">
                                             <div className="font-bold text-lg leading-none">Amit Patel</div>
@@ -275,25 +262,7 @@ export function LandingPage({ topics }: LandingPageProps) {
                                         </div>
                                     </div>
 
-                                    {/* // ... (Inside the component) */}
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="p-4 rounded-2xl border bg-muted/10 space-y-1">
-                                            <p className="text-[10px] font-black text-muted-foreground uppercase">Topics Mastered</p>
-                                            <p className="text-2xl font-black tracking-tighter text-[#FB923C]">{solvedProblems}/{totalProblems}</p>
-                                        </div>
-                                        <div className="p-4 rounded-2xl border bg-muted/10 space-y-1">
-                                            <p className="text-[10px] font-black text-muted-foreground uppercase">Mock Interviews</p>
-                                            <p className="text-2xl font-black tracking-tighter text-[#FB923C]">05</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <div className="flex justify-between text-[10px] font-black uppercase">
-                                            <span>Engineering Blueprint</span>
-                                            <span className="text-[#FB923C]">{progress}% Complete</span>
-                                        </div>
-                                        <Progress value={progress} className="h-2 rounded-full" />
-                                    </div>
+                                    <ProofOfWorkStats />
                                 </div>
                             </div>
                         </div>
@@ -316,7 +285,7 @@ export function LandingPage({ topics }: LandingPageProps) {
                                     <p className="font-bold">Skill-based badges that carry actual weight.</p>
                                 </div>
                             </div>
-                            <Button size="lg" className="h-16 px-10 rounded-full text-xl font-black uppercase tracking-tight shadow-2xl shadow-[#FB923C]/20 bg-[#FB923C] text-white hover:bg-[#FB923C]/90">
+                            <Button size="lg" className="h-16 px-10 rounded-full text-xl font-black uppercase tracking-tight shadow-2xl shadow-[#FB923C]/20 bg-[#FB923C] text-white hover:bg-[#FB923C]/90 border-none">
                                 Create Your Profile
                             </Button>
                         </div>
@@ -365,12 +334,12 @@ export function LandingPage({ topics }: LandingPageProps) {
                                             <p className="text-[10px] text-muted-foreground">Expert guidance from Top Engineers</p>
                                         </div>
                                     </div>
-                                    <Badge className="bg-[#FB923C]">₹399/hr</Badge>
+                                    <Badge className="bg-[#FB923C] text-white border-none">₹399/hr</Badge>
                                 </div>
                                 <div className="flex items-center justify-between p-3 rounded-2xl bg-muted/30 border border-dashed hover:bg-muted/50 transition-colors">
                                     <div className="flex items-center gap-3">
                                         <div className="h-10 w-10 rounded-full bg-gray-200 border-2 border-white shadow-sm overflow-hidden shrink-0 aspect-square">
-                                            <img src="/assets/mentors/image.png" alt="Mentor 1" className="w-full h-full object-cover" loading="lazy" />
+                                            <img src="/assets/mentors/image.png" alt="Mentor Profile: Vikram Singh, Senior Staff at Google" className="w-full h-full object-cover" loading="lazy" />
                                         </div>
                                         <div>
                                             <p className="text-xs font-black uppercase tracking-tight">Vikram Singh</p>
@@ -384,7 +353,7 @@ export function LandingPage({ topics }: LandingPageProps) {
                                 <div className="flex items-center justify-between p-3 rounded-2xl bg-muted/30 border border-dashed hover:bg-muted/50 transition-colors">
                                     <div className="flex items-center gap-3">
                                         <div className="h-10 w-10 rounded-full bg-gray-200 border-2 border-white shadow-sm overflow-hidden shrink-0 aspect-square">
-                                            <img src="/assets/mentors/image2.png" alt="Mentor 2" className="w-full h-full object-cover" loading="lazy" />
+                                            <img src="/assets/mentors/image2.png" alt="Mentor Profile: Sarah Chen, Manager at Netflix" className="w-full h-full object-cover" loading="lazy" />
                                         </div>
                                         <div>
                                             <p className="text-xs font-black uppercase tracking-tight">Sarah Chen</p>
@@ -396,7 +365,7 @@ export function LandingPage({ topics }: LandingPageProps) {
                                     </Link>
                                 </div>
                                 <Link href="/dashboard/mentorship" className="block">
-                                    <Button className="w-full h-14 rounded-2xl bg-[#FB923C] hover:bg-[#FB923C]/90 text-white font-black uppercase tracking-tight shadow-xl shadow-[#FB923C]/20">
+                                    <Button className="w-full h-14 rounded-2xl bg-[#FB923C] hover:bg-[#FB923C]/90 text-white font-black uppercase tracking-tight shadow-xl shadow-[#FB923C]/20 border-none">
                                         Find Your Mentor
                                     </Button>
                                 </Link>
@@ -415,7 +384,7 @@ export function LandingPage({ topics }: LandingPageProps) {
                     </h2>
                     <div className="flex justify-center">
                         <Link href="/dashboard">
-                            <Button size="lg" className="bg-white text-[#FB923C] hover:bg-white/90 h-20 px-16 rounded-full text-2xl font-black uppercase tracking-tight shadow-[0_0_50px_rgba(255,255,255,0.3)]">
+                            <Button size="lg" className="bg-white text-[#FB923C] hover:bg-white/90 h-20 px-16 rounded-full text-2xl font-black uppercase tracking-tight shadow-[0_0_50px_rgba(255,255,255,0.3)] border-none">
                                 Launch Hub Now
                             </Button>
                         </Link>
