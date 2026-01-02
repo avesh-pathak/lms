@@ -18,10 +18,13 @@ interface LandingPageProps {
 export function LandingPage({ topics }: LandingPageProps) {
     const { problems } = useProblems()
 
-    // Calculate stats
-    const totalProblems = 20
-    const solvedProblems = problems ? problems.filter(p => p.status === "Completed").length : 0
-    const progress = Math.min(Math.round((solvedProblems / totalProblems) * 100), 100)
+    // Memoize stats to avoid recalculated on every render (improves INP)
+    const { solvedProblems, progress } = React.useMemo(() => {
+        const totalProblems = 20
+        const solved = problems ? problems.filter(p => p.status === "Completed").length : 0
+        const prog = Math.min(Math.round((solved / totalProblems) * 100), 100)
+        return { solvedProblems: solved, progress: prog }
+    }, [problems])
 
     return (
         <div className="min-h-screen bg-background text-foreground selection:bg-primary/20">
@@ -48,7 +51,7 @@ export function LandingPage({ topics }: LandingPageProps) {
             </nav>
 
             {/* Hero Section */}
-            <section className="relative pt-32 pb-20 overflow-hidden">
+            <section className="relative pt-32 pb-20 overflow-hidden min-h-[600px]">
                 {/* Decorative Gradients */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-primary/20 blur-[120px] rounded-full -z-10 opacity-50" />
 
@@ -263,8 +266,8 @@ export function LandingPage({ topics }: LandingPageProps) {
 
                                 <div className="space-y-6">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-16 h-16 rounded-3xl bg-muted overflow-hidden border-2 border-[#FB923C]/20">
-                                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Amit" alt="User" className="w-full h-full object-cover" />
+                                        <div className="w-16 h-16 rounded-3xl bg-muted overflow-hidden border-2 border-[#FB923C]/20 shrink-0 aspect-square">
+                                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Amit" alt="User" className="w-full h-full object-cover" loading="eager" />
                                         </div>
                                         <div className="space-y-1">
                                             <div className="font-bold text-lg leading-none">Amit Patel</div>
@@ -366,8 +369,8 @@ export function LandingPage({ topics }: LandingPageProps) {
                                 </div>
                                 <div className="flex items-center justify-between p-3 rounded-2xl bg-muted/30 border border-dashed hover:bg-muted/50 transition-colors">
                                     <div className="flex items-center gap-3">
-                                        <div className="h-10 w-10 rounded-full bg-gray-200 border-2 border-white shadow-sm overflow-hidden">
-                                            <img src="/assets/mentors/image.png" className="w-full h-full object-cover" />
+                                        <div className="h-10 w-10 rounded-full bg-gray-200 border-2 border-white shadow-sm overflow-hidden shrink-0 aspect-square">
+                                            <img src="/assets/mentors/image.png" alt="Mentor 1" className="w-full h-full object-cover" loading="lazy" />
                                         </div>
                                         <div>
                                             <p className="text-xs font-black uppercase tracking-tight">Vikram Singh</p>
@@ -380,8 +383,8 @@ export function LandingPage({ topics }: LandingPageProps) {
                                 </div>
                                 <div className="flex items-center justify-between p-3 rounded-2xl bg-muted/30 border border-dashed hover:bg-muted/50 transition-colors">
                                     <div className="flex items-center gap-3">
-                                        <div className="h-10 w-10 rounded-full bg-gray-200 border-2 border-white shadow-sm overflow-hidden">
-                                            <img src="/assets/mentors/image2.png" className="w-full h-full object-cover" />
+                                        <div className="h-10 w-10 rounded-full bg-gray-200 border-2 border-white shadow-sm overflow-hidden shrink-0 aspect-square">
+                                            <img src="/assets/mentors/image2.png" alt="Mentor 2" className="w-full h-full object-cover" loading="lazy" />
                                         </div>
                                         <div>
                                             <p className="text-xs font-black uppercase tracking-tight">Sarah Chen</p>

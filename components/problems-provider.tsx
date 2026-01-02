@@ -39,28 +39,35 @@ export function ProblemsProvider({
     const [problems, setProblems] = useState<MongoDBProblem[]>(initialProblems)
     const [loading, setLoading] = useState(initialProblems.length === 0)
 
-    // Derive topics from the problems state to stay reactive
+    // Derive topics from the problems state to stay reactive (Optimized)
     const topics = React.useMemo(() => {
         const topicMap = new Map<string, Topic>()
 
-        // Subject mapping for Core Engineering
-        const getSubjectForTopic = (topicName: string): string | undefined => {
-            const name = topicName.toLowerCase()
-            if (["scalability", "distributed systems", "api design", "message queues", "caching", "load balancing"].some(t => name.includes(t))) return "System Design"
-            if (["ood patterns", "design patterns", "creational patterns", "structural patterns", "behavioral patterns"].some(t => name.includes(t))) return "Low Level Design"
-            if (name.includes("operating systems") || name.includes("os fundamentals")) return "Operating Systems"
-            if (name.includes("computer networks") || name.includes("tcp") || name.includes("http")) return "Computer Networks"
-            if (name.includes("dbms") || name.includes("database") || name.includes("sql") || name.includes("nosql")) return "DBMS"
-            if (["neural networks", "supervised learning", "genai", "machine learning", "deep learning", "nlp"].some(t => name.includes(t))) return "AI/ML"
+        // Optimize keyword matching by pre-defining maps
+        const subjectKeywords = [
+            { keywords: ["scalability", "distributed systems", "api design", "message queues", "caching", "load balancing"], subject: "System Design" },
+            { keywords: ["ood patterns", "design patterns", "creational patterns", "structural patterns", "behavioral patterns"], subject: "Low Level Design" },
+            { keywords: ["operating systems", "os fundamentals"], subject: "Operating Systems" },
+            { keywords: ["computer networks", "tcp", "http"], subject: "Computer Networks" },
+            { keywords: ["dbms", "database", "sql", "nosql"], subject: "DBMS" },
+            { keywords: ["neural networks", "supervised learning", "genai", "machine learning", "deep learning", "nlp"], subject: "AI/ML" },
+        ]
+
+        const getSubjectForTopic = (pTopic: string): string | undefined => {
+            const name = pTopic.toLowerCase()
+            for (const item of subjectKeywords) {
+                if (item.keywords.some(k => name.includes(k))) return item.subject
+            }
             return undefined
         }
 
-        problems.forEach(p => {
+        for (const p of problems) {
             const topicId = toSlug(p.topic)
-            const domain = p.domain || "DSA" // Default to DSA
+            const domain = p.domain || "DSA"
 
-            if (!topicMap.has(topicId)) {
-                topicMap.set(topicId, {
+            let t = topicMap.get(topicId)
+            if (!t) {
+                t = {
                     id: topicId,
                     name: p.topic,
                     solved: 0,
@@ -68,13 +75,13 @@ export function ProblemsProvider({
                     domain: domain as any,
                     subject: getSubjectForTopic(p.topic),
                     reviewCount: 0
-                })
+                }
+                topicMap.set(topicId, t)
             }
-            const t = topicMap.get(topicId)!
             t.total++
             if (p.status === "Completed") t.solved++
             if (p.isReviewDue) t.reviewCount = (t.reviewCount || 0) + 1
-        })
+        }
         return Array.from(topicMap.values())
     }, [problems])
 
@@ -110,22 +117,27 @@ export function ProblemsProvider({
         return applySRS(merged)
     }
 
-    const mergeWithDomainData = (apiProblems: MongoDBProblem[]) => {
-        const mergedApi = apiProblems.map(mergeProblem)
-        const allProblems = [...mergedApi]
+    const processAllProblems = (apiProblems: MongoDBProblem[]) => {
+        const allProblemsMap = new Map<string, MongoDBProblem>();
+
+        apiProblems.forEach(p => {
+            allProblemsMap.set(p._id, mergeProblem(p));
+        });
+
         DOMAIN_PROBLEMS.forEach(dp => {
-            if (!allProblems.find(p => p._id === dp._id)) {
-                allProblems.push(mergeProblem(dp))
+            if (!allProblemsMap.has(dp._id)) {
+                allProblemsMap.set(dp._id, mergeProblem(dp));
             }
-        })
-        return allProblems
+        });
+
+        return Array.from(allProblemsMap.values());
     }
 
     const fetchData = async () => {
         try {
             const res = await fetch("/api/problems")
             const data = await res.json()
-            setProblems(mergeWithDomainData(data.problems ?? []))
+            setProblems(processAllProblems(data.problems ?? []))
         } catch (err) {
             console.error("Failed to load problems in provider", err)
         } finally {
@@ -146,7 +158,7 @@ export function ProblemsProvider({
 
     useEffect(() => {
         if (initialProblems.length > 0) {
-            setProblems(mergeWithDomainData(initialProblems))
+            setProblems(processAllProblems(initialProblems))
             setLoading(false)
         } else {
             fetchData()

@@ -29,42 +29,95 @@ export function AnalyticsDashboard() {
   const pointsMap = { "Easy": 50, "Medium": 100, "Hard": 200 }
 
   // --- Data Calculations ---
-  const stats = useMemo(() => {
+  // --- Consolidated Data Calculations (Optimized to O(N) instead of O(N^2)) ---
+  const { stats, trendData, streak, completedToday } = useMemo(() => {
     const total = topics.reduce((s, t) => s + t.total, 0)
     const solved = topics.reduce((s, t) => s + t.solved, 0)
     const percent = total > 0 ? (solved / total) * 100 : 0
 
-    const byDiff = (level: string) => ({
-      done: problems.filter(p => p.difficulty === level && p.status === "Completed").length,
-      total: problems.filter(p => p.difficulty === level).length,
+    const diffStats = {
+      Easy: { done: 0, total: 0 },
+      Medium: { done: 0, total: 0 },
+      Hard: { done: 0, total: 0 }
+    }
+
+    let totalXP = 0
+    let completedCountToday = 0
+    const today = new Date()
+    const todayStr = format(today, "yyyy-MM-dd")
+    const yesterdayStr = format(subDays(today, 1), "yyyy-MM-dd")
+
+    // Map to group XP by date for trend
+    const xpByDate = new Map<string, number>()
+
+    // Set for streak calculation
+    const completedDatesSet = new Set<string>()
+
+    problems.forEach(p => {
+      const diff = p.difficulty as keyof typeof diffStats
+      if (diffStats[diff]) {
+        diffStats[diff].total++
+        if (p.status === "Completed") {
+          diffStats[diff].done++
+        }
+      }
+
+      if (p.status === "Completed") {
+        const xp = pointsMap[p.difficulty as keyof typeof pointsMap] || 50
+        totalXP += xp
+
+        if (p.completedAt) {
+          const pDate = parseISO(p.completedAt)
+          const pDateStr = format(pDate, "yyyy-MM-dd")
+          completedDatesSet.add(pDateStr)
+
+          if (isSameDay(pDate, today)) {
+            completedCountToday++
+          }
+
+          const trendKey = format(pDate, "MMM d")
+          xpByDate.set(trendKey, (xpByDate.get(trendKey) || 0) + xp)
+        }
+      }
     })
 
-    const easy = byDiff("Easy")
-    const medium = byDiff("Medium")
-    const hard = byDiff("Hard")
-
-    const totalXP = problems
-      .filter(p => p.status === "Completed")
-      .reduce((acc, p) => acc + (pointsMap[p.difficulty as keyof typeof pointsMap] || 50), 0)
-
-    return { total, solved, percent, easy, medium, hard, totalXP }
-  }, [topics, problems])
-
-  const trendData = useMemo(() => {
+    // Generate trend data for last 30 days
     const last30Days = eachDayOfInterval({
       start: subDays(new Date(), 29),
       end: new Date(),
     })
+    const trend = last30Days.map(date => ({
+      date: format(date, "MMM d"),
+      xp: xpByDate.get(format(date, "MMM d")) || 0
+    }))
 
-    return last30Days.map(date => {
-      const dateStr = format(date, "MMM d")
-      const xp = problems
-        .filter(p => p.status === "Completed" && p.completedAt && isSameDay(parseISO(p.completedAt), date))
-        .reduce((acc, p) => acc + (pointsMap[p.difficulty as keyof typeof pointsMap] || 50), 0)
+    // Calculate Streak
+    const sortedDates = Array.from(completedDatesSet).sort((a, b) => b.localeCompare(a))
+    let currentStreak = 0
+    if (sortedDates.length > 0) {
+      let checkDate = sortedDates[0] === todayStr ? todayStr : (sortedDates[0] === yesterdayStr ? yesterdayStr : null)
+      if (checkDate) {
+        let dateIterator = parseISO(checkDate)
+        for (const dateStr of sortedDates) {
+          if (dateStr === format(dateIterator, "yyyy-MM-dd")) {
+            currentStreak++
+            dateIterator = subDays(dateIterator, 1)
+          } else if (dateStr > format(dateIterator, "yyyy-MM-dd")) {
+            continue // Skip multiple completions on same day (already unique via Set)
+          } else {
+            break
+          }
+        }
+      }
+    }
 
-      return { date: dateStr, xp }
-    })
-  }, [problems])
+    return {
+      stats: { total, solved, percent, easy: diffStats.Easy, medium: diffStats.Medium, hard: diffStats.Hard, totalXP },
+      trendData: trend,
+      streak: currentStreak,
+      completedToday: completedCountToday
+    }
+  }, [topics, problems])
 
   const topicChartData = useMemo(() => {
     return topics
@@ -78,37 +131,6 @@ export function AnalyticsDashboard() {
       .sort((a, b) => b.percent - a.percent)
       .slice(0, 10)
   }, [topics])
-
-  const streak = useMemo(() => {
-    if (problems.length === 0) return 0
-    const completedDates = problems
-      .filter(p => p.status === "Completed" && p.completedAt)
-      .map(p => format(parseISO(p.completedAt!), "yyyy-MM-dd"))
-    const uniqueDates = Array.from(new Set(completedDates)).sort((a, b) => b.localeCompare(a))
-    if (uniqueDates.length === 0) return 0
-    let currentStreak = 0
-    const today = format(new Date(), "yyyy-MM-dd")
-    const yesterday = format(subDays(new Date(), 1), "yyyy-MM-dd")
-    let checkDate = uniqueDates[0] === today ? today : (uniqueDates[0] === yesterday ? yesterday : null)
-    if (!checkDate) return 0
-    let dateIterator = parseISO(checkDate!)
-    for (const dateStr of uniqueDates) {
-      if (dateStr === format(dateIterator, "yyyy-MM-dd")) {
-        currentStreak++
-        dateIterator = subDays(dateIterator, 1)
-      } else { break }
-    }
-    return currentStreak
-  }, [problems])
-
-  const completedToday = useMemo(() => {
-    const today = new Date()
-    return problems.filter(p =>
-      p.status === "Completed" &&
-      p.completedAt &&
-      isSameDay(parseISO(p.completedAt), today)
-    ).length
-  }, [problems])
 
   const mostRecentProblem = useMemo(() => {
     const sorted = [...problems]
