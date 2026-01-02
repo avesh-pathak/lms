@@ -76,13 +76,9 @@ export function DashboardOverview() {
     return null
   }
 
-  if (loading) {
-    return <div className="p-8">Loading dashboard...</div>
-  }
-
   return (
     <div className="p-6 lg:p-8 space-y-12 max-w-7xl mx-auto">
-      {/* Header & Stats (Hide on Launchpad if you want or keep for context) */}
+      {/* Header & Stats - Rendered immediately for LCP */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="space-y-3">
           <div className="flex items-center gap-3">
@@ -111,70 +107,82 @@ export function DashboardOverview() {
         </div>
 
         {activeDomain && (
-          <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-primary to-orange-500 rounded-[28px] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-            <div className="relative flex items-center gap-6 bg-card p-5 rounded-[28px] border border-border shadow-xl">
-              <div className="space-y-1 text-right">
-                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{activeDomain} Mastery</span>
-                <div className="flex items-baseline gap-3">
-                  <span className="text-4xl font-black tabular-nums">{stats.percent.toFixed(0)}%</span>
-                  <div className="flex flex-col gap-1">
-                    <div className="h-2.5 w-32 bg-muted rounded-full overflow-hidden border border-muted-foreground/10">
-                      <div className="h-full bg-gradient-to-r from-primary to-orange-400 rounded-full shadow-[0_0_15px_rgba(251,146,60,0.6)] animate-pulse" style={{ width: `${stats.percent}%` }} />
+          loading ? (
+            <div className="h-24 w-64 bg-card border rounded-[28px] animate-pulse" />
+          ) : (
+            <div className="relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-primary to-orange-500 rounded-[28px] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+              <div className="relative flex items-center gap-6 bg-card p-5 rounded-[28px] border border-border shadow-xl h-[92px]">
+                <div className="space-y-1 text-right">
+                  <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{activeDomain} Mastery</span>
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-4xl font-black tabular-nums">{stats.percent.toFixed(0)}%</span>
+                    <div className="flex flex-col gap-1">
+                      <div className="h-2.5 w-32 bg-muted rounded-full overflow-hidden border border-muted-foreground/10">
+                        <div className="h-full bg-gradient-to-r from-primary to-orange-400 rounded-full shadow-[0_0_15px_rgba(251,146,60,0.6)] animate-pulse" style={{ width: `${stats.percent}%` }} />
+                      </div>
+                      <span className="text-[9px] font-black uppercase text-primary/60 tracking-tighter self-end">{stats.solved} / {stats.total} Solved</span>
                     </div>
-                    <span className="text-[9px] font-black uppercase text-primary/60 tracking-tighter self-end">{stats.solved} / {stats.total} Solved</span>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          )
         )}
       </div>
 
-      {!activeDomain ? (
-        <Launchpad problems={problems} topics={topics} />
-      ) : (
-        <div className="space-y-8">
-          <div className="space-y-8">
-            {activeDomain === "Core Engineering" && groupedTopics ? (
-              <div className="space-y-16">
-                {Object.entries(groupedTopics).map(([subject, subTopics]) => (
-                  <div key={subject} className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    <div className="flex items-center gap-4">
-                      <h3 className={cn(
-                        "text-2xl font-black uppercase italic tracking-tighter text-foreground/90",
-                        (subject === "System Design" || subject === "Low Level Design") && "text-primary"
-                      )}>
-                        {subject}
-                      </h3>
-                      <div className="h-px flex-1 bg-gradient-to-r from-border/50 to-transparent" />
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {subTopics.map((topic: Topic) => (
-                        <TopicCard key={topic.id} topic={topic} getMasteryRank={getMasteryRank} />
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredTopics.map((topic: Topic) => (
-                  <TopicCard key={topic.id} topic={topic} getMasteryRank={getMasteryRank} />
-                ))}
-                {filteredTopics.length === 0 && (
-                  <div className="col-span-full py-12 text-center space-y-4 bg-muted/5 rounded-[32px] border border-dashed border-primary/20">
-                    <div className="text-4xl">🔍</div>
-                    <div className="space-y-1">
-                      <h4 className="font-black uppercase tracking-tighter">No topics found</h4>
-                      <p className="text-xs font-medium text-muted-foreground">Try adjusting your search or switching domains.</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array(6).fill(0).map((_, i) => (
+            <div key={i} className="h-44 bg-card border rounded-[24px] animate-pulse" />
+          ))}
         </div>
+      ) : (
+        !activeDomain ? (
+          <Launchpad problems={problems} topics={topics} />
+        ) : (
+          <div className="space-y-8">
+            <div className="space-y-8">
+              {activeDomain === "Core Engineering" && groupedTopics ? (
+                <div className="space-y-16">
+                  {Object.entries(groupedTopics).map(([subject, subTopics]) => (
+                    <div key={subject} className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                      <div className="flex items-center gap-4">
+                        <h3 className={cn(
+                          "text-2xl font-black uppercase italic tracking-tighter text-foreground/90",
+                          (subject === "System Design" || subject === "Low Level Design") && "text-primary"
+                        )}>
+                          {subject}
+                        </h3>
+                        <div className="h-px flex-1 bg-gradient-to-r from-border/50 to-transparent" />
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {subTopics.map((topic: Topic) => (
+                          <TopicCard key={topic.id} topic={topic} getMasteryRank={getMasteryRank} />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredTopics.map((topic: Topic) => (
+                    <TopicCard key={topic.id} topic={topic} getMasteryRank={getMasteryRank} />
+                  ))}
+                  {filteredTopics.length === 0 && (
+                    <div className="col-span-full py-12 text-center space-y-4 bg-muted/5 rounded-[32px] border border-dashed border-primary/20">
+                      <div className="text-4xl">🔍</div>
+                      <div className="space-y-1">
+                        <h4 className="font-black uppercase tracking-tighter">No topics found</h4>
+                        <p className="text-xs font-medium text-muted-foreground">Try adjusting your search or switching domains.</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )
       )}
     </div>
   )

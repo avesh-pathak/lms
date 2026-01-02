@@ -178,10 +178,6 @@ export function TopicDetail({ topicSlug }: TopicDetailProps) {
     return Array.from(tagSet)
   }, [allProblems])
 
-  if (loading) {
-    return <div className="p-6 text-muted-foreground">Loading problems…</div>
-  }
-
   return (
     <div className="p-6 lg:p-8 space-y-6">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -189,9 +185,13 @@ export function TopicDetail({ topicSlug }: TopicDetailProps) {
           <h2 className="text-4xl font-black tracking-tight uppercase italic">
             {slugToTitle(topicSlug)}
           </h2>
-          <p className="text-sm text-muted-foreground font-medium">
-            {completed} of {total} problems solved ({progress.toFixed(0)}%)
-          </p>
+          {loading ? (
+            <div className="h-4 w-48 bg-muted animate-pulse rounded" />
+          ) : (
+            <p className="text-sm text-muted-foreground font-medium">
+              {completed} of {total} problems solved ({progress.toFixed(0)}%)
+            </p>
+          )}
           <Progress value={progress} className="h-2 w-[300px]" />
         </div>
       </div>
@@ -220,6 +220,7 @@ export function TopicDetail({ topicSlug }: TopicDetailProps) {
               variant="outline"
               className="gap-2 shrink-0 h-10 px-4 border-dashed hover:border-primary hover:text-primary transition-all font-bold uppercase tracking-tighter italic"
               onClick={pickRandomProblem}
+              disabled={loading}
             >
               <Shuffle className="h-4 w-4" />
               Pick Random
@@ -241,163 +242,175 @@ export function TopicDetail({ topicSlug }: TopicDetailProps) {
               </TableHeader>
 
               <TableBody>
-                {filteredProblems.map((problem, index) => (
-                  <React.Fragment key={problem._id}>
-                    <TableRow
-                      id={`problem-${problem._id}`}
-                      className={cn(
-                        "group transition-colors cursor-pointer border-b border-border/50 last:border-0",
-                        expandedId === problem._id && "bg-muted/50"
-                      )}
-                      onClick={() => setExpandedId(expandedId === problem._id ? null : problem._id)}
-                    >
-                      <TableCell className="align-top py-4" onClick={(e) => e.stopPropagation()}>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            setExpandedId(expandedId === problem._id ? null : problem._id)
-                          }}
-                        >
-                          {expandedId === problem._id ? (
-                            <ChevronDown className="h-4 w-4" />
-                          ) : (
-                            <ChevronRight className="h-4 w-4" />
-                          )}
-                        </Button>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground px-2 align-top py-4 font-bold">{index + 1}</TableCell>
-
-                      <TableCell className="whitespace-normal py-4 min-w-[300px] align-top">
-                        <div className="flex items-start gap-2">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              toggleStar(problem._id)
-                            }}
-                            className="transition-transform active:scale-125 pt-0.5"
-                          >
-                            <Star
-                              className={cn(
-                                "h-4 w-4 transition-colors",
-                                problem.starred
-                                  ? "fill-yellow-400 text-yellow-400"
-                                  : "text-muted-foreground group-hover:text-muted-foreground/80"
-                              )}
-                            />
-                          </button>
-
-                          <span className="text-base font-bold leading-tight break-words flex-1 group-hover/row:text-primary transition-colors tracking-tight italic">{problem.title}</span>
-
-                          <a
-                            href={problem.problem_link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-muted-foreground hover:text-primary transition-colors pt-0.5 shrink-0"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <ExternalLink className="h-3.5 w-3.5" />
-                          </a>
-                        </div>
-                      </TableCell>
-
-                      <TableCell className="align-top py-4">
-                        <Badge
-                          variant="secondary"
-                          className={cn(
-                            "font-black uppercase text-[10px] h-5 tracking-tighter",
-                            problem.difficulty === "Easy" && "bg-green-500/10 text-green-500 hover:bg-green-500/20",
-                            problem.difficulty === "Medium" && "bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20",
-                            problem.difficulty === "Hard" && "bg-red-500/10 text-red-500 hover:bg-red-500/20"
-                          )}
-                        >
-                          {problem.difficulty}
-                        </Badge>
-                      </TableCell>
-
-                      <TableCell className="align-top py-4" onClick={(e) => e.stopPropagation()}>
-                        <ProblemTimer
-                          problemId={problem._id}
-                          onTimeUpdate={handleTimeUpdate}
-                        />
-                      </TableCell>
-
-                      <TableCell className="align-top py-4">
-                        <div className="flex items-center gap-2">
-                          {problem.status === "Completed" ? (
-                            <div className="flex items-center gap-1.5 text-success">
-                              <Check className="h-4 w-4" />
-                              <span className="text-sm font-black uppercase tracking-tight italic">Solved</span>
-                            </div>
-                          ) : (
-                            <div className="flex items-center gap-1.5 text-muted-foreground">
-                              <Circle className="h-4 w-4" />
-                              <span className="text-sm font-black uppercase tracking-tight italic">Pending</span>
-                            </div>
-                          )}
-                        </div>
-                      </TableCell>
-
-                      <TableCell className="text-right align-top py-4" onClick={(e) => e.stopPropagation()}>
-                        <Button
-                          size="sm"
-                          variant={problem.status === "Completed" ? "outline" : "default"}
-                          className="h-8 font-black uppercase tracking-tighter italic"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            toggleStatus(problem._id)
-                          }}
-                        >
-                          {problem.status === "Completed" ? "Undo" : "Done"}
-                        </Button>
+                {loading ? (
+                  Array(5).fill(0).map((_, i) => (
+                    <TableRow key={i} className="animate-pulse">
+                      <TableCell colSpan={7} className="p-8">
+                        <div className="h-6 bg-muted/40 rounded-lg w-full" />
                       </TableCell>
                     </TableRow>
+                  ))
+                ) : (
+                  <>
+                    {filteredProblems.map((problem, index) => (
+                      <React.Fragment key={problem._id}>
+                        <TableRow
+                          id={`problem-${problem._id}`}
+                          className={cn(
+                            "group transition-colors cursor-pointer border-b border-border/50 last:border-0",
+                            expandedId === problem._id && "bg-muted/50"
+                          )}
+                          onClick={() => setExpandedId(expandedId === problem._id ? null : problem._id)}
+                        >
+                          <TableCell className="align-top py-4" onClick={(e) => e.stopPropagation()}>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setExpandedId(expandedId === problem._id ? null : problem._id)
+                              }}
+                            >
+                              {expandedId === problem._id ? (
+                                <ChevronDown className="h-4 w-4" />
+                              ) : (
+                                <ChevronRight className="h-4 w-4" />
+                              )}
+                            </Button>
+                          </TableCell>
+                          <TableCell className="text-muted-foreground px-2 align-top py-4 font-bold">{index + 1}</TableCell>
 
-                    {expandedId === problem._id && (
-                      <TableRow className="bg-muted/30 hover:bg-muted/30 border-t-0">
-                        <TableCell colSpan={7} className="p-0">
-                          <div className="p-4 md:p-6 bg-card border-x border-b rounded-b-xl mx-4 mb-4 shadow-inner animate-in fade-in slide-in-from-top-2 duration-200 space-y-6">
-                            <div className="flex flex-col gap-2">
-                              <label className="text-xs font-black text-muted-foreground uppercase tracking-wider">Tags</label>
-                              <TagManager
-                                availableTags={allAvailableTags}
-                                selectedTags={problem.tags || []}
-                                onTagsChange={(tags) => handleTagsChange(problem._id, tags)}
-                                onCreateTag={(tag) => handleTagsChange(problem._id, [...(problem.tags || []), tag])}
-                              />
-                            </div>
+                          <TableCell className="whitespace-normal py-4 min-w-[300px] align-top">
+                            <div className="flex items-start gap-2">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  toggleStar(problem._id)
+                                }}
+                                className="transition-transform active:scale-125 pt-0.5"
+                              >
+                                <Star
+                                  className={cn(
+                                    "h-4 w-4 transition-colors",
+                                    problem.starred
+                                      ? "fill-yellow-400 text-yellow-400"
+                                      : "text-muted-foreground group-hover:text-muted-foreground/80"
+                                  )}
+                                />
+                              </button>
 
-                            <div className="flex flex-col gap-2">
-                              <label className="text-xs font-black text-muted-foreground uppercase tracking-wider">Problem Details</label>
-                              <ProblemNotes
-                                problemId={problem._id}
-                                initialNotes={problem.notes || ""}
-                                initialSolution={problem.solution || ""}
-                                initialApproach={problem.approach || ""}
-                                onSave={handleNotesSave}
-                              />
+                              <span className="text-base font-bold leading-tight break-words flex-1 group-hover/row:text-primary transition-colors tracking-tight italic">{problem.title}</span>
+
+                              <a
+                                href={problem.problem_link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-muted-foreground hover:text-primary transition-colors pt-0.5 shrink-0"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <ExternalLink className="h-3.5 w-3.5" />
+                              </a>
                             </div>
+                          </TableCell>
+
+                          <TableCell className="align-top py-4">
+                            <Badge
+                              variant="secondary"
+                              className={cn(
+                                "font-black uppercase text-[10px] h-5 tracking-tighter",
+                                problem.difficulty === "Easy" && "bg-green-500/10 text-green-500 hover:bg-green-500/20",
+                                problem.difficulty === "Medium" && "bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20",
+                                problem.difficulty === "Hard" && "bg-red-500/10 text-red-500 hover:bg-red-500/20"
+                              )}
+                            >
+                              {problem.difficulty}
+                            </Badge>
+                          </TableCell>
+
+                          <TableCell className="align-top py-4" onClick={(e) => e.stopPropagation()}>
+                            <ProblemTimer
+                              problemId={problem._id}
+                              onTimeUpdate={handleTimeUpdate}
+                            />
+                          </TableCell>
+
+                          <TableCell className="align-top py-4">
+                            <div className="flex items-center gap-2">
+                              {problem.status === "Completed" ? (
+                                <div className="flex items-center gap-1.5 text-success">
+                                  <Check className="h-4 w-4" />
+                                  <span className="text-sm font-black uppercase tracking-tight italic">Solved</span>
+                                </div>
+                              ) : (
+                                <div className="flex items-center gap-1.5 text-muted-foreground">
+                                  <Circle className="h-4 w-4" />
+                                  <span className="text-sm font-black uppercase tracking-tight italic">Pending</span>
+                                </div>
+                              )}
+                            </div>
+                          </TableCell>
+
+                          <TableCell className="text-right align-top py-4" onClick={(e) => e.stopPropagation()}>
+                            <Button
+                              size="sm"
+                              variant={problem.status === "Completed" ? "outline" : "default"}
+                              className="h-8 font-black uppercase tracking-tighter italic"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                toggleStatus(problem._id)
+                              }}
+                            >
+                              {problem.status === "Completed" ? "Undo" : "Done"}
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+
+                        {expandedId === problem._id && (
+                          <TableRow className="bg-muted/30 hover:bg-muted/30 border-t-0">
+                            <TableCell colSpan={7} className="p-0">
+                              <div className="p-4 md:p-6 bg-card border-x border-b rounded-b-xl mx-4 mb-4 shadow-inner animate-in fade-in slide-in-from-top-2 duration-200 space-y-6">
+                                <div className="flex flex-col gap-2">
+                                  <label className="text-xs font-black text-muted-foreground uppercase tracking-wider">Tags</label>
+                                  <TagManager
+                                    availableTags={allAvailableTags}
+                                    selectedTags={problem.tags || []}
+                                    onTagsChange={(tags) => handleTagsChange(problem._id, tags)}
+                                    onCreateTag={(tag) => handleTagsChange(problem._id, [...(problem.tags || []), tag])}
+                                  />
+                                </div>
+
+                                <div className="flex flex-col gap-2">
+                                  <label className="text-xs font-black text-muted-foreground uppercase tracking-wider">Problem Details</label>
+                                  <ProblemNotes
+                                    problemId={problem._id}
+                                    initialNotes={problem.notes || ""}
+                                    initialSolution={problem.solution || ""}
+                                    initialApproach={problem.approach || ""}
+                                    onSave={handleNotesSave}
+                                  />
+                                </div>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </React.Fragment>
+                    ))}
+
+                    {filteredProblems.length === 0 && (
+                      <TableRow>
+                        <TableCell
+                          colSpan={7}
+                          className="text-center py-20 text-muted-foreground"
+                        >
+                          <div className="flex flex-col items-center gap-2">
+                            <p className="font-bold uppercase tracking-tighter italic">No problems found</p>
+                            <p className="text-xs opacity-60">Try adjusting your filters or search term</p>
                           </div>
                         </TableCell>
                       </TableRow>
                     )}
-                  </React.Fragment>
-                ))}
-
-                {filteredProblems.length === 0 && (
-                  <TableRow>
-                    <TableCell
-                      colSpan={7}
-                      className="text-center py-20 text-muted-foreground"
-                    >
-                      <div className="flex flex-col items-center gap-2">
-                        <p className="font-bold uppercase tracking-tighter italic">No problems found</p>
-                        <p className="text-xs opacity-60">Try adjusting your filters or search term</p>
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                  </>
                 )}
               </TableBody>
             </Table>
