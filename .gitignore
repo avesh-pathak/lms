@@ -11,9 +11,10 @@
 !.yarn/versions
 
 
+q.txt
 
-#.env
-# .env.local
+.env
+.env.local
 # testing
 /coverage
 /q.txt
