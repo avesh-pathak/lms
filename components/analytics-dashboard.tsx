@@ -2,10 +2,16 @@
 
 import React, { useMemo, useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as ReTooltip,
-  ResponsiveContainer, AreaChart, Area
-} from "recharts"
+import dynamic from "next/dynamic"
+
+const XPVelocityChart = dynamic(() => import("./visual-charts").then(mod => mod.XPVelocityChart), {
+  ssr: false,
+  loading: () => <div className="h-full w-full bg-muted/10 animate-pulse rounded-3xl" />
+})
+const MasteryBarChart = dynamic(() => import("./visual-charts").then(mod => mod.MasteryBarChart), {
+  ssr: false,
+  loading: () => <div className="h-full w-full bg-muted/10 animate-pulse rounded-3xl" />
+})
 import {
   TrendingUp, Target, BarChart3, Flame, Trophy, Medal
 } from "lucide-react"
@@ -133,21 +139,22 @@ export function AnalyticsDashboard() {
   }, [topics])
 
   const mostRecentProblem = useMemo(() => {
-    const sorted = [...problems]
-      .filter(p => p.status !== "Completed" && (p.timeSpent || 0) > 0)
-      .sort((a, b) => {
-        const dateA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0
-        const dateB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0
-        return dateB - dateA
-      })
-    return sorted[0] || null
+    let latest: any = null
+    for (const p of problems) {
+      if (p.status !== "Completed" && (p.timeSpent || 0) > 0) {
+        const pTime = p.updatedAt ? new Date(p.updatedAt).getTime() : 0
+        const latestTime = latest?.updatedAt ? new Date(latest.updatedAt).getTime() : 0
+        if (!latest || pTime > latestTime) {
+          latest = p
+        }
+      }
+    }
+    return latest
   }, [problems])
-
-  if (!mounted || loading) return <div className="p-8 text-center text-muted-foreground animate-pulse font-black uppercase tracking-widest text-[10px] italic">Initializing analytics terminal...</div>
 
   return (
     <div className="p-6 lg:p-8 space-y-8 max-w-7xl mx-auto">
-      {/* Refined Header */}
+      {/* Refined Header - Always Rendered for better LCP */}
       <div className="flex flex-col md:flex-row justify-between items-end gap-6 border-b pb-8 border-border/50">
         <div className="space-y-1">
           <h2 className="text-5xl font-black tracking-tight text-primary">
@@ -156,20 +163,29 @@ export function AnalyticsDashboard() {
           <p className="text-muted-foreground font-medium">Real-time performance decoding.</p>
         </div>
         <div className="flex gap-3">
-          <div className="bg-card border h-16 px-6 rounded-2xl flex items-center gap-4 shadow-sm">
-            <Trophy className="h-6 w-6 text-primary" />
-            <div className="flex flex-col">
-              <span className="text-xl font-black leading-none">{completedToday}</span>
-              <span className="text-[9px] font-black uppercase opacity-40">Today</span>
-            </div>
-          </div>
-          <div className="bg-card border h-16 px-6 rounded-2xl flex items-center gap-4 shadow-sm">
-            <Medal className="h-6 w-6 text-primary" />
-            <div className="flex flex-col">
-              <span className="text-xl font-black leading-none">{streak}</span>
-              <span className="text-[9px] font-black uppercase opacity-40">Streak</span>
-            </div>
-          </div>
+          {(!mounted || loading) ? (
+            <>
+              <div className="bg-card border h-16 w-24 rounded-2xl animate-pulse" />
+              <div className="bg-card border h-16 w-24 rounded-2xl animate-pulse" />
+            </>
+          ) : (
+            <>
+              <div className="bg-card border h-16 px-6 rounded-2xl flex items-center gap-4 shadow-sm">
+                <Trophy className="h-6 w-6 text-primary" />
+                <div className="flex flex-col">
+                  <span className="text-xl font-black leading-none">{completedToday}</span>
+                  <span className="text-[9px] font-black uppercase opacity-40">Today</span>
+                </div>
+              </div>
+              <div className="bg-card border h-16 px-6 rounded-2xl flex items-center gap-4 shadow-sm">
+                <Medal className="h-6 w-6 text-primary" />
+                <div className="flex flex-col">
+                  <span className="text-xl font-black leading-none">{streak}</span>
+                  <span className="text-[9px] font-black uppercase opacity-40">Streak</span>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -177,54 +193,36 @@ export function AnalyticsDashboard() {
         {/* Main Content Area */}
         <div className="lg:col-span-8 space-y-8">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-            <MetricCard title="Total XP" value={stats.totalXP.toLocaleString()} icon={Trophy} color="primary" />
-            <MetricCard title="Overall" value={`${stats.percent.toFixed(0)}%`} icon={TrendingUp} color="primary" />
-            <MetricCard title="Easy" value={stats.easy.done} icon={Target} color="green" />
-            <MetricCard title="Medium" value={stats.medium.done} icon={BarChart3} color="yellow" />
-            <MetricCard title="Hard" value={stats.hard.done} icon={Flame} color="red" />
+            {(!mounted || loading) ? (
+              Array(5).fill(0).map((_, i) => <div key={i} className="h-32 bg-card border rounded-2xl animate-pulse" />)
+            ) : (
+              <>
+                <MetricCard title="Total XP" value={stats.totalXP.toLocaleString()} icon={Trophy} color="primary" />
+                <MetricCard title="Overall" value={`${stats.percent.toFixed(0)}%`} icon={TrendingUp} color="primary" />
+                <MetricCard title="Easy" value={stats.easy.done} icon={Target} color="green" />
+                <MetricCard title="Medium" value={stats.medium.done} icon={BarChart3} color="yellow" />
+                <MetricCard title="Hard" value={stats.hard.done} icon={Flame} color="red" />
+              </>
+            )}
           </div>
 
           <div className="space-y-6">
-            <Card className="rounded-[32px] border-none bg-muted/20 shadow-none overflow-hidden">
+            <Card className="rounded-[32px] border-none bg-muted/20 shadow-none overflow-hidden h-[400px]">
               <CardHeader>
                 <CardTitle className="text-sm font-black uppercase tracking-widest text-muted-foreground">30-Day XP Velocity</CardTitle>
               </CardHeader>
               <CardContent className="h-[300px] pt-4">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={trendData}>
-                    <defs>
-                      <linearGradient id="colorXP" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#FB923C" stopOpacity={0.4} />
-                        <stop offset="95%" stopColor="#FB923C" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.1} />
-                    <XAxis dataKey="date" fontSize={10} tickLine={false} axisLine={false} interval={4} />
-                    <YAxis fontSize={10} tickLine={false} axisLine={false} tickCount={5} />
-                    <ReTooltip
-                      contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                    />
-                    <Area type="monotone" dataKey="xp" name="XP Gained" stroke="#FB923C" strokeWidth={4} fillOpacity={1} fill="url(#colorXP)" />
-                  </AreaChart>
-                </ResponsiveContainer>
+                {(!mounted || loading) ? <div className="h-full w-full bg-muted/30 animate-pulse rounded-2xl" /> : <XPVelocityChart data={trendData} />}
               </CardContent>
             </Card>
 
-            <Card className="rounded-[32px] border-none bg-muted/20 shadow-none overflow-hidden">
+            <Card className="rounded-[32px] border-none bg-muted/20 shadow-none overflow-hidden h-[450px]">
               <CardHeader>
                 <CardTitle className="text-sm font-black uppercase tracking-widest text-muted-foreground">Strongest Patterns</CardTitle>
                 <CardDescription className="text-[10px] font-bold italic opacity-60">High-fidelity mastery distribution</CardDescription>
               </CardHeader>
               <CardContent className="h-[350px] pb-8">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={topicChartData} layout="vertical" margin={{ left: 20 }}>
-                    <CartesianGrid strokeDasharray="3 3" horizontal={false} opacity={0.1} />
-                    <XAxis type="number" hide />
-                    <YAxis dataKey="name" type="category" width={100} fontSize={10} axisLine={false} tickLine={false} />
-                    <ReTooltip cursor={{ fill: 'transparent' }} />
-                    <Bar dataKey="percent" fill="#FB923C" radius={[0, 4, 4, 0]} barSize={16} />
-                  </BarChart>
-                </ResponsiveContainer>
+                {(!mounted || loading) ? <div className="h-full w-full bg-muted/30 animate-pulse rounded-2xl" /> : <MasteryBarChart data={topicChartData} />}
               </CardContent>
             </Card>
           </div>
@@ -232,25 +230,31 @@ export function AnalyticsDashboard() {
 
         {/* Sidebar: Focused Daily Pulse */}
         <div className="lg:col-span-4 space-y-6">
-          <div className="bg-card border rounded-[32px] p-6 space-y-6 lg:sticky lg:top-8">
+          <div className="bg-card border rounded-[32px] p-6 space-y-6 lg:sticky lg:top-8 min-h-[500px]">
             <div className="space-y-1 px-1">
               <h3 className="text-lg font-black uppercase italic tracking-tight">Daily Pulse.</h3>
               <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest opacity-60">Live feedback loop</p>
             </div>
 
-            <DailyGoal completedToday={completedToday} />
-
-            <Separator className="opacity-10" />
-
-            <div className="space-y-4">
-              <ContinueLearning problem={mostRecentProblem} />
-            </div>
-
-            <div className="space-y-4">
-              <SmartRecommendations />
-            </div>
-
-            <RevisionQueue />
+            {(!mounted || loading) ? (
+              <div className="space-y-6">
+                <div className="h-24 bg-muted/30 animate-pulse rounded-2xl" />
+                <div className="h-32 bg-muted/30 animate-pulse rounded-2xl" />
+                <div className="h-40 bg-muted/30 animate-pulse rounded-2xl" />
+              </div>
+            ) : (
+              <>
+                <DailyGoal completedToday={completedToday} />
+                <Separator className="opacity-10" />
+                <div className="space-y-4">
+                  <ContinueLearning problem={mostRecentProblem} />
+                </div>
+                <div className="space-y-4">
+                  <SmartRecommendations />
+                </div>
+                <RevisionQueue />
+              </>
+            )}
           </div>
         </div>
       </div>

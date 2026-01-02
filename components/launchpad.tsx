@@ -40,11 +40,17 @@ export function Launchpad({ problems, topics }: LaunchpadProps) {
         setUserGoal(localStorage.getItem("user_learning_goal"))
     }, [])
 
-    // 1. Resume Hero: Most recent "In Progress" problem
+    // 1. Resume Hero: Most recent "In Progress" problem (Optimized O(N) search)
     const resumeProblem = useMemo(() => {
-        return [...problems]
-            .filter(p => p.status === "In Progress")
-            .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())[0]
+        let latest: MongoDBProblem | null = null
+        for (const p of problems) {
+            if (p.status === "In Progress") {
+                if (!latest || new Date(p.updatedAt).getTime() > new Date(latest.updatedAt).getTime()) {
+                    latest = p
+                }
+            }
+        }
+        return latest
     }, [problems])
 
     // 2. Hot Zone: Overdue revisions

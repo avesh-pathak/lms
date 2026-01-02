@@ -133,11 +133,15 @@ export function ProblemsProvider({
         return Array.from(allProblemsMap.values());
     }
 
+    const [isPending, startTransition] = React.useTransition()
+
     const fetchData = async () => {
         try {
             const res = await fetch("/api/problems")
             const data = await res.json()
-            setProblems(processAllProblems(data.problems ?? []))
+            startTransition(() => {
+                setProblems(processAllProblems(data.problems ?? []))
+            })
         } catch (err) {
             console.error("Failed to load problems in provider", err)
         } finally {
@@ -146,19 +150,22 @@ export function ProblemsProvider({
     }
 
     const updateProblem = React.useCallback((id: string, updates: Partial<MongoDBProblem>) => {
-        setProblems(prev => prev.map(p => {
-            if (p._id === id) {
-                const updated = { ...p, ...updates }
-                // Re-apply SRS logic to the updated problem for immediate reactivity
-                return applySRS(updated)
-            }
-            return p
-        }))
+        startTransition(() => {
+            setProblems(prev => prev.map(p => {
+                if (p._id === id) {
+                    const updated = { ...p, ...updates }
+                    return applySRS(updated)
+                }
+                return p
+            }))
+        })
     }, [])
 
     useEffect(() => {
         if (initialProblems.length > 0) {
-            setProblems(processAllProblems(initialProblems))
+            startTransition(() => {
+                setProblems(processAllProblems(initialProblems))
+            })
             setLoading(false)
         } else {
             fetchData()
