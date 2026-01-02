@@ -17,7 +17,7 @@ q.txt
 .env.local
 # testing
 /coverage
-/q.txt
+q.txt
 # next.js
 /.next/
 /out/
