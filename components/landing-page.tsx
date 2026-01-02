@@ -19,11 +19,11 @@ export function LandingPage({ topics }: LandingPageProps) {
     const { problems } = useProblems()
 
     // Memoize stats to avoid recalculated on every render (improves INP)
-    const { solvedProblems, progress } = React.useMemo(() => {
-        const totalProblems = 20
+    const { solvedProblems, progress, totalProblems } = React.useMemo(() => {
+        const total = 20
         const solved = problems ? problems.filter(p => p.status === "Completed").length : 0
-        const prog = Math.min(Math.round((solved / totalProblems) * 100), 100)
-        return { solvedProblems: solved, progress: prog }
+        const prog = Math.min(Math.round((solved / total) * 100), 100)
+        return { solvedProblems: solved, progress: prog, totalProblems: total }
     }, [problems])
 
     return (
