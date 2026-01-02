@@ -54,9 +54,9 @@ export default async function RootLayout({
         <ProblemsProvider initialProblems={problems}>
           {children}
           <Toaster />
-          <Analytics />
-          <SpeedInsights />
         </ProblemsProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
