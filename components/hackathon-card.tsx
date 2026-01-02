@@ -23,7 +23,7 @@ interface HackathonCardProps {
     onClick?: () => void
 }
 
-export function HackathonCard({
+export const HackathonCard = React.memo(function HackathonCard({
     title,
     description,
     status,
@@ -130,4 +130,4 @@ export function HackathonCard({
             </CardFooter>
         </Card>
     )
-}
+})

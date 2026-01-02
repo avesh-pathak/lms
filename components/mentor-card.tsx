@@ -5,7 +5,7 @@ import { Star, MessageSquare, Briefcase, Globe, Linkedin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 
-export function MentorCard({ mentor, onBook }: { mentor: Mentor, onBook?: (mentor: Mentor) => void }) {
+export const MentorCard = React.memo(function MentorCard({ mentor, onBook }: { mentor: Mentor, onBook?: (mentor: Mentor) => void }) {
     return (
         <div className="group relative flex flex-col p-6 rounded-[40px] border-2 border-border/50 bg-card/40 backdrop-blur-xl hover:border-[#FB923C]/50 hover:bg-card/60 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] transition-all duration-500 overflow-hidden hover:-translate-y-2">
             {/* Stretched Link for the whole card */}
@@ -24,7 +24,10 @@ export function MentorCard({ mentor, onBook }: { mentor: Mentor, onBook?: (mento
                         <img
                             src={mentor.image}
                             alt={mentor.name}
+                            width={64}
+                            height={64}
                             className="w-16 h-16 rounded-2xl bg-muted object-cover border-2 border-background shadow-sm"
+                            loading="lazy"
                         />
                         <div className="absolute -bottom-2 -right-2 bg-background p-1 rounded-lg border shadow-sm">
                             <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-yellow-500/10">
@@ -90,4 +93,4 @@ export function MentorCard({ mentor, onBook }: { mentor: Mentor, onBook?: (mento
             </div>
         </div>
     )
-}
+})

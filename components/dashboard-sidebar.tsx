@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname, useSearchParams } from "next/navigation"
-import { useState } from "react"
+import React, { useState } from "react"
 import { cn } from "@/lib/utils"
 import {
   LayoutDashboard,
@@ -251,7 +251,7 @@ export function DashboardSidebar() {
   )
 }
 
-function NavLink({
+const NavLink = React.memo(function NavLink({
   href,
   icon: Icon,
   active,
@@ -283,4 +283,4 @@ function NavLink({
       {!isCollapsed && children}
     </Link>
   )
-}
+})

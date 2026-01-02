@@ -162,6 +162,7 @@ export function Launchpad({ problems, topics }: LaunchpadProps) {
                         {/* Mastery Orbit (Screenshot Style) */}
                         <div className="relative shrink-0 flex items-center justify-center w-40 h-40 lg:mr-4">
                             <div className="absolute inset-0 rounded-full border-[8px] border-white/50" />
+
                             <svg className="w-full h-full transform -rotate-90 relative z-10" viewBox="0 0 100 100">
                                 <circle
                                     cx="50"
@@ -328,7 +329,7 @@ export function Launchpad({ problems, topics }: LaunchpadProps) {
     )
 }
 
-function QuestItem({ label, sub, completed }: { label: string, sub: string, completed: boolean }) {
+const QuestItem = React.memo(function QuestItem({ label, sub, completed }: { label: string, sub: string, completed: boolean }) {
     return (
         <div className="flex items-start gap-4 group">
             <div className={cn(
@@ -343,9 +344,9 @@ function QuestItem({ label, sub, completed }: { label: string, sub: string, comp
             </div>
         </div>
     )
-}
+})
 
-function TechTreeNode({ stage, level, completed, current, locked, percent = 0, href }: { stage: string, level: string, completed?: boolean, current?: boolean, locked?: boolean, percent?: number, href?: string }) {
+const TechTreeNode = React.memo(function TechTreeNode({ stage, level, completed, current, locked, percent = 0, href }: { stage: string, level: string, completed?: boolean, current?: boolean, locked?: boolean, percent?: number, href?: string }) {
     const content = (
         <div className={cn(
             "relative flex flex-col items-center gap-4 transition-all hover:scale-105",
@@ -378,7 +379,7 @@ function TechTreeNode({ stage, level, completed, current, locked, percent = 0, h
             {content}
         </Link>
     )
-}
+})
 
 function TechTreeSeparator({ completed }: { completed?: boolean }) {
     return (

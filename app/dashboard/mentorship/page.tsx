@@ -25,19 +25,19 @@ export default function MentorshipPage() {
     const [searchTerm, setSearchTerm] = useState("")
     const [isMissionControlOpen, setIsMissionControlOpen] = useState(true)
 
-    const filteredMentors = MOCK_MENTORS.filter(mentor =>
+    const filteredMentors = React.useMemo(() => MOCK_MENTORS.filter(mentor =>
         mentor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         mentor.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
         mentor.expertise.some(e => e.toLowerCase().includes(searchTerm.toLowerCase()))
-    )
+    ), [searchTerm])
 
     return (
         <div className="min-h-screen bg-background relative overflow-hidden">
             {/* Background Grid & Globs */}
             <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] pointer-events-none opacity-20" />
 
-            <div className="absolute top-0 -left-4 w-72 h-72 bg-primary/10 rounded-full blur-[128px] animate-pulse pointer-events-none" />
-            <div className="absolute bottom-0 -right-4 w-96 h-96 bg-orange-500/5 rounded-full blur-[128px] animate-pulse pointer-events-none delay-1000" />
+            <div className="absolute top-0 -left-4 w-72 h-72 bg-primary/10 rounded-full blur-[64px] pointer-events-none" />
+            <div className="absolute bottom-0 -right-4 w-96 h-96 bg-orange-500/5 rounded-full blur-[64px] pointer-events-none" />
 
             <div className="relative z-10 p-4 lg:p-10 max-w-7xl mx-auto space-y-12 animate-in fade-in duration-700">
                 {/* Tagline Section */}

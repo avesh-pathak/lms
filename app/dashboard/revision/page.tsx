@@ -12,12 +12,12 @@ import Link from "next/link"
 export default function RevisionPage() {
     const { problems, topics, loading } = useProblems()
 
-    const reviewProblems = problems.filter(p => p.isReviewDue)
-    const completedProblems = problems.filter(p => p.status === "Completed")
+    const reviewProblems = React.useMemo(() => problems.filter(p => p.isReviewDue), [problems])
+    const completedProblems = React.useMemo(() => problems.filter(p => p.status === "Completed"), [problems])
 
-    const masteryPercentage = problems.length > 0
+    const masteryPercentage = React.useMemo(() => problems.length > 0
         ? (completedProblems.length / problems.length) * 100
-        : 0
+        : 0, [problems.length, completedProblems.length])
 
     if (loading) {
         return <div className="p-8">Loading mastery data...</div>

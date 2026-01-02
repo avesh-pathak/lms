@@ -44,6 +44,11 @@ export function LandingPage({ topics }: LandingPageProps) {
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-primary/20 blur-[120px] rounded-full -z-10 opacity-50" />
 
                 <div className="max-w-7xl mx-auto px-6 text-center space-y-8">
+                    <div className="flex justify-center mb-6">
+                        <Badge variant="outline" className="py-2 px-6 rounded-full border-[#FB923C]/20 bg-[#FB923C]/5 text-[#FB923C] font-black uppercase tracking-[0.2em] text-sm animate-pulse">
+                            The Ultimate Babua DSA Sheet
+                        </Badge>
+                    </div>
                     <h1 className="text-4xl md:text-6xl lg:text-8xl font-black tracking-tighter leading-[0.85] max-w-5xl mx-auto uppercase">
                         REAL ENGINEERING <br />
                         NOT JUST <span className="text-[#FB923C] italic underline decoration-4 underline-offset-8">CERTIFICATES</span>
@@ -79,7 +84,7 @@ export function LandingPage({ topics }: LandingPageProps) {
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="flex flex-col items-center text-center space-y-4 mb-20">
                         <Badge variant="outline" className="py-2 px-6 rounded-full border-[#FB923C]/20 bg-[#FB923C]/5 text-[#FB923C] font-black uppercase tracking-[0.2em] text-xs">
-                            The Babua Curriculum
+                            The Babua DSA Sheet & Curriculum
                         </Badge>
                         <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic">ENGINEERING PATHS</h2>
                         <div className="space-y-2 max-w-2xl mx-auto">
@@ -96,7 +101,7 @@ export function LandingPage({ topics }: LandingPageProps) {
                             </div>
                             <div className="space-y-6 relative">
                                 <div className="space-y-2">
-                                    <h3 className="text-2xl font-black uppercase tracking-tight">DSA Patterns</h3>
+                                    <h3 className="text-2xl font-black uppercase tracking-tight">Babua DSA Sheet</h3>
                                     <p className="text-sm text-muted-foreground font-medium italic underline decoration-[#FB923C]/30 underline-offset-4">Sliding Window • Graphs • DP</p>
                                 </div>
                                 <p className="text-muted-foreground text-sm font-medium">Master the intuition behind 20+ DSA patterns. Solve problems by pattern, not by rote memorization.</p>
@@ -370,6 +375,42 @@ export function LandingPage({ topics }: LandingPageProps) {
                                     </Button>
                                 </Link>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* FAQ Section */}
+            <section className="py-24 bg-background border-t">
+                <div className="max-w-4xl mx-auto px-6">
+                    <div className="text-center space-y-4 mb-16">
+                        <h2 className="text-3xl md:text-5xl font-black tracking-tighter uppercase italic">Frequently Asked Questions</h2>
+                        <p className="text-muted-foreground font-medium">Everything you need to know about the Babua DSA Sheet.</p>
+                    </div>
+                    <div className="space-y-8">
+                        <div className="p-8 rounded-[32px] border bg-card/50">
+                            <h3 className="text-xl font-black uppercase tracking-tight mb-4">What is the Babua DSA Sheet?</h3>
+                            <p className="text-muted-foreground leading-relaxed">
+                                The **Babua DSA Sheet** is a curated collection of 90+ high-impact problems organized by patterns rather than difficulty. It's designed to build intuition for competitive programming and technical interviews.
+                            </p>
+                        </div>
+                        <div className="p-8 rounded-[32px] border bg-card/50">
+                            <h3 className="text-xl font-black uppercase tracking-tight mb-4">How is it different from other sheets?</h3>
+                            <p className="text-muted-foreground leading-relaxed">
+                                Unlike traditional sheets that focus on rote memorization, the **Babua DSA Sheet** focuses on **Mastering Patterns**. Once you understand the underlying pattern (like Two Pointers or Sliding Window), you can solve hundreds of similar problems effortlessly.
+                            </p>
+                        </div>
+                        <div className="p-8 rounded-[32px] border bg-card/50">
+                            <h3 className="text-xl font-black uppercase tracking-tight mb-4">Is the Babua DSA Sheet free?</h3>
+                            <p className="text-muted-foreground leading-relaxed">
+                                Yes, the **Babua DSA Sheet** and all its learning paths are 100% free. We follow a "Proof of Work" model where your progress is your certificate.
+                            </p>
+                        </div>
+                        <div className="p-8 rounded-[32px] border bg-card/50">
+                            <h3 className="text-xl font-black uppercase tracking-tight mb-4">Can I use it for interview preparation?</h3>
+                            <p className="text-muted-foreground leading-relaxed">
+                                Absolutely. The **Babua DSA Sheet** covers patterns frequently asked in top-tier companies like Google, Meta, and Amazon.
+                            </p>
                         </div>
                     </div>
                 </div>

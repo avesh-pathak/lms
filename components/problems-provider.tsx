@@ -40,10 +40,13 @@ export function ProblemsProvider({
     const [loading, setLoading] = useState(initialProblems.length === 0)
 
     // Derive topics from the problems state to stay reactive (Optimized)
-    const topics = React.useMemo(() => {
-        const topicMap = new Map<string, Topic>()
+    // Optimized subject lookup (Pre-computed map for O(1) access)
+    const subjectCache = React.useMemo(() => new Map<string, string | undefined>(), [])
 
-        // Optimize keyword matching by pre-defining maps
+    const getSubjectForTopic = (pTopic: string): string | undefined => {
+        if (subjectCache.has(pTopic)) return subjectCache.get(pTopic)
+
+        const name = pTopic.toLowerCase()
         const subjectKeywords = [
             { keywords: ["scalability", "distributed systems", "api design", "message queues", "caching", "load balancing"], subject: "System Design" },
             { keywords: ["ood patterns", "design patterns", "creational patterns", "structural patterns", "behavioral patterns"], subject: "Low Level Design" },
@@ -53,17 +56,22 @@ export function ProblemsProvider({
             { keywords: ["neural networks", "supervised learning", "genai", "machine learning", "deep learning", "nlp"], subject: "AI/ML" },
         ]
 
-        const getSubjectForTopic = (pTopic: string): string | undefined => {
-            const name = pTopic.toLowerCase()
-            for (const item of subjectKeywords) {
-                if (item.keywords.some(k => name.includes(k))) return item.subject
+        for (const item of subjectKeywords) {
+            if (item.keywords.some(k => name.includes(k))) {
+                subjectCache.set(pTopic, item.subject)
+                return item.subject
             }
-            return undefined
         }
+        subjectCache.set(pTopic, undefined)
+        return undefined
+    }
 
-        for (const p of problems) {
+    const topics = React.useMemo(() => {
+        const topicMap = new Map<string, Topic>()
+
+        for (let i = 0; i < problems.length; i++) {
+            const p = problems[i]
             const topicId = toSlug(p.topic)
-            const domain = p.domain || "DSA"
 
             let t = topicMap.get(topicId)
             if (!t) {
@@ -72,7 +80,7 @@ export function ProblemsProvider({
                     name: p.topic,
                     solved: 0,
                     total: 0,
-                    domain: domain as any,
+                    domain: (p.domain || "DSA") as any,
                     subject: getSubjectForTopic(p.topic),
                     reviewCount: 0
                 }
@@ -85,53 +93,51 @@ export function ProblemsProvider({
         return Array.from(topicMap.values())
     }, [problems])
 
-    const applySRS = (p: MongoDBProblem): MongoDBProblem => {
-        const merged = { ...p }
-        // --- SRS Logic ---
-        if (merged.status === "Completed" && merged.completedAt) {
-            const completedDate = parseISO(merged.completedAt)
-            // Review due in 3 days for the first revision after completion
-            const reviewDueAt = addDays(completedDate, 3).toISOString()
-            merged.reviewDueAt = reviewDueAt
-            merged.isReviewDue = isPast(parseISO(reviewDueAt)) || (merged.tags?.includes("Revision") ?? false)
-        } else if (merged.tags?.includes("Revision")) {
-            // Manually tagged for revision
-            merged.isReviewDue = true
-        } else {
-            // Reset if tag removed or not completed
-            merged.isReviewDue = false
+    const applySRS = React.useCallback((p: MongoDBProblem): MongoDBProblem => {
+        if (p.status !== "Completed" || !p.completedAt) {
+            return { ...p, isReviewDue: !!(p.tags?.includes("Revision")) }
         }
-        return merged
-    }
 
-    const mergeProblem = (p: MongoDBProblem) => {
+        const completedDate = parseISO(p.completedAt)
+        const reviewDueAt = addDays(completedDate, 3).toISOString()
+        const isReviewDue = isPast(parseISO(reviewDueAt)) || (p.tags?.includes("Revision") ?? false)
+
+        return { ...p, reviewDueAt, isReviewDue }
+    }, [])
+
+    const mergeProblem = React.useCallback((p: MongoDBProblem) => {
         const stored = getProblemData(p._id)
+        const domain = p.domain || "DSA"
         let title = p.title
         if (title === "None" && p.problem_link) {
             title = extractTitleFromLink(p.problem_link)
         }
-        // Ensure p.domain is set or defaulted
-        const domain = p.domain || "DSA"
 
-        const merged: MongoDBProblem = stored ? { ...p, ...stored, title, domain } : { ...p, title, domain }
+        const merged: MongoDBProblem = { ...p, ...stored, title, domain }
         return applySRS(merged)
-    }
+    }, [applySRS])
 
-    const processAllProblems = (apiProblems: MongoDBProblem[]) => {
+    const processAllProblems = React.useCallback((apiProblems: MongoDBProblem[]) => {
         const allProblemsMap = new Map<string, MongoDBProblem>();
 
-        apiProblems.forEach(p => {
-            allProblemsMap.set(p._id, mergeProblem(p));
-        });
+        // Cache DOMAIN_PROBLEMS length for performance
+        const dpLen = DOMAIN_PROBLEMS.length
+        const apiLen = apiProblems.length
 
-        DOMAIN_PROBLEMS.forEach(dp => {
+        for (let i = 0; i < apiLen; i++) {
+            const p = apiProblems[i]
+            allProblemsMap.set(p._id, mergeProblem(p));
+        }
+
+        for (let i = 0; i < dpLen; i++) {
+            const dp = DOMAIN_PROBLEMS[i]
             if (!allProblemsMap.has(dp._id)) {
                 allProblemsMap.set(dp._id, mergeProblem(dp));
             }
-        });
+        }
 
         return Array.from(allProblemsMap.values());
-    }
+    }, [mergeProblem])
 
     const [isPending, startTransition] = React.useTransition()
 
@@ -141,25 +147,27 @@ export function ProblemsProvider({
             const data = await res.json()
             startTransition(() => {
                 setProblems(processAllProblems(data.problems ?? []))
+                setLoading(false)
             })
         } catch (err) {
             console.error("Failed to load problems in provider", err)
-        } finally {
             setLoading(false)
         }
     }
 
     const updateProblem = React.useCallback((id: string, updates: Partial<MongoDBProblem>) => {
         startTransition(() => {
-            setProblems(prev => prev.map(p => {
-                if (p._id === id) {
-                    const updated = { ...p, ...updates }
-                    return applySRS(updated)
-                }
-                return p
-            }))
+            setProblems(prev => {
+                const index = prev.findIndex(p => p._id === id)
+                if (index === -1) return prev
+
+                const newProblems = [...prev]
+                const updated = { ...newProblems[index], ...updates }
+                newProblems[index] = applySRS(updated)
+                return newProblems
+            })
         })
-    }, [])
+    }, [applySRS])
 
     useEffect(() => {
         if (initialProblems.length > 0) {

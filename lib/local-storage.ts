@@ -98,35 +98,36 @@ export interface StoredProblemData {
   updatedAt?: string
 }
 
+let cachedProblemsData: Record<string, StoredProblemData> | null = null
+
 export function getProblemData(problemId: string): StoredProblemData | null {
   if (typeof window === "undefined") return null
 
   try {
-    const stored = localStorage.getItem(PROBLEMS_STORAGE_KEY)
-    if (stored) {
-      const data = JSON.parse(stored)
-      return data[problemId] || null
+    if (!cachedProblemsData) {
+      const stored = localStorage.getItem(PROBLEMS_STORAGE_KEY)
+      cachedProblemsData = stored ? JSON.parse(stored) : {}
     }
+    return cachedProblemsData![problemId] || null
   } catch (error) {
     console.error("[v0] Error reading problem data:", error)
+    return null
   }
-
-  return null
 }
 
 export function getAllProblemsData(): Record<string, StoredProblemData> {
   if (typeof window === "undefined") return {}
 
   try {
-    const stored = localStorage.getItem(PROBLEMS_STORAGE_KEY)
-    if (stored) {
-      return JSON.parse(stored)
+    if (!cachedProblemsData) {
+      const stored = localStorage.getItem(PROBLEMS_STORAGE_KEY)
+      cachedProblemsData = stored ? JSON.parse(stored) : {}
     }
+    return cachedProblemsData!
   } catch (error) {
     console.error("[v0] Error reading all problems data:", error)
+    return {}
   }
-
-  return {}
 }
 
 export function updateProblemData(problemId: string, updates: Partial<StoredProblemData>) {
@@ -142,12 +143,17 @@ export function updateProblemData(problemId: string, updates: Partial<StoredProb
       updates.completedAt = undefined
     }
 
-    allData[problemId] = {
+    const updatedItem = {
       ...currentData,
       ...updates,
       updatedAt: new Date().toISOString(),
     }
 
+    allData[problemId] = updatedItem
+    cachedProblemsData = allData // Maintain cache
+
+    // Debounce the actual localStorage write to keep interactions snappy
+    // For now, simple write is okay if we only do it once per change
     localStorage.setItem(PROBLEMS_STORAGE_KEY, JSON.stringify(allData))
   } catch (error) {
     console.error("[v0] Error updating problem data:", error)
@@ -156,7 +162,7 @@ export function updateProblemData(problemId: string, updates: Partial<StoredProb
 
 export function clearAllProblemsData() {
   if (typeof window === "undefined") return
-
+  cachedProblemsData = null
   try {
     localStorage.removeItem(PROBLEMS_STORAGE_KEY)
   } catch (error) {

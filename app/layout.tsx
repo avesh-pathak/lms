@@ -15,9 +15,9 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Babua Hub | 90 Days Pattern DSA Mastery",
-  description: "Master the Babua 90-day pattern-based DSA roadmap. The elite registry for engineering mastery, system design, and distributed protocols. No courses, just proof of work.",
-  keywords: ["Babua DSA", "90 Days Pattern", "Pattern DSA", "Babua Hub", "Engineering Mastery", "System Design", "Low Level Design", "Distributed Systems", "90 Days Plan", "Pattern Based Learning"],
+  title: "Babua DSA Sheet | 90 Days Pattern Mastery Roadmap",
+  description: "Master the Babua DSA Sheet - a comprehensive 90-day pattern-based DSA roadmap. The elite registry for engineering mastery, system design, and distributed protocols. No courses, just proof of work.",
+  keywords: ["Babua DSA Sheet", "Babua DSA", "90 Days Pattern", "Pattern DSA", "Babua Hub", "Engineering Mastery", "System Design", "Low Level Design", "Distributed Systems", "90 Days Plan", "Pattern Based Learning", "DSA Roadmap", "Coding Interview Preparation"],
   generator: "v0.app",
 }
 
@@ -53,6 +53,24 @@ export default function RootLayout({
           {children}
           <Toaster />
         </ProblemsProvider>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Course",
+              "name": "Babua DSA Sheet",
+              "description": "A comprehensive 90-day pattern-based DSA roadmap and sheet for mastering data structures and algorithms.",
+              "provider": {
+                "@type": "Organization",
+                "name": "Babua Hub",
+                "sameAs": "https://aveshpathaklms.vercel.app/"
+              },
+              "courseCode": "DSA-90",
+              "educationalLevel": "Intermediate to Advanced"
+            })
+          }}
+        />
         <Analytics />
         <SpeedInsights />
       </body>

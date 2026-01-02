@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo } from "react"
+import React, { useMemo, memo } from "react"
 import { toSlug, cn } from "@/lib/utils"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
@@ -188,9 +188,10 @@ export function DashboardOverview() {
   )
 }
 
-function TopicCard({ topic, getMasteryRank }: { topic: Topic, getMasteryRank: any }) {
+const TopicCard = React.memo(function TopicCard({ topic, getMasteryRank }: { topic: Topic, getMasteryRank: (percent: number) => { label: string; color: string } | null }) {
   const progress = (topic.solved / topic.total) * 100
-  const rank = getMasteryRank(progress)
+  const rank = React.useMemo(() => getMasteryRank(progress), [progress, getMasteryRank])
+
   return (
     <Link
       href={`/dashboard/topic/${toSlug(topic.name)}`}
@@ -238,4 +239,4 @@ function TopicCard({ topic, getMasteryRank }: { topic: Topic, getMasteryRank: an
       </div>
     </Link>
   )
-}
+})
