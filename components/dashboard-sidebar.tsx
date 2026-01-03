@@ -55,7 +55,7 @@ export function DashboardSidebar() {
       {/* Mobile menu button */}
       <button
         onClick={() => setOpen(true)}
-        className="lg:hidden fixed top-3 right-4 z-50 rounded-xl border bg-background/80 backdrop-blur-md p-2.5 shadow-xl hover:bg-background transition-all active:scale-95 border-border/50"
+        className="lg:hidden fixed top-3 left-4 z-50 rounded-xl border bg-background/80 backdrop-blur-md p-2.5 shadow-xl hover:bg-background transition-all active:scale-95 border-border/50"
         aria-label="Open sidebar"
       >
         <Menu className="h-5 w-5 text-primary" aria-hidden="true" />
