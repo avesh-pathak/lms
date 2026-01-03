@@ -69,12 +69,12 @@ export function DashboardOverview() {
     return groups
   }, [filteredTopics, activeDomain])
 
-  const getMasteryRank = (percent: number) => {
+  const getMasteryRank = React.useCallback((percent: number) => {
     if (percent === 100) return { label: "Gold", color: "text-yellow-600 bg-yellow-500/10 border-yellow-500/20" }
     if (percent >= 50) return { label: "Silver", color: "text-slate-400 bg-slate-500/10 border-slate-500/20" }
     if (percent >= 25) return { label: "Bronze", color: "text-orange-600 bg-orange-500/10 border-orange-500/20" }
     return null
-  }
+  }, [])
 
   return (
     <div className="p-6 lg:p-8 space-y-12 max-w-7xl mx-auto">
@@ -148,13 +148,10 @@ export function DashboardOverview() {
                   {Object.entries(groupedTopics).map(([subject, subTopics]) => (
                     <div key={subject} className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                       <div className="flex items-center gap-4">
-                        <h3 className={cn(
-                          "text-2xl font-black uppercase italic tracking-tighter text-foreground/90",
-                          (subject === "System Design" || subject === "Low Level Design") && "text-primary"
-                        )}>
+                        <h3 className="text-2xl md:text-3xl font-black uppercase italic tracking-tighter text-foreground bg-primary/10 px-4 py-1 rounded-lg border-l-4 border-primary">
                           {subject}
                         </h3>
-                        <div className="h-px flex-1 bg-gradient-to-r from-border/50 to-transparent" />
+                        <div className="h-px flex-1 bg-gradient-to-r from-primary/50 to-transparent" />
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {subTopics.map((topic: Topic) => (
@@ -202,7 +199,7 @@ const TopicCard = React.memo(function TopicCard({ topic, getMasteryRank }: { top
       <div className="flex justify-between items-start relative z-10">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <h4 className="text-lg font-black group-hover:text-primary transition-colors leading-tight italic truncate max-w-[150px] uppercase">
+            <h4 className="text-lg font-black text-foreground group-hover:text-primary transition-colors leading-tight italic truncate max-w-[150px] uppercase">
               {topic.name}
             </h4>
             {rank && (
@@ -221,7 +218,7 @@ const TopicCard = React.memo(function TopicCard({ topic, getMasteryRank }: { top
           </p>
         </div>
         <div className="h-8 w-8 rounded-full bg-muted/50 flex items-center justify-center group-hover:bg-primary/20 group-hover:text-primary transition-all">
-          <ArrowRight className="h-4 w-4" />
+          <ArrowRight className="h-4 w-4" aria-hidden="true" />
         </div>
       </div>
 
@@ -230,7 +227,14 @@ const TopicCard = React.memo(function TopicCard({ topic, getMasteryRank }: { top
           <span className="opacity-40">Proficiency</span>
           <span className="text-primary font-black">{progress.toFixed(0)}%</span>
         </div>
-        <div className="h-2 bg-muted rounded-full overflow-hidden">
+        <div
+          className="h-2 bg-muted rounded-full overflow-hidden"
+          role="progressbar"
+          aria-valuenow={Math.round(progress)}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label={`${topic.name} proficiency`}
+        >
           <div
             className="h-full bg-primary rounded-full transition-all duration-500 shadow-[0_0_8px_rgba(251,146,60,0.4)]"
             style={{ width: `${progress}%` }}

@@ -18,11 +18,8 @@ import {
 import { useProblems } from "./problems-provider"
 import { format, parseISO, subDays, eachDayOfInterval, isSameDay } from "date-fns"
 import { cn } from "@/lib/utils"
-import { DailyGoal } from "./daily-goal"
-import { ContinueLearning } from "./continue-learning"
-import { SmartRecommendations } from "./smart-recommendations"
-import { RevisionQueue } from "./revision-queue"
 import { Separator } from "@/components/ui/separator"
+import { ActivityHeatmap } from "./activity-heatmap"
 
 export function AnalyticsDashboard() {
   const { topics, problems, loading } = useProblems()
@@ -36,7 +33,7 @@ export function AnalyticsDashboard() {
 
   // --- Data Calculations ---
   // --- Consolidated Data Calculations (Optimized to O(N) instead of O(N^2)) ---
-  const { stats, trendData, streak, completedToday } = useMemo(() => {
+  const { stats, trendData, streak, completedToday, activityData } = useMemo(() => {
     const total = topics.reduce((s, t) => s + t.total, 0)
     const solved = topics.reduce((s, t) => s + t.solved, 0)
     const percent = total > 0 ? (solved / total) * 100 : 0
@@ -87,15 +84,29 @@ export function AnalyticsDashboard() {
       }
     })
 
-    // Generate trend data for last 30 days
+    // Generate trend data and activity data for last 30 days
     const last30Days = eachDayOfInterval({
       start: subDays(new Date(), 29),
       end: new Date(),
     })
+
     const trend = last30Days.map(date => ({
       date: format(date, "MMM d"),
       xp: xpByDate.get(format(date, "MMM d")) || 0
     }))
+
+    const activityHeatmapData = last30Days.map(date => {
+      const dateStr = format(date, "yyyy-MM-dd")
+      let count = 0
+      problems.forEach(p => {
+        if (p.status === "Completed" && p.completedAt) {
+          if (format(parseISO(p.completedAt), "yyyy-MM-dd") === dateStr) {
+            count++
+          }
+        }
+      })
+      return { date: format(date, "PPP"), count }
+    })
 
     // Calculate Streak
     const sortedDates = Array.from(completedDatesSet).sort((a, b) => b.localeCompare(a))
@@ -120,6 +131,7 @@ export function AnalyticsDashboard() {
     return {
       stats: { total, solved, percent, easy: diffStats.Easy, medium: diffStats.Medium, hard: diffStats.Hard, totalXP },
       trendData: trend,
+      activityData: activityHeatmapData,
       streak: currentStreak,
       completedToday: completedCountToday
     }
@@ -157,7 +169,7 @@ export function AnalyticsDashboard() {
       {/* Refined Header - Always Rendered for better LCP */}
       <div className="flex flex-col md:flex-row justify-between items-end gap-6 border-b pb-8 border-border/50">
         <div className="space-y-1">
-          <h2 className="text-5xl font-black tracking-tight text-primary">
+          <h2 className="text-5xl font-black tracking-tighter uppercase italic text-primary">
             ANALYTICS
           </h2>
           <p className="text-muted-foreground font-medium">Real-time performance decoding.</p>
@@ -228,31 +240,22 @@ export function AnalyticsDashboard() {
           </div>
         </div>
 
-        {/* Sidebar: Focused Daily Pulse */}
+        {/* Sidebar: Focused Analytics & Proof of Work */}
         <div className="lg:col-span-4 space-y-6">
-          <div className="bg-card border rounded-[32px] p-6 space-y-6 lg:sticky lg:top-8 min-h-[500px]">
-            <div className="space-y-1 px-1">
-              <h3 className="text-lg font-black uppercase italic tracking-tight">Daily Pulse.</h3>
-              <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest opacity-60">Live feedback loop</p>
-            </div>
+          <div className="bg-card border rounded-[32px] p-6 space-y-6 lg:sticky lg:top-8 min-h-[400px]">
+            {/* <div className="space-y-1 px-1">
+              <h3 className="text-lg font-black uppercase italic tracking-tight">Proof of Work.</h3>
+              <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest opacity-60">Consistency Audit Log</p>
+            </div> */}
 
             {(!mounted || loading) ? (
               <div className="space-y-6">
-                <div className="h-24 bg-muted/30 animate-pulse rounded-2xl" />
+                <div className="h-16 bg-muted/30 animate-pulse rounded-2xl" />
                 <div className="h-32 bg-muted/30 animate-pulse rounded-2xl" />
-                <div className="h-40 bg-muted/30 animate-pulse rounded-2xl" />
               </div>
             ) : (
               <>
-                <DailyGoal completedToday={completedToday} />
-                <Separator className="opacity-10" />
-                <div className="space-y-4">
-                  <ContinueLearning problem={mostRecentProblem} />
-                </div>
-                <div className="space-y-4">
-                  <SmartRecommendations />
-                </div>
-                <RevisionQueue />
+                <ActivityHeatmap data={activityData} />
               </>
             )}
           </div>
@@ -273,11 +276,11 @@ function MetricCard({ title, value, icon: Icon, color }: any) {
   return (
     <div className="bg-card border p-6 rounded-2xl flex flex-col gap-4 shadow-sm group hover:border-primary transition-all">
       <div className={cn("p-2 w-10 h-10 rounded-xl border flex items-center justify-center transition-colors group-hover:bg-primary group-hover:text-white", colorMap[color])}>
-        <Icon className="h-5 w-5" />
+        <Icon className="h-5 w-5" aria-hidden="true" />
       </div>
       <div className="flex flex-col">
-        <span className="text-3xl font-black tabular-nums">{value}</span>
-        <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{title}</span>
+        <span className="text-2xl sm:text-3xl font-black tabular-nums tracking-tighter shrink-0">{value}</span>
+        <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest leading-none mt-1">{title}</span>
       </div>
     </div>
   )

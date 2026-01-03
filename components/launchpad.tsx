@@ -24,20 +24,34 @@ import {
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { GoalSelector } from "./goal-selector"
+import { DailyGoal } from "./daily-goal"
+
+import { getSessionData } from "@/lib/local-storage"
+import { isAfter, parseISO } from "date-fns"
 
 interface LaunchpadProps {
     problems: MongoDBProblem[]
     topics: Topic[]
 }
 
-export function Launchpad({ problems, topics }: LaunchpadProps) {
+export const Launchpad = React.memo(function Launchpad({ problems, topics }: LaunchpadProps) {
     const [mounted, setMounted] = React.useState(false)
     const [userGoal, setUserGoal] = useState<string | null>(null)
     const [isGoalOpen, setIsGoalOpen] = useState(false)
+    const [hasBookedSession, setHasBookedSession] = useState(false)
 
     React.useEffect(() => {
         setMounted(true)
         setUserGoal(localStorage.getItem("user_learning_goal"))
+
+        // Check for booked sessions
+        const data = getSessionData()
+        if (data.bookedSessions && data.bookedSessions.length > 0) {
+            const hasActive = data.bookedSessions.some(s =>
+                s.status === "upcoming" && isAfter(parseISO(s.date), new Date())
+            )
+            setHasBookedSession(hasActive)
+        }
     }, [])
 
     // 1. Resume Hero: Most recent "In Progress" problem (Optimized O(N) search)
@@ -91,9 +105,9 @@ export function Launchpad({ problems, topics }: LaunchpadProps) {
         let count = 0
         if (stats.solvedToday > 0) count++
         if (hotZoneProblems.length === 0) count++
-        // Final one is placeholder for theory reading
+        if (hasBookedSession) count++
         return (count / 3) * 100
-    }, [stats.solvedToday, hotZoneProblems.length])
+    }, [stats.solvedToday, hotZoneProblems.length, hasBookedSession])
 
     if (!mounted) return null
 
@@ -110,11 +124,11 @@ export function Launchpad({ problems, topics }: LaunchpadProps) {
             {/* Hero: Action Plan */}
             <section className="relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 to-orange-500/30 rounded-[32px] blur-xl opacity-25 group-hover:opacity-40 transition-opacity" />
-                <Card className="relative overflow-hidden border-none bg-[#FDF5F0] rounded-[32px] shadow-sm border border-orange-100/50">
+                <Card className="relative overflow-hidden border-none bg-[#FDF5F0] dark:bg-card/50 rounded-[32px] shadow-sm border border-orange-100/50 dark:border-border/50">
                     <CardContent className="p-6 lg:p-8 flex flex-col lg:flex-row items-center justify-between gap-6">
                         <div className="space-y-4 max-w-xl text-center lg:text-left relative z-10">
                             <div className="flex items-center gap-2 justify-center lg:justify-start">
-                                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-rose-50/80 backdrop-blur-sm border border-rose-100 text-rose-600 font-black uppercase text-xs tracking-widest italic shadow-sm">
+                                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-rose-50/80 dark:bg-rose-500/10 backdrop-blur-sm border border-rose-100 dark:border-rose-500/20 text-rose-600 dark:text-rose-400 font-black uppercase text-xs tracking-widest italic shadow-sm">
                                     <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
                                     Mission Active: {userGoal || "DSA"}
                                 </div>
@@ -122,18 +136,18 @@ export function Launchpad({ problems, topics }: LaunchpadProps) {
                                     variant="ghost"
                                     size="sm"
                                     onClick={() => setIsGoalOpen(true)}
-                                    className="h-8 px-3 rounded-xl text-xs font-black uppercase tracking-widest text-rose-400 hover:text-rose-600 hover:bg-rose-100/50 transition-all active:scale-95"
+                                    className="h-8 px-3 rounded-xl text-xs font-black uppercase tracking-widest text-rose-400 hover:text-rose-600 hover:bg-rose-100/50 dark:hover:bg-rose-500/10 transition-all active:scale-95"
                                 >
                                     Change Mission
                                 </Button>
                             </div>
                             <div className="space-y-2">
-                                <h2 className="text-4xl lg:text-5xl font-black italic uppercase tracking-tighter leading-[0.85] text-[#1A1A1A]">
+                                <h2 className="text-4xl lg:text-5xl font-black italic uppercase tracking-tighter leading-[0.85] text-[#1A1A1A] dark:text-foreground">
                                     Ready to <span className="text-[#FB923C] relative italic">Execute?
                                         <div className="absolute -bottom-1 left-0 w-full h-2 bg-[#FB923C]/10 -skew-x-12" />
                                     </span>
                                 </h2>
-                                <p className="text-sm text-[#1A1A1A]/60 font-medium max-w-xs">
+                                <p className="text-sm text-[#1A1A1A]/60 dark:text-muted-foreground font-medium max-w-xs">
                                     {resumeProblem
                                         ? `You were mid-way through "${resumeProblem.title}".`
                                         : "Start your curated daily session now."
@@ -161,7 +175,7 @@ export function Launchpad({ problems, topics }: LaunchpadProps) {
 
                         {/* Mastery Orbit (Screenshot Style) */}
                         <div className="relative shrink-0 flex items-center justify-center w-40 h-40 lg:mr-4">
-                            <div className="absolute inset-0 rounded-full border-[8px] border-white/50" />
+                            <div className="absolute inset-0 rounded-full border-[8px] border-white/50 dark:border-muted/20" />
 
                             <svg className="w-full h-full transform -rotate-90 relative z-10" viewBox="0 0 100 100">
                                 <circle
@@ -171,7 +185,7 @@ export function Launchpad({ problems, topics }: LaunchpadProps) {
                                     stroke="currentColor"
                                     strokeWidth="8"
                                     fill="transparent"
-                                    className="text-white/20"
+                                    className="text-white/20 dark:text-muted/20"
                                 />
                                 <circle
                                     cx="50"
@@ -187,8 +201,8 @@ export function Launchpad({ problems, topics }: LaunchpadProps) {
                                 />
                             </svg>
                             <div className="absolute inset-0 flex flex-col items-center justify-center text-center space-y-0.5">
-                                <span className="text-[8px] font-black text-[#1A1A1A]/30 uppercase tracking-[0.2em] leading-none">System Sync</span>
-                                <span className="text-4xl font-black italic text-[#1A1A1A]">{stats.mastery.toFixed(0)}%</span>
+                                <span className="text-[8px] font-black text-[#1A1A1A]/30 dark:text-muted-foreground/60 uppercase tracking-[0.2em] leading-none">System Sync</span>
+                                <span className="text-4xl font-black italic text-[#1A1A1A] dark:text-foreground">{stats.mastery.toFixed(0)}%</span>
                                 <span className="text-[9px] font-black uppercase tracking-tighter text-[#FB923C] pt-1">{stats.solved} / {stats.total}</span>
                             </div>
                         </div>
@@ -242,11 +256,24 @@ export function Launchpad({ problems, topics }: LaunchpadProps) {
                     </div>
                 </div>
 
-                {/* Right: Daily Quests */}
                 <div className="space-y-6">
+                    <div className="space-y-4">
+                        <h3 className="text-xl font-black uppercase italic tracking-tighter flex items-center gap-2 px-2 text-primary">
+                            <Target className="h-5 w-5" />
+                            Daily Pulse.
+                        </h3>
+                        <div className="p-6 rounded-[32px] bg-card border border-border/50 shadow-xl shadow-black/5">
+                            <DailyGoal completedToday={stats.solvedToday} />
+                        </div>
+                    </div>
+
+                    {/* Pattern of the Day */}
+                    <PatternOfTheDay topics={topics} />
+
+
                     <h3 className="text-xl font-black uppercase italic tracking-tighter flex items-center gap-2 px-2">
-                        <Target className="h-5 w-5 text-primary" />
-                        Execution Quests
+                        <Flame className="h-5 w-5 text-orange-600 animate-pulse" />
+                        Active Quests
                     </h3>
                     <div className="p-6 rounded-[32px] bg-card border border-border/50 space-y-6 shadow-xl shadow-black/5">
                         <QuestItem
@@ -262,7 +289,7 @@ export function Launchpad({ problems, topics }: LaunchpadProps) {
                         <QuestItem
                             label="Connect with a Mentor"
                             sub="Explore expert support modules"
-                            completed={false}
+                            completed={hasBookedSession}
                         />
 
                         <div className="pt-4 border-t border-border/50">
@@ -327,7 +354,7 @@ export function Launchpad({ problems, topics }: LaunchpadProps) {
             </section>
         </div>
     )
-}
+})
 
 const QuestItem = React.memo(function QuestItem({ label, sub, completed }: { label: string, sub: string, completed: boolean }) {
     return (
@@ -389,6 +416,41 @@ function TechTreeSeparator({ completed }: { completed?: boolean }) {
                 completed ? "bg-primary shadow-[0_0_8px_rgba(251,146,60,0.5)]" : "bg-transparent"
             )} style={{ width: completed ? '100%' : '0%' }} />
             <ChevronRight className={cn("h-4 w-4 relative z-10", completed ? "text-primary" : "text-muted/30")} />
+        </div>
+    )
+}
+
+function PatternOfTheDay({ topics }: { topics: Topic[] }) {
+    // Select pattern based on day of year to be consistent for 24h
+    const pattern = useMemo(() => {
+        if (!topics || topics.length === 0) return null
+        const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 1000 / 60 / 60 / 24)
+        return topics[dayOfYear % topics.length]
+    }, [topics])
+
+    if (!pattern) return null
+
+    return (
+        <div className="space-y-4">
+            <h3 className="text-xl font-black uppercase italic tracking-tighter flex items-center gap-2 px-2 text-primary">
+                <Zap className="h-5 w-5" />
+                Pattern of the Day
+            </h3>
+            <Link href={`/dashboard/topic/${toSlug(pattern.name)}`}>
+                <div className="group relative p-6 rounded-[32px] bg-card border border-border/50 shadow-xl shadow-black/5 hover:border-primary/50 transition-all overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                    <div className="relative z-10 flex items-center justify-between">
+                        <div className="space-y-1">
+                            <h4 className="text-lg font-black uppercase italic tracking-tight group-hover:text-primary transition-colors">{pattern.name}</h4>
+                            <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">{pattern.total} Problems • {pattern.solved} Solved</p>
+                        </div>
+                        <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                            <ArrowRight className="h-5 w-5" />
+                        </div>
+                    </div>
+                </div>
+            </Link>
         </div>
     )
 }

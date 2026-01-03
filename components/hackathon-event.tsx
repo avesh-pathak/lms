@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import Image from "next/image"
 
 interface Submission {
     id: string
@@ -267,11 +268,14 @@ export function HackathonEvent({
                                             <div className="space-y-6">
                                                 <div className="flex items-center justify-between">
                                                     <div className="flex items-center gap-3">
-                                                        <img
-                                                            src="/assets/mentors/image.png"
-                                                            alt={sub.user}
-                                                            className="w-10 h-10 rounded-full object-cover border-2 border-background shadow-sm"
-                                                        />
+                                                        <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-background shadow-sm">
+                                                            <Image
+                                                                src="/assets/mentors/image.png"
+                                                                alt={sub.user}
+                                                                fill
+                                                                className="object-cover"
+                                                            />
+                                                        </div>
                                                         <div>
                                                             <p className="text-sm font-black uppercase tracking-tight">{sub.user}</p>
                                                             <p className="text-[10px] text-muted-foreground">Submitted 2h ago</p>
@@ -325,7 +329,7 @@ export function HackathonEvent({
                                     <div className="relative z-10 grid grid-cols-3 items-end gap-4 text-center">
                                         <div className="space-y-4">
                                             <div className="w-16 h-16 rounded-full bg-white/20 mx-auto relative border-2 border-white/50 overflow-hidden">
-                                                <img src="/assets/mentors/image2.png" className="w-full h-full object-cover" alt="Sarah_B" />
+                                                <Image src="/assets/mentors/image2.png" fill className="object-cover" alt="Sarah_B" />
                                                 <div className="absolute -top-2 -left-2 bg-indigo-500 text-white px-2 py-0.5 rounded-full font-black text-[10px]">#2</div>
                                             </div>
                                             <p className="font-black uppercase tracking-tight">Sarah_B</p>
@@ -334,7 +338,7 @@ export function HackathonEvent({
                                         <div className="space-y-4">
                                             <Crown className="h-8 w-8 text-yellow-300 mx-auto animate-bounce" />
                                             <div className="w-20 h-20 rounded-full bg-white/20 mx-auto relative border-4 border-yellow-300 overflow-hidden">
-                                                <img src="/assets/mentors/image.png" className="w-full h-full object-cover" alt="Alex.dev" />
+                                                <Image src="/assets/mentors/image.png" fill className="object-cover" alt="Alex.dev" />
                                                 <div className="absolute -top-3 -left-3 bg-yellow-300 text-[#FB923C] px-3 py-1 rounded-full font-black text-xs">#1</div>
                                             </div>
                                             <p className="text-xl font-black uppercase tracking-tight">Alex.dev</p>
@@ -342,7 +346,7 @@ export function HackathonEvent({
                                         </div>
                                         <div className="space-y-4">
                                             <div className="w-14 h-14 rounded-full bg-white/10 mx-auto relative border-2 border-white/30 overflow-hidden">
-                                                <img src="/assets/mentors/image.png" className="w-full h-full object-cover" alt="Coder_X" />
+                                                <Image src="/assets/mentors/image.png" fill className="object-cover" alt="Coder_X" />
                                                 <div className="absolute -top-2 -left-2 bg-emerald-500 text-white px-2 py-0.5 rounded-full font-black text-[10px]">#3</div>
                                             </div>
                                             <p className="font-black uppercase tracking-tight">Coder_X</p>
@@ -355,8 +359,8 @@ export function HackathonEvent({
                                     {["Master_Architect", "Build_Wizard", "Cloud_Native", "Kernel_Dev", "Prompt_Eng"].map((name, idx) => (
                                         <div key={name} className="flex items-center gap-6 p-6 border-b last:border-0 hover:bg-muted/30 transition-colors">
                                             <span className="w-8 text-center text-lg font-black text-muted-foreground">{idx + 4}</span>
-                                            <div className="w-10 h-10 rounded-full bg-muted border-2 border-border/50 overflow-hidden">
-                                                <img src={idx % 2 === 0 ? "/assets/mentors/image.png" : "/assets/mentors/image2.png"} alt={name} className="w-full h-full object-cover" />
+                                            <div className="w-10 h-10 rounded-full bg-muted border-2 border-border/50 overflow-hidden relative">
+                                                <Image src={idx % 2 === 0 ? "/assets/mentors/image.png" : "/assets/mentors/image2.png"} alt={name} fill className="object-cover" />
                                             </div>
                                             <div className="flex-grow">
                                                 <p className="font-black uppercase tracking-tight">{name}</p>

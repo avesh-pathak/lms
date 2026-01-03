@@ -141,7 +141,7 @@ export function ProblemsProvider({
 
     const [isPending, startTransition] = React.useTransition()
 
-    const fetchData = async () => {
+    const fetchData = React.useCallback(async () => {
         try {
             const res = await fetch("/api/problems")
             const data = await res.json()
@@ -153,7 +153,7 @@ export function ProblemsProvider({
             console.error("Failed to load problems in provider", err)
             setLoading(false)
         }
-    }
+    }, [processAllProblems])
 
     const updateProblem = React.useCallback((id: string, updates: Partial<MongoDBProblem>) => {
         startTransition(() => {
@@ -169,6 +169,15 @@ export function ProblemsProvider({
         })
     }, [applySRS])
 
+    // Optimize context value to prevent unnecessary re-renders
+    const value = React.useMemo(() => ({
+        problems,
+        topics,
+        loading,
+        refresh: fetchData,
+        updateProblem
+    }), [problems, topics, loading, fetchData, updateProblem])
+
     useEffect(() => {
         if (initialProblems.length > 0) {
             startTransition(() => {
@@ -178,10 +187,10 @@ export function ProblemsProvider({
         } else {
             fetchData()
         }
-    }, [])
+    }, [initialProblems, processAllProblems, fetchData])
 
     return (
-        <ProblemsContext.Provider value={{ problems, topics, loading, refresh: fetchData, updateProblem }}>
+        <ProblemsContext.Provider value={value}>
             {children}
         </ProblemsContext.Provider>
     )

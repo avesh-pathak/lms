@@ -59,7 +59,7 @@ export default function GroupsPage() {
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground opacity-40" />
                         <Input
                             placeholder="Find your squad (e.g., System Design, Frontend)..."
-                            className="pl-12 h-12 rounded-2xl bg-white border-none text-sm font-bold shadow-inner"
+                            className="pl-12 h-12 rounded-2xl bg-background border-none text-sm font-bold shadow-inner"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -135,12 +135,12 @@ export default function GroupsPage() {
                 {/* Bottom Guarantee */}
                 <div className="max-w-xl mx-auto p-8 rounded-[40px] bg-emerald-500/[0.03] border-2 border-emerald-500/10 text-center space-y-3 relative overflow-hidden group">
                     <div className="absolute top-0 left-0 w-full h-1 bg-emerald-500/20" />
-                    <div className="flex items-center justify-center gap-2 text-emerald-600">
+                    <div className="flex items-center justify-center gap-2 text-emerald-600 dark:text-emerald-400">
                         <ShieldCheck className="w-5 h-5" />
                         <span className="font-black text-[12px] uppercase tracking-[0.3em] italic">The Collective Guarantee</span>
                     </div>
-                    <p className="text-xs text-emerald-900/60 font-bold italic leading-relaxed">
-                        If your Squad doesn't accelerate your technical intuition in the first 14 days, we will terminate your subscription and issue an <span className="text-emerald-600 font-black">ENTIRE REFUND</span>. No neural friction.
+                    <p className="text-xs text-emerald-900/60 dark:text-emerald-100/60 font-bold italic leading-relaxed">
+                        If your Squad doesn't accelerate your technical intuition in the first 14 days, we will terminate your subscription and issue an <span className="text-emerald-600 dark:text-emerald-400 font-black">ENTIRE REFUND</span>. No neural friction.
                     </p>
                 </div>
             </div>

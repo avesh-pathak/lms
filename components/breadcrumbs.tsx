@@ -52,7 +52,8 @@ export function Breadcrumbs() {
                 <BreadcrumbItem>
                     <BreadcrumbLink asChild>
                         <Link href="/" className="flex items-center gap-1">
-                            <Home className="h-3 w-3" />
+                            <Home className="h-3 w-3" aria-hidden="true" />
+                            <span className="sr-only">Home</span>
                         </Link>
                     </BreadcrumbLink>
                 </BreadcrumbItem>

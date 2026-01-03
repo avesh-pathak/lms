@@ -31,7 +31,7 @@ export const MOCK_SQUADS: Squad[] = [
         manifesto: [
             "Weekly LIVE Pattern Gauntlet: Real-Time Load Simulations",
             "Direct Architecture Reviews of your Project Nodes",
-            "Personalized Mission Roadmaps (Monthly Sync)",
+            "Personalized Mission Plans (Monthly Sync)",
             "Priority 'War Room' Support for System Blockers"
         ],
         monthlyPrice: 2499,

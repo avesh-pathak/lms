@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
+import Image from "next/image"
 import { getSessionData, BookedSession } from "@/lib/local-storage"
 import { Video, Calendar, Clock, ArrowRight, ExternalLink, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -88,11 +89,14 @@ export function UpcomingSessions() {
 
                         <div className="flex items-center gap-5 relative z-10 mb-8">
                             <div className="relative">
-                                <img
-                                    src={session.mentorImage}
-                                    alt={session.mentorName}
-                                    className="w-14 h-14 rounded-[20px] object-cover border-2 border-background shadow-xl scale-100 group-hover:scale-105 transition-transform duration-500"
-                                />
+                                <div className="relative w-14 h-14 rounded-[20px] overflow-hidden border-2 border-background shadow-xl scale-100 group-hover:scale-105 transition-transform duration-500">
+                                    <Image
+                                        src={session.mentorImage}
+                                        alt={session.mentorName}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </div>
                                 <div className="absolute -bottom-1 -right-1 h-5 w-5 bg-primary rounded-lg flex items-center justify-center border-2 border-background shadow-lg">
                                     <Video className="h-2.5 w-2.5 text-white" />
                                 </div>

@@ -149,14 +149,14 @@ export default function LeaderboardPage() {
                         {/* Top Standing Card */}
                         {currentUser && (
                             <div className="max-w-[550px] w-full lg:mb-2 self-center scale-105 transform origin-right">
-                                <div className="bg-white/95 text-black rounded-[32px] p-4 shadow-[0_30px_60px_rgba(0,0,0,0.15)] border border-black/5 flex items-center justify-between gap-6 animate-in fade-in slide-in-from-right-4 duration-700 backdrop-blur-xl">
+                                <div className="bg-white/95 dark:bg-card/50 text-black dark:text-foreground rounded-[32px] p-4 shadow-[0_30px_60px_rgba(0,0,0,0.15)] border border-black/5 dark:border-border/50 flex items-center justify-between gap-6 animate-in fade-in slide-in-from-right-4 duration-700 backdrop-blur-xl">
                                     {/* Left Section: Compact User Info */}
                                     <div className="flex items-center gap-5">
                                         <div className="relative">
-                                            <div className="w-14 h-14 rounded-2xl border-2 border-black/10 overflow-hidden shadow-sm">
+                                            <div className="w-14 h-14 rounded-2xl border-2 border-black/10 dark:border-border/50 overflow-hidden shadow-sm">
                                                 <img src={currentUser.avatar} className="w-full h-full object-cover" alt={currentUser.name} />
                                             </div>
-                                            <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white bg-green-500 animate-pulse" />
+                                            <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white dark:border-card bg-green-500 animate-pulse" />
                                         </div>
                                         <div className="space-y-1">
                                             <div className="flex items-center gap-2">
@@ -171,15 +171,15 @@ export default function LeaderboardPage() {
                                     </div>
 
                                     {/* Center Section: Points Today */}
-                                    <div className="flex flex-col items-center px-6 border-x border-black/5">
+                                    <div className="flex flex-col items-center px-6 border-x border-black/5 dark:border-border/50">
                                         <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest leading-none mb-1">Today</span>
-                                        <div className="text-xl font-black text-green-600">↑ {pointsToday}</div>
+                                        <div className="text-xl font-black text-green-600 dark:text-green-500">↑ {pointsToday}</div>
                                     </div>
 
                                     {/* Right Section: Main Points & CTA */}
                                     <div className="flex items-center gap-5">
                                         <div className="text-right">
-                                            <div className="text-2xl font-black text-black italic leading-none">
+                                            <div className="text-2xl font-black text-black dark:text-foreground italic leading-none">
                                                 {(timeRange === "weekly" ? currentUser.weeklyPoints : currentUser.points)?.toLocaleString()}
                                             </div>
                                             <div className="text-[10px] font-black uppercase text-muted-foreground leading-none">Total XP</div>

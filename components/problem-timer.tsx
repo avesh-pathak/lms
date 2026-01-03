@@ -80,18 +80,18 @@ export function ProblemTimer({ problemId, onTimeUpdate }: ProblemTimerProps) {
 
   return (
     <div className="flex items-center gap-2">
-      <div className="flex items-center gap-1.5 text-sm font-mono min-w-[60px]">
-        <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+      <div className="flex items-center gap-1.5 text-sm font-mono min-w-[60px]" aria-label="Time spent">
+        <Clock className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
         <span className={isRunning ? "text-foreground" : "text-muted-foreground"}>{formatTime(time)}</span>
       </div>
 
-      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleToggle}>
-        {isRunning ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
+      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleToggle} aria-label={isRunning ? "Pause timer" : "Start timer"}>
+        {isRunning ? <Pause className="h-3.5 w-3.5" aria-hidden="true" /> : <Play className="h-3.5 w-3.5" aria-hidden="true" />}
       </Button>
 
       {time > 0 && (
-        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleReset}>
-          <RotateCcw className="h-3.5 w-3.5" />
+        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleReset} aria-label="Reset timer">
+          <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
         </Button>
       )}
     </div>

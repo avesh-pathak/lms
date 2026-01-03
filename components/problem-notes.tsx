@@ -69,24 +69,24 @@ export function ProblemNotes({
     <div className="space-y-4">
       <Tabs defaultValue="notes" className="w-full">
         <div className="flex items-center justify-between mb-3">
-          <TabsList>
+          <TabsList aria-label="Problem documentation tabs">
             <TabsTrigger value="notes" className="gap-2">
-              <StickyNote className="h-4 w-4" />
+              <StickyNote className="h-4 w-4" aria-hidden="true" />
               Notes
             </TabsTrigger>
             <TabsTrigger value="solution" className="gap-2">
-              <Code2 className="h-4 w-4" />
+              <Code2 className="h-4 w-4" aria-hidden="true" />
               Solution
             </TabsTrigger>
             <TabsTrigger value="approach" className="gap-2">
-              <Lightbulb className="h-4 w-4" />
+              <Lightbulb className="h-4 w-4" aria-hidden="true" />
               Approach
             </TabsTrigger>
           </TabsList>
 
           {hasChanges && (
-            <Button size="sm" onClick={handleSave} className="gap-2">
-              <Save className="h-4 w-4" />
+            <Button size="sm" onClick={handleSave} className="gap-2" aria-label="Save changes to notes">
+              <Save className="h-4 w-4" aria-hidden="true" />
               Save Changes
             </Button>
           )}

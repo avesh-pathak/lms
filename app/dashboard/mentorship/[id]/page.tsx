@@ -115,12 +115,12 @@ export default function MentorProfilePage({ params }: { params: Promise<{ id: st
                         <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                             <ShieldCheck className="h-20 w-20 text-emerald-500" />
                         </div>
-                        <div className="flex items-center gap-2 text-emerald-500 relative z-10">
+                        <div className="flex items-center gap-2 text-emerald-500 dark:text-emerald-400 relative z-10">
                             <ShieldCheck className="w-5 h-5" />
                             <span className="font-black text-[10px] uppercase tracking-[0.2em] italic">Babua Guarantee</span>
                         </div>
-                        <p className="text-[11px] text-emerald-900/60 font-medium leading-relaxed italic relative z-10">
-                            If the session doesn't yield measurable throughput, we will issue a <span className="text-emerald-600 font-black tracking-widest">100% REFUND</span> instantly.
+                        <p className="text-[11px] text-emerald-900/60 dark:text-emerald-100/60 font-medium leading-relaxed italic relative z-10">
+                            If the session doesn't yield measurable throughput, we will issue a <span className="text-emerald-600 dark:text-emerald-400 font-black tracking-widest">100% REFUND</span> instantly.
                         </p>
                     </div>
                 </div>

@@ -82,19 +82,20 @@ export function SearchFilterBar({
     <div className="space-y-3">
       <div className="flex items-center gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
           <Input
             placeholder="Search problems..."
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-9"
+            aria-label="Search problems"
           />
         </div>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="gap-2 bg-transparent">
-              <Filter className="h-4 w-4" />
+              <Filter className="h-4 w-4" aria-hidden="true" />
               Filters
               {activeFilterCount > 0 && (
                 <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-xs">
@@ -147,8 +148,8 @@ export function SearchFilterBar({
         </DropdownMenu>
 
         {activeFilterCount > 0 && (
-          <Button variant="ghost" size="icon" onClick={clearAllFilters}>
-            <X className="h-4 w-4" />
+          <Button variant="ghost" size="icon" onClick={clearAllFilters} aria-label="Clear all filters">
+            <X className="h-4 w-4" aria-hidden="true" />
           </Button>
         )}
       </div>
@@ -159,24 +160,24 @@ export function SearchFilterBar({
           {Array.from(filters.difficulties).map((difficulty) => (
             <Badge key={difficulty} variant="secondary" className="gap-1.5">
               {difficulty}
-              <button onClick={() => toggleDifficulty(difficulty)} className="hover:text-foreground">
-                <X className="h-3 w-3" />
+              <button onClick={() => toggleDifficulty(difficulty)} className="hover:text-foreground" aria-label={`Remove ${difficulty} filter`}>
+                <X className="h-3 w-3" aria-hidden="true" />
               </button>
             </Badge>
           ))}
           {Array.from(filters.statuses).map((status) => (
             <Badge key={status} variant="secondary" className="gap-1.5">
               {status}
-              <button onClick={() => toggleStatus(status)} className="hover:text-foreground">
-                <X className="h-3 w-3" />
+              <button onClick={() => toggleStatus(status)} className="hover:text-foreground" aria-label={`Remove ${status} filter`}>
+                <X className="h-3 w-3" aria-hidden="true" />
               </button>
             </Badge>
           ))}
           {Array.from(filters.companies).map((company) => (
             <Badge key={company} variant="secondary" className="gap-1.5">
               {company}
-              <button onClick={() => toggleCompany(company)} className="hover:text-foreground">
-                <X className="h-3 w-3" />
+              <button onClick={() => toggleCompany(company)} className="hover:text-foreground" aria-label={`Remove ${company} filter`}>
+                <X className="h-3 w-3" aria-hidden="true" />
               </button>
             </Badge>
           ))}

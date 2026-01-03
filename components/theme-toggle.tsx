@@ -39,10 +39,10 @@ export function ThemeToggle() {
       variant="outline"
       size="icon"
       onClick={toggleTheme}
-      className="h-10 w-10 rounded-2xl border-2 flex items-center justify-center transition-all bg-background border-border"
+      className="h-10 w-10 rounded-2xl border-2 flex items-center justify-center transition-all hover:bg-muted hover:border-primary dark:bg-muted/20 dark:border-muted-foreground dark:hover:border-primary dark:hover:bg-muted/40"
     >
-      <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-180 dark:scale-0 text-foreground" />
-      <Moon className="absolute h-4 w-4 rotate-180 scale-0 transition-all dark:rotate-0 dark:scale-100 text-foreground" />
+      <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-180 dark:scale-0 text-foreground" />
+      <Moon className="absolute h-5 w-5 rotate-180 scale-0 transition-all dark:rotate-0 dark:scale-100 text-foreground" />
       <span className="sr-only">Toggle theme</span>
     </Button>
   )

@@ -299,22 +299,22 @@ export function QuizClient({ initialTopics }: QuizClientProps) {
 
     return (
         <div className="p-2 lg:p-4 max-w-2xl mx-auto space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-200 mt-4 lg:mt-8">
-            <div className="flex items-center justify-between gap-4">
-                <Button variant="ghost" className="rounded-lg font-black italic uppercase tracking-widest text-[8px] h-7 px-2" onClick={() => setSelectedTopic(null)}>
-                    <ArrowLeft className="mr-1 h-3 w-3" /> Abort Sequence
+            <div className="flex items-center justify-between gap-6 py-2">
+                <Button variant="ghost" className="rounded-xl font-black italic uppercase tracking-widest text-xs h-10 px-4 hover:bg-destructive/10 hover:text-destructive transition-colors" onClick={() => setSelectedTopic(null)}>
+                    <ArrowLeft className="mr-2 h-4 w-4" /> Abort Sequence
                 </Button>
 
-                <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 px-2 py-1 bg-card rounded-lg border border-border/50">
-                        <Clock className="h-3 w-3 text-primary animate-pulse" />
-                        <span className="text-[10px] font-black italic tabular-nums">{formatTime(timer)}</span>
+                <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-2.5 px-4 py-2 bg-card rounded-xl border border-border/50 shadow-sm">
+                        <Clock className="h-4 w-4 text-primary animate-pulse" />
+                        <span className="text-sm font-black italic tabular-nums">{formatTime(timer)}</span>
                     </div>
 
-                    <div className="flex flex-col items-end gap-0.5">
-                        <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground">
+                    <div className="flex flex-col items-end gap-1.5">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                             Exceedance: {currentQuestionIndex + 1} / {selectedTopic.questions.length}
                         </p>
-                        <div className="w-20 lg:w-24 h-1 bg-muted rounded-full overflow-hidden border border-border/50">
+                        <div className="w-32 lg:w-40 h-2 bg-muted rounded-full overflow-hidden border border-border/50">
                             <div className="h-full bg-primary transition-all duration-500 shadow-[0_0_8px_rgba(251,146,60,0.5)]" style={{ width: `${progress}%` }} />
                         </div>
                     </div>

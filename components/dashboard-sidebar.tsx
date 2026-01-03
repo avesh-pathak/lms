@@ -55,9 +55,10 @@ export function DashboardSidebar() {
       {/* Mobile menu button */}
       <button
         onClick={() => setOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-50 rounded-md border bg-background/80 backdrop-blur-md p-2 shadow-lg hover:bg-background transition-colors"
+        className="lg:hidden fixed top-3 right-4 z-50 rounded-xl border bg-background/80 backdrop-blur-md p-2.5 shadow-xl hover:bg-background transition-all active:scale-95 border-border/50"
+        aria-label="Open sidebar"
       >
-        <Menu className="h-5 w-5" />
+        <Menu className="h-5 w-5 text-primary" aria-hidden="true" />
       </button>
 
       {/* Overlay (mobile) */}
@@ -95,15 +96,17 @@ export function DashboardSidebar() {
               onClick={() => setIsCollapsed(!isCollapsed)}
               className="p-2 hover:bg-muted rounded-lg transition-colors hidden lg:block text-[#FB923C]"
               title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+              aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
             >
-              {isCollapsed ? <PanelLeftOpen className="h-5 w-5" /> : <PanelLeftClose className="h-5 w-5" />}
+              {isCollapsed ? <PanelLeftOpen className="h-5 w-5" aria-hidden="true" /> : <PanelLeftClose className="h-5 w-5" aria-hidden="true" />}
             </button>
             {!isCollapsed && <ThemeToggle />}
             <button
               onClick={() => setOpen(false)}
               className="lg:hidden ml-2"
+              aria-label="Close sidebar"
             >
-              <X className="h-4 w-4" />
+              <X className="h-4 w-4" aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -279,7 +282,7 @@ const NavLink = React.memo(function NavLink({
         isCollapsed ? "justify-center px-0 h-12 w-12 mx-auto" : ""
       )}
     >
-      <Icon className={cn("h-4 w-4", active ? "text-primary" : "text-foreground/60")} />
+      <Icon className={cn("h-4 w-4", active ? "text-primary" : "text-foreground/60")} aria-hidden="true" />
       {!isCollapsed && children}
     </Link>
   )

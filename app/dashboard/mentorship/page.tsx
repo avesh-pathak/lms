@@ -126,7 +126,7 @@ export default function MentorshipPage() {
                         <div className="space-y-1 relative z-10 flex-1">
                             <h3 className="text-sm font-black italic uppercase tracking-tighter">Mission Control</h3>
                             <p className="text-[10px] font-bold text-muted-foreground/80 leading-relaxed px-2">
-                                1h deep-dive roadmap and high-level architectural planning.
+                                1h deep-dive and high-level architectural planning.
                             </p>
                         </div>
                         <div className="mt-5 w-full relative z-10 px-2">

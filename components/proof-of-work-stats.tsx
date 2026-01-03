@@ -4,7 +4,7 @@ import React from "react"
 import { Progress } from "@/components/ui/progress"
 import { useProblems } from "@/components/problems-provider"
 
-export function ProofOfWorkStats() {
+export const ProofOfWorkStats = React.memo(function ProofOfWorkStats() {
     const { problems, loading } = useProblems()
 
     const { solvedProblems, progress, totalProblems } = React.useMemo(() => {
@@ -50,4 +50,4 @@ export function ProofOfWorkStats() {
             </div>
         </div>
     )
-}
+})

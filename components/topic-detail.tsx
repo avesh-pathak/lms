@@ -182,7 +182,7 @@ export function TopicDetail({ topicSlug }: TopicDetailProps) {
     <div className="p-6 lg:p-8 space-y-6">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="space-y-1">
-          <h2 className="text-4xl font-black tracking-tight uppercase italic">
+          <h2 className="text-4xl font-black tracking-tight uppercase italic text-foreground">
             {slugToTitle(topicSlug)}
           </h2>
           {loading ? (
@@ -231,12 +231,12 @@ export function TopicDetail({ topicSlug }: TopicDetailProps) {
               <TableHeader>
                 <TableRow className="hover:bg-transparent border-b border-border/50">
                   <TableHead className="w-10 px-2"></TableHead>
-                  <TableHead className="w-10 px-2 font-black uppercase tracking-wider text-[10px]">#</TableHead>
-                  <TableHead className="font-black uppercase tracking-wider text-[10px]">Problem</TableHead>
-                  <TableHead className="w-24 font-black uppercase tracking-wider text-[10px]">Difficulty</TableHead>
-                  <TableHead className="w-32 font-black uppercase tracking-wider text-[10px]">Timer</TableHead>
-                  <TableHead className="w-24 font-black uppercase tracking-wider text-[10px]">Status</TableHead>
-                  <TableHead className="w-24 text-right font-black uppercase tracking-wider text-[10px]">Action</TableHead>
+                  <TableHead className="w-10 px-2 font-black uppercase tracking-wider text-[10px] text-foreground/70">#</TableHead>
+                  <TableHead className="font-black uppercase tracking-wider text-[10px] text-foreground/70">Problem</TableHead>
+                  <TableHead className="w-24 font-black uppercase tracking-wider text-[10px] text-foreground/70">Difficulty</TableHead>
+                  <TableHead className="w-32 font-black uppercase tracking-wider text-[10px] text-foreground/70">Timer</TableHead>
+                  <TableHead className="w-24 font-black uppercase tracking-wider text-[10px] text-foreground/70">Status</TableHead>
+                  <TableHead className="w-24 text-right font-black uppercase tracking-wider text-[10px] text-foreground/70">Action</TableHead>
                 </TableRow>
               </TableHeader>
 
@@ -366,11 +366,12 @@ const ProblemRow = React.memo(function ProblemRow({
               e.stopPropagation()
               onExpand()
             }}
+            aria-label={isExpanded ? "Collapse details" : "Expand details"}
           >
             {isExpanded ? (
-              <ChevronDown className="h-4 w-4" />
+              <ChevronDown className="h-4 w-4" aria-hidden="true" />
             ) : (
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4" aria-hidden="true" />
             )}
           </Button>
         </TableCell>
@@ -384,6 +385,7 @@ const ProblemRow = React.memo(function ProblemRow({
                 toggleStar(problem._id)
               }}
               className="transition-transform active:scale-125 pt-0.5"
+              aria-label={problem.starred ? "Unstar problem" : "Star problem"}
             >
               <Star
                 className={cn(
@@ -392,10 +394,11 @@ const ProblemRow = React.memo(function ProblemRow({
                     ? "fill-yellow-400 text-yellow-400"
                     : "text-muted-foreground group-hover:text-muted-foreground/80"
                 )}
+                aria-hidden="true"
               />
             </button>
 
-            <span className="text-base font-bold leading-tight break-words flex-1 group-hover/row:text-primary transition-colors tracking-tight italic">{problem.title}</span>
+            <span className="text-base font-bold leading-tight break-words flex-1 group-hover/row:text-primary transition-colors tracking-tight italic text-foreground">{problem.title}</span>
 
             <a
               href={problem.problem_link}
@@ -403,8 +406,9 @@ const ProblemRow = React.memo(function ProblemRow({
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-primary transition-colors pt-0.5 shrink-0"
               onClick={(e) => e.stopPropagation()}
+              aria-label={`Open ${problem.title} on external site`}
             >
-              <ExternalLink className="h-3.5 w-3.5" />
+              <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
             </a>
           </div>
         </TableCell>
@@ -433,13 +437,13 @@ const ProblemRow = React.memo(function ProblemRow({
         <TableCell className="align-top py-4">
           <div className="flex items-center gap-2">
             {problem.status === "Completed" ? (
-              <div className="flex items-center gap-1.5 text-success">
-                <Check className="h-4 w-4" />
+              <div className="flex items-center gap-1.5 text-success" aria-label="Status: Solved">
+                <Check className="h-4 w-4" aria-hidden="true" />
                 <span className="text-sm font-black uppercase tracking-tight italic">Solved</span>
               </div>
             ) : (
-              <div className="flex items-center gap-1.5 text-muted-foreground">
-                <Circle className="h-4 w-4" />
+              <div className="flex items-center gap-1.5 text-muted-foreground" aria-label="Status: Pending">
+                <Circle className="h-4 w-4" aria-hidden="true" />
                 <span className="text-sm font-black uppercase tracking-tight italic">Pending</span>
               </div>
             )}

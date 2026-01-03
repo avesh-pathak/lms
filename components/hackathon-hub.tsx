@@ -50,25 +50,36 @@ export function HackathonHub() {
     return (
         <div className="space-y-12 pb-20">
             {/* Hero Header */}
-            <div className="relative overflow-hidden rounded-[20px] bg-[#FB923C] p-5 md:p-6 text-white shadow-xl shadow-orange-500/20">
-                <div className="absolute top-0 right-0 p-4 opacity-10 blur-sm">
-                    <Trophy className="h-24 w-24" />
+            <div className="relative overflow-hidden rounded-[20px] bg-gradient-to-br from-[#FB923C] to-[#EA580C] dark:from-[#FB923C]/20 dark:to-orange-950/20 p-5 md:p-6 text-white shadow-xl shadow-orange-500/20 dark:shadow-none border border-white/10 dark:border-orange-500/20 backdrop-blur-md">
+                <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-white/10 blur-[80px] rounded-full animate-pulse" />
+                <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 bg-black/10 blur-[60px] rounded-full" />
+
+                <div className="absolute top-0 right-0 p-4 opacity-10">
+                    <Trophy className="h-24 w-24 rotate-12" />
                 </div>
+
                 <div className="relative z-10 max-w-xl space-y-2">
                     <div className="flex items-center gap-2">
-                        <Badge className="bg-white/20 hover:bg-white/30 text-white border-0 font-black uppercase tracking-widest py-0.5 px-2.5 rounded-full text-[9px]">
+                        <Badge className="bg-white/20 hover:bg-white/30 dark:bg-orange-500/20 dark:hover:bg-orange-500/30 text-white dark:text-[#FB923C] border-none font-black uppercase tracking-widest py-0.5 px-2.5 rounded-full text-[9px] backdrop-blur-md">
                             Babua Arena
                         </Badge>
-                        <span className="text-white/60 font-bold text-[10px] uppercase tracking-wider">Season 1</span>
+                        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-black/10 dark:bg-white/5 border border-white/10">
+                            <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-ping" />
+                            <span className="text-white/80 dark:text-white/60 font-black text-[9px] uppercase tracking-wider">Season 1 LIVE</span>
+                        </div>
                     </div>
 
                     <h1 className="text-2xl md:text-4xl font-black tracking-tighter uppercase leading-none italic">
                         BUILD FAST. <br />
-                        WIN <span className="underline decoration-4 underline-offset-4 decoration-black/80 text-black/90 px-1">REAL</span> REWARDS.
+                        WIN <span className="text-black dark:text-[#FB923C] relative">REAL
+                            <div className="absolute -bottom-1 left-0 w-full h-2 bg-black/10 dark:bg-[#FB923C]/10 -z-10 -skew-x-12" />
+                        </span> REWARDS.
                     </h1>
-                    <p className="text-xs md:text-sm font-bold opacity-90 leading-relaxed font-sans max-w-md">
+
+                    <p className="text-xs md:text-sm font-bold opacity-90 dark:opacity-80 leading-relaxed max-w-md">
                         Transform your learning into production-grade projects. Win exclusive mentorship and prizes.
                     </p>
+
                     <div className="flex gap-3 pt-2">
                         <Button
                             size="sm"
@@ -76,15 +87,17 @@ export function HackathonHub() {
                                 const activeId = MOCK_HACKATHONS.find(h => h.status === "active")?.id || "1"
                                 router.push(`/dashboard/hackathons/${activeId}`)
                             }}
-                            className="bg-white text-[#FB923C] hover:bg-white/90 h-9 px-5 rounded-lg font-black uppercase tracking-tight shadow-md text-[10px]"
+                            className="bg-white text-[#FB923C] hover:bg-white/90 dark:bg-[#FB923C] dark:text-white dark:hover:bg-[#FB923C]/90 h-9 px-5 rounded-lg font-black uppercase tracking-tight shadow-md text-[10px] border-none"
                         >
-                            Join Active sprint
+                            Join Active Sprint <Rocket className="ml-2 h-3.5 w-3.5" />
                         </Button>
-                        <div className="flex items-center gap-2 px-3 py-1 bg-black/10 rounded-lg border border-white/20 backdrop-blur-sm">
+                        <div className="flex items-center gap-2 px-3 py-1 bg-black/10 dark:bg-white/5 rounded-lg border border-white/20 backdrop-blur-xl">
                             <div className="flex -space-x-1.5">
-                                {[1, 2, 3].map(i => <div key={i} className="w-4 h-4 rounded-full bg-white/20 border border-white/50" />)}
+                                {[1, 2, 3].map(i => (
+                                    <div key={i} className="w-4 h-4 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 border border-[#FB923C] dark:border-orange-500/50 shadow-sm" />
+                                ))}
                             </div>
-                            <span className="text-[9px] font-black uppercase tracking-tighter text-white">1,240 Building</span>
+                            <span className="text-[9px] font-black uppercase tracking-tighter text-white whitespace-nowrap">1,240 Building</span>
                         </div>
                     </div>
                 </div>
