@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
       },
     ],
     formats: ["image/webp", "image/avif"], // Modern formats first
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920], // Common breakpoints
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920], // Mobile-first breakpoints
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384], // Icon sizes
     minimumCacheTTL: 60 * 60 * 24 * 365, // 1 year cache
   },
@@ -30,10 +30,7 @@ const nextConfig: NextConfig = {
     optimizeCss: true,
   },
 
-  // Production optimizations
-  swcMinify: true,
-
-  // Output standalone for smaller builds
+  // Output standalone for smaller builds (production only)
   output: process.env.NODE_ENV === "production" ? "standalone" : undefined,
 };
 

@@ -23,6 +23,24 @@ export const metadata: Metadata = {
   description: "Master the Babua LMS. The elite registry for engineering mastery, system design, and distributed protocols. No courses, just proof of work.",
   keywords: ["Babua LMS", "Babua DSA", "Babua Hub", "Engineering Mastery", "System Design", "Low Level Design", "Distributed Systems", "Coding Interview Preparation"],
   generator: "v0.app",
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+  },
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#FB923C" },
+    { media: "(prefers-color-scheme: dark)", color: "#1A1A1A" }
+  ],
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Babua LMS"
+  },
+  formatDetection: {
+    telephone: false,
+  },
 }
 
 import { ProblemsProvider } from "@/components/problems-provider"
