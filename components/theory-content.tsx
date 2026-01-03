@@ -1,7 +1,10 @@
 "use client"
 
 import React from "react"
-import ReactMarkdown from "react-markdown"
+// import ReactMarkdown from "react-markdown"
+const ReactMarkdown = ({ children, components }: { children: string, components?: any }) => {
+    return <div className="whitespace-pre-wrap font-sans">{children}</div>
+}
 import { TopicTheory } from "@/lib/theory"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"

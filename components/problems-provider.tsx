@@ -98,11 +98,19 @@ export function ProblemsProvider({
             return { ...p, isReviewDue: !!(p.tags?.includes("Revision")) }
         }
 
-        const completedDate = parseISO(p.completedAt)
-        const reviewDueAt = addDays(completedDate, 3).toISOString()
-        const isReviewDue = isPast(parseISO(reviewDueAt)) || (p.tags?.includes("Revision") ?? false)
+        try {
+            const completedDate = parseISO(p.completedAt)
+            if (isNaN(completedDate.getTime())) {
+                // Invalid date
+                return { ...p, isReviewDue: false }
+            }
+            const reviewDueAt = addDays(completedDate, 3).toISOString()
+            const isReviewDue = isPast(parseISO(reviewDueAt)) || (p.tags?.includes("Revision") ?? false)
 
-        return { ...p, reviewDueAt, isReviewDue }
+            return { ...p, reviewDueAt, isReviewDue }
+        } catch (e) {
+            return { ...p, isReviewDue: false }
+        }
     }, [])
 
     const mergeProblem = React.useCallback((p: MongoDBProblem) => {

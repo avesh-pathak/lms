@@ -5,7 +5,9 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function toSlug(value: string) {
+export function toSlug(value: string | null | undefined) {
+  if (typeof value !== "string") return ""
+
   return value
     .toLowerCase()
     .trim()

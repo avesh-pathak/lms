@@ -197,12 +197,18 @@ export function TopicDetail({ topicSlug }: TopicDetailProps) {
       </div>
 
       <Tabs value={activeTab} defaultValue="problems" className="w-full" onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-2 max-w-[400px] mb-8 bg-muted/50 p-1 border border-border/50 rounded-xl">
-          <TabsTrigger value="problems" className="flex items-center gap-2 font-bold uppercase tracking-tighter italic data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-lg transition-all">
+        <TabsList className="grid w-full grid-cols-2 h-12 items-center rounded-full bg-muted/50 p-1 text-muted-foreground max-w-[400px] mb-8 border border-border/50">
+          <TabsTrigger
+            value="problems"
+            className="rounded-full h-full flex items-center justify-center gap-2 text-xs font-black uppercase tracking-widest italic data-[state=active]:bg-foreground data-[state=active]:text-background transition-all"
+          >
             <List className="h-4 w-4" />
             Problems
           </TabsTrigger>
-          <TabsTrigger value="theory" className="flex items-center gap-2 font-bold uppercase tracking-tighter italic data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-lg transition-all">
+          <TabsTrigger
+            value="theory"
+            className="rounded-full h-full flex items-center justify-center gap-2 text-xs font-black uppercase tracking-widest italic data-[state=active]:bg-foreground data-[state=active]:text-background transition-all"
+          >
             <BookOpen className="h-4 w-4" />
             Theory
           </TabsTrigger>
@@ -357,7 +363,7 @@ const ProblemRow = React.memo(function ProblemRow({
         )}
         onClick={onExpand}
       >
-        <TableCell className="align-top py-4" onClick={(e) => e.stopPropagation()}>
+        <TableCell className="align-middle py-4" onClick={(e) => e.stopPropagation()}>
           <Button
             variant="ghost"
             size="icon"
@@ -375,9 +381,9 @@ const ProblemRow = React.memo(function ProblemRow({
             )}
           </Button>
         </TableCell>
-        <TableCell className="text-muted-foreground px-2 align-top py-4 font-bold">{index + 1}</TableCell>
+        <TableCell className="text-muted-foreground px-2 align-middle py-4 font-bold">{index + 1}</TableCell>
 
-        <TableCell className="whitespace-normal py-4 min-w-[300px] align-top">
+        <TableCell className="whitespace-normal py-4 min-w-[300px] align-middle">
           <div className="flex items-start gap-2">
             <button
               onClick={(e) => {
@@ -413,7 +419,7 @@ const ProblemRow = React.memo(function ProblemRow({
           </div>
         </TableCell>
 
-        <TableCell className="align-top py-4">
+        <TableCell className="align-middle py-4">
           <Badge
             variant="secondary"
             className={cn(
@@ -427,14 +433,14 @@ const ProblemRow = React.memo(function ProblemRow({
           </Badge>
         </TableCell>
 
-        <TableCell className="align-top py-4" onClick={(e) => e.stopPropagation()}>
+        <TableCell className="align-middle py-4" onClick={(e) => e.stopPropagation()}>
           <ProblemTimer
             problemId={problem._id}
             onTimeUpdate={handleTimeUpdate}
           />
         </TableCell>
 
-        <TableCell className="align-top py-4">
+        <TableCell className="align-middle py-4">
           <div className="flex items-center gap-2">
             {problem.status === "Completed" ? (
               <div className="flex items-center gap-1.5 text-success" aria-label="Status: Solved">
@@ -450,7 +456,7 @@ const ProblemRow = React.memo(function ProblemRow({
           </div>
         </TableCell>
 
-        <TableCell className="text-right align-top py-4" onClick={(e) => e.stopPropagation()}>
+        <TableCell className="text-right align-middle py-4" onClick={(e) => e.stopPropagation()}>
           <Button
             size="sm"
             variant={problem.status === "Completed" ? "outline" : "default"}
