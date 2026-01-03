@@ -251,7 +251,7 @@ export default function MentorProfilePage({ params }: { params: Promise<{ id: st
                                     </div>
 
                                     <div className="space-y-3 pt-6 border-t border-dashed border-border/50">
-                                        <Link href="/dashboard">
+                                        <Link href="/dashboard/sessions">
                                             <Button className="w-full h-16 rounded-2xl font-black italic uppercase tracking-[0.2em] bg-primary text-white shadow-2xl shadow-primary/30 transition-all hover:scale-[1.02] active:scale-[0.98]">
                                                 Return
                                             </Button>
