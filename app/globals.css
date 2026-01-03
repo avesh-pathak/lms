@@ -150,10 +150,9 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Ensure minimum touch target size (44x44px) */
-  button,
-  a,
-  [role="button"] {
+  /* Ensure minimum touch target size for interactive elements only */
+  button:not(.ignore-touch-target),
+  [role="button"]:not(.ignore-touch-target) {
     min-width: 44px;
     min-height: 44px;
   }
