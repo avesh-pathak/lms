@@ -1,10 +1,7 @@
 "use client"
 
 import React from "react"
-// import ReactMarkdown from "react-markdown"
-const ReactMarkdown = ({ children, components }: { children: string, components?: any }) => {
-    return <div className="whitespace-pre-wrap font-sans">{children}</div>
-}
+import { marked } from "marked"
 import { TopicTheory } from "@/lib/theory"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -30,6 +27,12 @@ export function TheoryContent({
     }
 
     const theoriesToRender = [theory]
+
+    // Helper to render markdown safely
+    const renderMarkdown = (content: string) => {
+        if (!content) return { __html: "" }
+        return { __html: marked.parse(content) as string }
+    }
 
     return (
         <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -72,8 +75,8 @@ export function TheoryContent({
                                     <BookOpen className="h-5 w-5" />
                                     <h3 className="text-sm font-black uppercase tracking-widest italic">Core Concept</h3>
                                 </div>
-                                <div className="text-lg leading-relaxed text-foreground/90 font-medium">
-                                    <ReactMarkdown>{t.core_concept}</ReactMarkdown>
+                                <div className="text-lg leading-relaxed text-foreground/90 font-medium prose prose-invert max-w-none">
+                                    <div dangerouslySetInnerHTML={renderMarkdown(t.core_concept)} />
                                 </div>
                             </section>
 
@@ -111,9 +114,7 @@ export function TheoryContent({
                                 </div>
                                 <div className="prose prose-invert max-w-none text-muted-foreground bg-muted/40 p-8 rounded-[2rem] border border-border/50 shadow-inner">
                                     <div className="space-y-2 prose-strong:text-foreground prose-strong:font-black prose-p:leading-relaxed">
-                                        <ReactMarkdown>
-                                            {t.how_it_works}
-                                        </ReactMarkdown>
+                                        <div dangerouslySetInnerHTML={renderMarkdown(t.how_it_works)} />
                                     </div>
                                 </div>
                             </section>
@@ -137,15 +138,8 @@ export function TheoryContent({
                                             </div>
                                             <Badge variant="outline" className="text-[9px] font-black uppercase tracking-tighter opacity-50">ASCII-VIZ</Badge>
                                         </div>
-                                        <div className="p-8 overflow-x-auto font-mono text-sm leading-relaxed text-primary/80 selection:bg-primary/20">
-                                            <ReactMarkdown
-                                                components={{
-                                                    code: ({ children }: { children?: React.ReactNode }) => <span className="text-primary font-bold">{children}</span>,
-                                                    pre: ({ children }: { children?: React.ReactNode }) => <pre className="bg-transparent p-0 m-0 whitespace-pre">{children}</pre>
-                                                }}
-                                            >
-                                                {t.visual_walkthrough}
-                                            </ReactMarkdown>
+                                        <div className="p-8 overflow-x-auto font-mono text-sm leading-relaxed text-primary/80 selection:bg-primary/20 prose prose-invert max-w-none prose-code:text-primary prose-code:font-bold prose-pre:bg-transparent prose-pre:p-0 prose-pre:m-0">
+                                            <div dangerouslySetInnerHTML={renderMarkdown(t.visual_walkthrough)} />
                                         </div>
                                     </div>
                                 </section>
@@ -161,10 +155,8 @@ export function TheoryContent({
                                         <h3 className="text-sm font-black uppercase tracking-widest italic">Interview Signals</h3>
                                     </div>
                                     <div className="space-y-4">
-                                        <div className="text-sm font-medium leading-relaxed text-muted-foreground prose-ul:list-none prose-ul:p-0 prose-li:mb-3 prose-li:flex prose-li:items-start prose-li:before:content-['⚡'] prose-li:before:mr-3 prose-li:before:text-primary">
-                                            <ReactMarkdown>
-                                                {t.pattern_signals}
-                                            </ReactMarkdown>
+                                        <div className="text-sm font-medium leading-relaxed text-muted-foreground prose prose-invert prose-ul:list-none prose-ul:p-0 prose-li:mb-3 prose-li:flex prose-li:items-start prose-li:before:content-['⚡'] prose-li:before:mr-3 prose-li:before:text-primary">
+                                            <div dangerouslySetInnerHTML={renderMarkdown(t.pattern_signals)} />
                                         </div>
                                     </div>
                                 </div>
@@ -179,10 +171,8 @@ export function TheoryContent({
                                         <h3 className="text-sm font-black uppercase tracking-widest italic">Efficiency</h3>
                                     </div>
                                     <div className="space-y-2">
-                                        <div className="text-base font-bold tracking-tight text-foreground/90 prose-p:m-0 prose-strong:text-primary prose-strong:text-lg">
-                                            <ReactMarkdown>
-                                                {t.complexity}
-                                            </ReactMarkdown>
+                                        <div className="text-base font-bold tracking-tight text-foreground/90 prose prose-invert prose-p:m-0 prose-strong:text-primary prose-strong:text-lg">
+                                            <div dangerouslySetInnerHTML={renderMarkdown(t.complexity)} />
                                         </div>
                                     </div>
                                 </div>

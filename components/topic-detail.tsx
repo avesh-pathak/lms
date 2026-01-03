@@ -197,17 +197,17 @@ export function TopicDetail({ topicSlug }: TopicDetailProps) {
       </div>
 
       <Tabs value={activeTab} defaultValue="problems" className="w-full" onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-2 h-12 items-center rounded-full bg-muted/50 p-1 text-muted-foreground max-w-[400px] mb-8 border border-border/50">
+        <TabsList className="grid w-full grid-cols-2 h-12 items-center rounded-full bg-muted/50 p-1 text-muted-foreground max-w-[400px] mb-8 border border-border/50 shadow-sm">
           <TabsTrigger
             value="problems"
-            className="rounded-full h-full flex items-center justify-center gap-2 text-xs font-black uppercase tracking-widest italic data-[state=active]:bg-foreground data-[state=active]:text-background transition-all"
+            className="rounded-full h-full flex items-center justify-center gap-2 text-xs font-black uppercase tracking-widest italic data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-md transition-all duration-300"
           >
             <List className="h-4 w-4" />
             Problems
           </TabsTrigger>
           <TabsTrigger
             value="theory"
-            className="rounded-full h-full flex items-center justify-center gap-2 text-xs font-black uppercase tracking-widest italic data-[state=active]:bg-foreground data-[state=active]:text-background transition-all"
+            className="rounded-full h-full flex items-center justify-center gap-2 text-xs font-black uppercase tracking-widest italic data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-md transition-all duration-300"
           >
             <BookOpen className="h-4 w-4" />
             Theory
@@ -381,7 +381,7 @@ const ProblemRow = React.memo(function ProblemRow({
             )}
           </Button>
         </TableCell>
-        <TableCell className="text-muted-foreground px-2 align-middle py-4 font-bold">{index + 1}</TableCell>
+        <TableCell className="text-muted-foreground px-2 align-middle py-4 font-bold text-xs">{index + 1}</TableCell>
 
         <TableCell className="whitespace-normal py-4 min-w-[300px] align-middle">
           <div className="flex items-start gap-2">
@@ -404,7 +404,7 @@ const ProblemRow = React.memo(function ProblemRow({
               />
             </button>
 
-            <span className="text-base font-bold leading-tight break-words flex-1 group-hover/row:text-primary transition-colors tracking-tight italic text-foreground">{problem.title}</span>
+            <span className="text-sm font-black leading-tight break-words flex-1 group-hover/row:text-primary transition-colors tracking-wide italic text-foreground">{problem.title}</span>
 
             <a
               href={problem.problem_link}
@@ -443,14 +443,14 @@ const ProblemRow = React.memo(function ProblemRow({
         <TableCell className="align-middle py-4">
           <div className="flex items-center gap-2">
             {problem.status === "Completed" ? (
-              <div className="flex items-center gap-1.5 text-success" aria-label="Status: Solved">
+              <div className="flex items-center gap-1.5 text-green-500" aria-label="Status: Solved">
                 <Check className="h-4 w-4" aria-hidden="true" />
-                <span className="text-sm font-black uppercase tracking-tight italic">Solved</span>
+                <span className="text-sm font-black uppercase tracking-widest italic">Solved</span>
               </div>
             ) : (
               <div className="flex items-center gap-1.5 text-muted-foreground" aria-label="Status: Pending">
                 <Circle className="h-4 w-4" aria-hidden="true" />
-                <span className="text-sm font-black uppercase tracking-tight italic">Pending</span>
+                <span className="text-sm font-black uppercase tracking-widest italic">Pending</span>
               </div>
             )}
           </div>
@@ -459,8 +459,13 @@ const ProblemRow = React.memo(function ProblemRow({
         <TableCell className="text-right align-middle py-4" onClick={(e) => e.stopPropagation()}>
           <Button
             size="sm"
-            variant={problem.status === "Completed" ? "outline" : "default"}
-            className="h-8 font-black uppercase tracking-tighter italic"
+            variant={problem.status === "Completed" ? "ghost" : "default"}
+            className={cn(
+              "h-8 font-black uppercase tracking-widest italic w-16",
+              problem.status === "Completed"
+                ? "text-muted-foreground hover:text-foreground hover:bg-muted"
+                : "bg-orange-600 hover:bg-orange-700 text-white shadow-md shadow-orange-900/20"
+            )}
             onClick={(e) => {
               e.stopPropagation()
               toggleStatus(problem._id)
