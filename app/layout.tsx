@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
@@ -23,16 +23,6 @@ export const metadata: Metadata = {
   description: "Master the Babua LMS. The elite registry for engineering mastery, system design, and distributed protocols. No courses, just proof of work.",
   keywords: ["Babua LMS", "Babua DSA", "Babua Hub", "Engineering Mastery", "System Design", "Low Level Design", "Distributed Systems", "Coding Interview Preparation"],
   generator: "v0.app",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 5,
-    userScalable: true,
-  },
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#FB923C" },
-    { media: "(prefers-color-scheme: dark)", color: "#1A1A1A" }
-  ],
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -41,6 +31,18 @@ export const metadata: Metadata = {
   formatDetection: {
     telephone: false,
   },
+}
+
+// Viewport configuration (Next.js 14+ requirement)
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#FB923C" },
+    { media: "(prefers-color-scheme: dark)", color: "#1A1A1A" }
+  ],
 }
 
 import { ProblemsProvider } from "@/components/problems-provider"
