@@ -4,6 +4,7 @@ import React, { useMemo, useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import dynamic from "next/dynamic"
 
+// Dynamically load chart components to reduce initial bundle
 const XPVelocityChart = dynamic(() => import("./visual-charts").then(mod => mod.XPVelocityChart), {
   ssr: false,
   loading: () => <div className="h-full w-full bg-muted/10 animate-pulse rounded-3xl" />

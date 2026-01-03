@@ -1,6 +1,7 @@
 "use client"
 import React from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { ArrowRight, Trophy, Code2, Layers, Zap, Star, ShieldCheck, Cpu, PencilRuler, MessageSquare, Users, Linkedin, Radio, Sparkles } from "lucide-react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
@@ -69,6 +70,15 @@ export function LandingPage({ topics }: LandingPageProps) {
                         <a href="#mentor" className="hover:text-[#FB923C] transition-colors">Mentorship</a>
                     </div>
                     <div className="flex items-center gap-4">
+                        <a
+                            href="https://www.linkedin.com/in/avesh-pathak/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="h-10 w-10 rounded-2xl border-2 flex items-center justify-center transition-all hover:bg-muted hover:border-primary dark:bg-muted/20 dark:border-muted-foreground dark:hover:border-primary dark:hover:bg-muted/40"
+                            aria-label="Visit Avesh Pathak's LinkedIn profile"
+                        >
+                            <Linkedin className="h-5 w-5 text-[#0077B5]" aria-hidden="true" />
+                        </a>
                         <ThemeToggle />
                         <Link href="/dashboard">
                             <Button variant="default" className="rounded-full px-6 font-bold shadow-lg shadow-[#FB923C]/20 hover:scale-105 transition-all text-white bg-[#FB923C] hover:bg-[#FB923C]/90">
@@ -348,8 +358,8 @@ export function LandingPage({ topics }: LandingPageProps) {
 
                                 <div className="space-y-6">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-16 h-16 rounded-3xl bg-muted overflow-hidden border-2 border-[#FB923C]/20 shrink-0 aspect-square">
-                                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Amit" alt="Student Profile: Amit Patel" className="w-full h-full object-cover" loading="eager" />
+                                        <div className="w-16 h-16 rounded-3xl bg-muted overflow-hidden border-2 border-[#FB923C]/20 shrink-0 aspect-square relative">
+                                            <Image src="https://api.dicebear.com/7.x/avataaars/svg?seed=Amit" alt="Student Profile: Amit Patel" fill className="object-cover" priority />
                                         </div>
                                         <div className="space-y-1">
                                             <div className="font-bold text-lg leading-none">Amit Patel</div>
@@ -445,8 +455,8 @@ export function LandingPage({ topics }: LandingPageProps) {
                                 </div>
                                 <div className="flex items-center justify-between p-3 rounded-2xl bg-muted/30 border border-dashed hover:bg-muted/50 transition-colors">
                                     <div className="flex items-center gap-3">
-                                        <div className="h-10 w-10 rounded-full bg-gray-200 border-2 border-white shadow-sm overflow-hidden shrink-0 aspect-square">
-                                            <img src="/assets/mentors/image.png" alt="Mentor Profile: Vikram Singh, Senior Staff at Google" className="w-full h-full object-cover" loading="lazy" />
+                                        <div className="h-10 w-10 rounded-full bg-gray-200 border-2 border-white shadow-sm overflow-hidden shrink-0 aspect-square relative">
+                                            <Image src="/assets/mentors/image.png" alt="Mentor Profile: Vikram Singh, Senior Staff at Google" fill className="object-cover" sizes="40px" />
                                         </div>
                                         <div>
                                             <p className="text-xs font-black uppercase tracking-tight">Vikram Singh</p>
@@ -459,8 +469,8 @@ export function LandingPage({ topics }: LandingPageProps) {
                                 </div>
                                 <div className="flex items-center justify-between p-3 rounded-2xl bg-muted/30 border border-dashed hover:bg-muted/50 transition-colors">
                                     <div className="flex items-center gap-3">
-                                        <div className="h-10 w-10 rounded-full bg-gray-200 border-2 border-white shadow-sm overflow-hidden shrink-0 aspect-square">
-                                            <img src="/assets/mentors/image2.png" alt="Mentor Profile: Sarah Chen, Manager at Netflix" className="w-full h-full object-cover" loading="lazy" />
+                                        <div className="h-10 w-10 rounded-full bg-gray-200 border-2 border-white shadow-sm overflow-hidden shrink-0 aspect-square relative">
+                                            <Image src="/assets/mentors/image2.png" alt="Mentor Profile: Sarah Chen, Manager at Netflix" fill className="object-cover" sizes="40px" />
                                         </div>
                                         <div>
                                             <p className="text-xs font-black uppercase tracking-tight">Sarah Chen</p>
