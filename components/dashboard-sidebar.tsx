@@ -53,13 +53,17 @@ export function DashboardSidebar() {
   return (
     <>
       {/* Mobile menu button */}
-      <button
-        onClick={() => setOpen(true)}
-        className="lg:hidden fixed top-3 left-4 z-50 rounded-xl border bg-background/80 backdrop-blur-md p-2.5 shadow-xl hover:bg-background transition-all active:scale-95 border-border/50"
-        aria-label="Open sidebar"
-      >
-        <Menu className="h-5 w-5 text-primary" aria-hidden="true" />
-      </button>
+      {/* Mobile Header - Natural Flow */}
+      <div className="lg:hidden w-full h-14 border-b bg-background/80 backdrop-blur-md flex items-center px-4 sticky top-0 z-40">
+        <button
+          onClick={() => setOpen(true)}
+          className="p-2 -ml-2 rounded-lg hover:bg-muted transition-colors"
+          aria-label="Open sidebar"
+        >
+          <Menu className="h-5 w-5 text-foreground" aria-hidden="true" />
+        </button>
+        <span className="font-bold text-sm ml-2">Menu</span>
+      </div>
 
       {/* Overlay (mobile) */}
       {open && (
@@ -75,7 +79,7 @@ export function DashboardSidebar() {
           "fixed z-50 top-0 left-0 h-screen border-r bg-card flex flex-col transition-all duration-300 ease-in-out overflow-y-auto scrollbar-hide",
           isCollapsed ? "w-[80px]" : "w-[320px]",
           open ? "translate-x-0" : "-translate-x-full",
-          "lg:translate-x-0 lg:static"
+          "lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen"
         )}
       >
         {/* Header */}
