@@ -200,7 +200,7 @@ export default function MentorProfilePage({ params }: { params: Promise<{ id: st
                                         </div>
                                     </div>
 
-                                    <div className="flex justify-between items-center text-left">
+                                    <div className="flex flex-col md:flex-row gap-6 md:gap-0 justify-between items-center md:items-center text-center md:text-left">
                                         <div className="space-y-1">
                                             <span className="text-xs font-black uppercase italic tracking-[0.3em] opacity-30">Total Value</span>
                                             <div className="text-4xl font-black italic tracking-tighter text-primary leading-none">₹{mentor.hourlyRate}</div>
@@ -208,14 +208,14 @@ export default function MentorProfilePage({ params }: { params: Promise<{ id: st
                                         <Button
                                             onClick={handleConfirm}
                                             disabled={isProcessing}
-                                            className="h-16 px-12 rounded-2xl font-black italic uppercase tracking-[0.3em] bg-foreground text-background hover:bg-foreground/90 shadow-2xl transition-all duration-300 disabled:opacity-50"
+                                            className="w-full md:w-auto h-16 px-12 rounded-2xl font-black italic uppercase tracking-[0.3em] bg-foreground text-background hover:bg-foreground/90 shadow-2xl transition-all duration-300 disabled:opacity-50"
                                         >
                                             {isProcessing ? "INITIALIZING..." : "Pay & Confirm"}
                                         </Button>
                                     </div>
                                 </div>
 
-                                <div className="flex gap-4">
+                                <div className="flex flex-col sm:flex-row gap-4">
                                     <Button variant="outline" onClick={() => setStep("calendar")} className="flex-1 h-14 rounded-2xl font-black italic uppercase tracking-widest text-[10px] border-2">
                                         Modify Schedule
                                     </Button>
