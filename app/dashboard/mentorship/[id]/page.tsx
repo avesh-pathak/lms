@@ -253,10 +253,10 @@ export default function MentorProfilePage({ params }: { params: Promise<{ id: st
                                     <div className="space-y-3 pt-6 border-t border-dashed border-border/50">
                                         <Link href="/dashboard">
                                             <Button className="w-full h-16 rounded-2xl font-black italic uppercase tracking-[0.2em] bg-primary text-white shadow-2xl shadow-primary/30 transition-all hover:scale-[1.02] active:scale-[0.98]">
-                                                Return to Mission Control
+                                                Return
                                             </Button>
                                         </Link>
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-30 italic px-8">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-80 italic px-8">
                                             A secure meeting link and calendar node has been transmitted to your primary terminal email.
                                         </p>
                                     </div>
