@@ -256,7 +256,7 @@ export default function MentorProfilePage({ params }: { params: Promise<{ id: st
                                                 Return
                                             </Button>
                                         </Link>
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-80 italic px-8">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-zinc-900 dark:text-zinc-200 italic px-8">
                                             A secure meeting link and calendar node has been transmitted to your primary terminal email.
                                         </p>
                                     </div>
